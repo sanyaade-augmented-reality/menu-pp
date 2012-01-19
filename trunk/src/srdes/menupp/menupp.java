@@ -49,7 +49,7 @@ public class menupp extends Activity
     private static final int APPSTATUS_CAMERA_RUNNING   = 6;
     
     // Name of the native dynamic libraries to load:
-    private static final String NATIVE_LIB_SAMPLE = "ImageTargets";    
+    private static final String NATIVE_LIB_SAMPLE = "menupp";    
     private static final String NATIVE_LIB_QCAR = "QCAR"; 
 
     // Our OpenGL view:
