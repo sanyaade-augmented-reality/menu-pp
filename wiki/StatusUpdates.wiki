@@ -8,9 +8,9 @@ I figured we could use this page to update the team on any updates, breakthrough
   * Larry -> User Interface
   * Denis & Dustin -> Graphics, Animations, and Native Code development
 
-= Details =
+= Updates =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Please initial or sign your entry. Latest entries at the top.
+  * Reviewing android development guide and looking into asynchronous events along with creating a suitable manifest file. -aaron
+  * Created repository. Be sure to check out into directory called 'apps' in qcar home directory. -aaron
+  * Hacked ImageTargets example from Qualcomm for our code. -aaron
