@@ -1,13 +1,7 @@
 #summary How to set up your stuff.
 
-= Introduction =
 
-How to set up your stuff.
-
-
-= Details =
-
-Step 1 - Download these things according to your OS
+= Step 1 - Download these things according to your OS =
 
 Eclipse Classic 3.7.1
 http://www.eclipse.org/downloads/
@@ -23,23 +17,27 @@ http://developer.android.com/sdk/ndk/index.html
 *remember where you extract this
 
 
-Step 2 - Run Eclipse and go to Help->Install New Software..
+= Step 2 - Android ADT Plugin =
+
+Run Eclipse and go to Help->Install New Software..
 
 Enter this URL to install the Android ADT Plugin:
 https://dl-ssl.google.com/android/eclipse/
 
 check everything, accept licenses, install, restart eclipse
 
-Step 3 - Upon restarting, you should receive the option to install the Android SDK. Be sure to install Android 2.1
+= Step 3 - Install Android SDK =
+Upon restarting, you should receive the option to install the Android SDK. Be sure to install Android 2.1
 
-Step 4 - Run Eclipse and go to Help->Install New Software.. again
+= Step 4 - Setup Subclipse =
+Run Eclipse and go to Help->Install New Software.. again
 
 Enter this URL to install Subclipse:
 http://subclipse.tigris.org/update_1.4.x
 
 check everything, accept licenses, install, restart eclipse
 
-Step 5 - Create New Project in Eclipse
+= Step 5 - Create New Project in Eclipse =
 
 File->New->Project..
 go to SVN and Checkout Projects from SVN
@@ -47,12 +45,12 @@ Create New Repository
 enter this URL: https://menu-pp.googlecode.com/svn/trunk/
 Next Next Finish
 
-Step 6 - QCAR Library setup
+= Step 6 - QCAR Library setup =
 
 Right click your project and go to Build Path->Configure Build Path.. Edit QCAR.jar in the Libraries tab and change the path to
 [wherever your put the Qualcomm SDK]\Android\qcar-android-1-0-6\build\java\QCAR\QCAR.jar
 
-Step 7 - NDK builder setup
+= Step 7 - NDK builder setup =
 
 Right click your project and go to Build Path->Configure Build Path..
 Go to the Builders page on the left side of the window and edit NDK Builder
