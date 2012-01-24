@@ -4,5 +4,9 @@
     <string name="hello">Hello World, MenuppActivity!</string>
     <string name="app_title">Menu++</string>
     <string name="app_name">Menupp</string>
+    <string name="loading">Initializing Components...</string>
+    <string name="pick_rest">Select a Restaurant</string>
+    <string name="user_guide">User Guide</string>
+    <string name="about_us">About Us</string>
 
 </resources>
