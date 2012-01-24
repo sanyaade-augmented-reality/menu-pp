@@ -4,10 +4,10 @@
             Qualcomm Confidential and Proprietary
             
 @file 
-    ImageTargets.java
+    menupp.java
 
 @brief
-    Sample for ImageTargets
+    Sample for menupp
 
 ==============================================================================*/
 
@@ -19,6 +19,7 @@ import java.util.Vector;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,13 +31,13 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageView;
+import android.widget.Button;
 
 import com.qualcomm.QCAR.QCAR;
 
 
-/** The main activity for the ImageTargets sample. */
-public class menupp extends Activity
+/** The main activity for the menupp sample. */
+public class menupp extends Activity implements android.view.View.OnClickListener
 {
     // Application status constants:
     private static final int APPSTATUS_UNINITED         = -1;
@@ -57,6 +58,11 @@ public class menupp extends Activity
     
     // The view to display the sample splash screen:
     private View loaderScreen;
+    
+    // Buttons relevant for the home screen
+    private Button selectRestButton;
+    private Button userGuideButton;
+    private Button aboutUsButton;
     
     // The minimum time the splash screen should be visible:
     private static final long MIN_SPLASH_SCREEN_TIME = 2000;    
@@ -83,7 +89,6 @@ public class menupp extends Activity
     
     // The textures we will use for rendering:
     private Vector<Texture> mTextures;
-    private int mSplashScreenImageResource = 0;
     
     /** Static initializer block to load native libraries on start-up. */
     static
@@ -239,13 +244,11 @@ public class menupp extends Activity
      * to an activity. */
     protected void onCreate(Bundle savedInstanceState)
     {
-        DebugLog.LOGD("ImageTargets::onCreate");
+        DebugLog.LOGD("menupp::onCreate");
         super.onCreate(savedInstanceState);
         
-        // Set the splash screen image to display during initialization:
-        //mSplashScreenImageResource = R.drawable.splash_screen_image_targets;
+        // Set the loader screen
         setContentView(R.layout.loader);
-        
         
         // Load any sample specific textures:  
         mTextures = new Vector<Texture>();
@@ -267,14 +270,6 @@ public class menupp extends Activity
                                                  getAssets()));
         mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
                                                  getAssets()));
-        //mTextures.add(Texture.loadTextureFromApk("banana.png",
-        //        getAssets()));
-        //mTextures.add(Texture.loadTextureFromApk("banana.png",
-        //        getAssets()));
-        //mTextures.add(Texture.loadTextureFromApk("banana.png",
-        //        getAssets()));
-        //mTextures.add(Texture.loadTextureFromApk("banana.png",
-        //        getAssets()));
     }
     
     
@@ -314,7 +309,7 @@ public class menupp extends Activity
    /** Called when the activity will start interacting with the user.*/
     protected void onResume()
     {
-        DebugLog.LOGD("ImageTargets::onResume");
+        DebugLog.LOGD("menupp::onResume");
         super.onResume();
         
         // QCAR-specific resume operation
@@ -337,7 +332,7 @@ public class menupp extends Activity
     /** Called when the system is about to start resuming a previous activity.*/
     protected void onPause()
     {
-        DebugLog.LOGD("ImageTargets::onPause");
+        DebugLog.LOGD("menupp::onPause");
         super.onPause();
         
         if (mGlView != null)
@@ -363,7 +358,7 @@ public class menupp extends Activity
     /** The final call you receive before your activity is destroyed.*/
     protected void onDestroy()
     {
-        DebugLog.LOGD("ImageTargets::onDestroy");
+        DebugLog.LOGD("menupp::onDestroy");
         super.onDestroy();
         
         // Cancel potentially running tasks
@@ -396,7 +391,7 @@ public class menupp extends Activity
 
     
     /** NOTE: this method is synchronized because of a potential concurrent
-     * access by ImageTargets::onResume() and InitQCARTask::onPostExecute(). */
+     * access by menupp::onResume() and InitQCARTask::onPostExecute(). */
     private synchronized void updateApplicationStatus(int appStatus)
     {
         // Exit if there is no change in status
@@ -471,44 +466,38 @@ public class menupp extends Activity
                 // Native post initialization:
                 onQCARInitializedNative();
                 
-                // The elapsed time since the splash screen was visible:
-                long splashScreenTime = System.currentTimeMillis() - 
-                                            mSplashScreenStartTime;
-                long newSplashScreenTime = 0;
-                if (splashScreenTime < MIN_SPLASH_SCREEN_TIME)
-                {
-                    newSplashScreenTime = MIN_SPLASH_SCREEN_TIME -
-                                            splashScreenTime;   
-                }
+                // Set the app view
+                setContentView(R.layout.home_screen);
                 
-                // Request a callback function after a given timeout to dismiss
-                // the splash screen:
-                Handler handler = new Handler();
-                handler.postDelayed(
-                    new Runnable() {
-                        public void run()
-                        {
-                            // Hide the splash screen
-                            //mSplashScreenView.setVisibility(View.INVISIBLE);
-                        	//DebugLog.LOGD("disabling view");
-                            //loaderScreen.setVisibility(View.INVISIBLE);
-                        	
-                            // Activate the renderer
-                            mRenderer.mIsActive = true;
-
-                            // Now add the GL surface view. It is important
-                            // that the OpenGL ES surface view gets added
-                            // BEFORE the camera is started and video
-                            // background is configured.
-                            addContentView(mGlView, new LayoutParams(
-                                            LayoutParams.FILL_PARENT,
-                                            LayoutParams.FILL_PARENT));
-                            
-                            // Start the camera:
-                            updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
-                        }
-                    }
-                    , newSplashScreenTime);                
+                // Initialize buttons on home view
+                selectRestButton = (Button) findViewById(R.id.select_rest);
+                selectRestButton.setOnClickListener(this);
+//                Handler handler = new Handler();
+//                handler.postDelayed(
+//                    new Runnable() {
+//                        public void run()
+//                        {
+//                            // Hide the splash screen
+//                            //mSplashScreenView.setVisibility(View.INVISIBLE);
+//                        	//DebugLog.LOGD("disabling view");
+//                            //loaderScreen.setVisibility(View.INVISIBLE);
+//                        	
+//                            // Activate the renderer
+//                            mRenderer.mIsActive = true;
+//
+//                            // Now add the GL surface view. It is important
+//                            // that the OpenGL ES surface view gets added
+//                            // BEFORE the camera is started and video
+//                            // background is configured.
+//                            addContentView(mGlView, new LayoutParams(
+//                                            LayoutParams.FILL_PARENT,
+//                                            LayoutParams.FILL_PARENT));
+//                            
+//                            // Start the camera:
+//                            updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
+//                        }
+//                    }
+//                    , newSplashScreenTime);                
         
                 break;
                 
@@ -558,7 +547,6 @@ public class menupp extends Activity
         //        we suggest that the activity using the QCAR SDK be locked
         //        to landscape mode if you plan to support Android 2.1 devices
         //        as well. Froyo is fine with both orientations.
-        //int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         
         // Apply screen orientation
@@ -578,18 +566,6 @@ public class menupp extends Activity
         getWindow().setFlags(
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-              
-        // Create and add the splash screen view
-        //mSplashScreenView = new ImageView(this);
-        //mSplashScreenView.setImageResource(mSplashScreenImageResource);
-        //addContentView(mSplashScreenView, new LayoutParams(
-        //                LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-        DebugLog.LOGD("creating view");
-        loaderScreen = (View) findViewById(R.layout.loader);
-        
-        
-        mSplashScreenStartTime = System.currentTimeMillis();
-
     }
     
     
@@ -718,5 +694,21 @@ public class menupp extends Activity
         }
         
         return false;
-    }    
+    }
+
+	public void onClick(View v) {
+      // Activate the renderer
+      mRenderer.mIsActive = true;
+
+      // Now add the GL surface view. It is important
+      // that the OpenGL ES surface view gets added
+      // BEFORE the camera is started and video
+      // background is configured.
+      addContentView(mGlView, new LayoutParams(
+                      LayoutParams.FILL_PARENT,
+                      LayoutParams.FILL_PARENT));
+      
+      // Start the camera:
+      updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
+	}    
 }
