@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,6 +54,9 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     private static final String NATIVE_LIB_SAMPLE = "menupp";    
     private static final String NATIVE_LIB_QCAR = "QCAR"; 
 
+    // Application activities
+    private MenuList menuList;
+    
     // Our OpenGL view:
     private QCARSampleGLView mGlView;
     
@@ -259,6 +263,9 @@ public class menupp extends Activity implements android.view.View.OnClickListene
         
         // Update the application status to start initializing application
         updateApplicationStatus(APPSTATUS_INIT_APP);
+        
+        //Initialize any other Activities
+        menuList = new MenuList();
     }
 
     
@@ -301,7 +308,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     public native void onQCARInitializedNative();    
     
     
-    /** Native methods for starting and stoping the camera. */ 
+    /** Native methods for starting and stopping the camera. */ 
     private native void startCamera();
     private native void stopCamera();
 
@@ -471,34 +478,11 @@ public class menupp extends Activity implements android.view.View.OnClickListene
                 
                 // Initialize buttons on home view
                 selectRestButton = (Button) findViewById(R.id.select_rest);
-                selectRestButton.setOnClickListener(this);
-//                Handler handler = new Handler();
-//                handler.postDelayed(
-//                    new Runnable() {
-//                        public void run()
-//                        {
-//                            // Hide the splash screen
-//                            //mSplashScreenView.setVisibility(View.INVISIBLE);
-//                        	//DebugLog.LOGD("disabling view");
-//                            //loaderScreen.setVisibility(View.INVISIBLE);
-//                        	
-//                            // Activate the renderer
-//                            mRenderer.mIsActive = true;
-//
-//                            // Now add the GL surface view. It is important
-//                            // that the OpenGL ES surface view gets added
-//                            // BEFORE the camera is started and video
-//                            // background is configured.
-//                            addContentView(mGlView, new LayoutParams(
-//                                            LayoutParams.FILL_PARENT,
-//                                            LayoutParams.FILL_PARENT));
-//                            
-//                            // Start the camera:
-//                            updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
-//                        }
-//                    }
-//                    , newSplashScreenTime);                
-        
+                selectRestButton.setOnClickListener(this);      
+                userGuideButton = (Button) findViewById(R.id.user_guide);
+                userGuideButton.setOnClickListener(this);
+                aboutUsButton = (Button) findViewById(R.id.about_us);
+                aboutUsButton.setOnClickListener(this);
                 break;
                 
             case APPSTATUS_CAMERA_STOPPED:
@@ -697,18 +681,35 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     }
 
 	public void onClick(View v) {
-      // Activate the renderer
-      mRenderer.mIsActive = true;
+		
+		switch(v.getId()) {
+		
+		case R.id.select_rest:
+		    // Activate the renderer
+//		    mRenderer.mIsActive = true;
+//		
+//		    // Now add the GL surface view. It is important
+//		    // that the OpenGL ES surface view gets added
+//		    // BEFORE the camera is started and video
+//		    // background is configured.
+//		    addContentView(mGlView, new LayoutParams(
+//		                    LayoutParams.FILL_PARENT,
+//		                    LayoutParams.FILL_PARENT));
+//		      
+//		    // Start the camera:
+//		    updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
+			Intent intent = new Intent(this, MenuList.class);
+			startActivity(intent);
+			break;
+			
+		case R.id.user_guide:
+	        setContentView(R.layout.user_guide);
+			break;
+			
+		case R.id.about_us:
+	        setContentView(R.layout.about_us);
+			break;
+		}
 
-      // Now add the GL surface view. It is important
-      // that the OpenGL ES surface view gets added
-      // BEFORE the camera is started and video
-      // background is configured.
-      addContentView(mGlView, new LayoutParams(
-                      LayoutParams.FILL_PARENT,
-                      LayoutParams.FILL_PARENT));
-      
-      // Start the camera:
-      updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
 	}    
 }
