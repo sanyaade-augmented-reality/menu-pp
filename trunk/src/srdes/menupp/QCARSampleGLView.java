@@ -23,6 +23,7 @@ import android.opengl.GLSurfaceView;
  *  Responsible for setting up and configuring the OpenGL surface view.
  *  
  * */
+//comment
 public class QCARSampleGLView extends GLSurfaceView
 {
     private static boolean mUseOpenGLES2 = true;
