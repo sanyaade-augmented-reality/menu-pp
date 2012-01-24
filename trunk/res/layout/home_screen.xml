@@ -9,17 +9,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="125dp"
+        android:layout_marginTop="30dp"
         android:text="@string/app_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="65dp" />
+        android:textSize="30dp" />
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="25dp" />
+        android:layout_marginTop="75dp"
+        android:text="@string/pick_rest" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/user_guide" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="@string/about_us" />
 
 </LinearLayout>
