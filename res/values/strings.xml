@@ -2,6 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, MenuppActivity!</string>
+    <string name="app_title">Menu++</string>
     <string name="app_name">Menupp</string>
 
 </resources>
