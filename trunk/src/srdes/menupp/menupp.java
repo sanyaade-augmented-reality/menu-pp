@@ -56,7 +56,7 @@ public class menupp extends Activity
     private QCARSampleGLView mGlView;
     
     // The view to display the sample splash screen:
-    private ImageView mSplashScreenView;
+    private View loaderScreen;
     
     // The minimum time the splash screen should be visible:
     private static final long MIN_SPLASH_SCREEN_TIME = 2000;    
@@ -244,6 +244,8 @@ public class menupp extends Activity
         
         // Set the splash screen image to display during initialization:
         //mSplashScreenImageResource = R.drawable.splash_screen_image_targets;
+        setContentView(R.layout.loader);
+        
         
         // Load any sample specific textures:  
         mTextures = new Vector<Texture>();
@@ -487,8 +489,10 @@ public class menupp extends Activity
                         public void run()
                         {
                             // Hide the splash screen
-                            mSplashScreenView.setVisibility(View.INVISIBLE);
-                            
+                            //mSplashScreenView.setVisibility(View.INVISIBLE);
+                        	//DebugLog.LOGD("disabling view");
+                            //loaderScreen.setVisibility(View.INVISIBLE);
+                        	
                             // Activate the renderer
                             mRenderer.mIsActive = true;
 
@@ -554,7 +558,8 @@ public class menupp extends Activity
         //        we suggest that the activity using the QCAR SDK be locked
         //        to landscape mode if you plan to support Android 2.1 devices
         //        as well. Froyo is fine with both orientations.
-        int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        //int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+        int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         
         // Apply screen orientation
         setRequestedOrientation(screenOrientation);
@@ -575,10 +580,13 @@ public class menupp extends Activity
             WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
               
         // Create and add the splash screen view
-        mSplashScreenView = new ImageView(this);
-        mSplashScreenView.setImageResource(mSplashScreenImageResource);
-        addContentView(mSplashScreenView, new LayoutParams(
-                        LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+        //mSplashScreenView = new ImageView(this);
+        //mSplashScreenView.setImageResource(mSplashScreenImageResource);
+        //addContentView(mSplashScreenView, new LayoutParams(
+        //                LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+        DebugLog.LOGD("creating view");
+        loaderScreen = (View) findViewById(R.layout.loader);
+        
         
         mSplashScreenStartTime = System.currentTimeMillis();
 
