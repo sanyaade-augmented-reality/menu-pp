@@ -19,30 +19,14 @@
       optional), i.e. it affects whether you can actually step through your 
       code in the debugger. It needs to be removed when the application is 
       released!
-      
-      NOTE 3: The setting
-      'android:theme="@android:style/Theme.NoTitleBar.Fullscreen"' ensures
-      that the application starts in full screen mode without a title bar.
     -->
     <application
+        android:icon="@drawable/menupp_icon"
         android:label="@string/app_name"
-        android:launchMode="singleTask"
+        android:launchMode="standard"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:debuggable="true">
 
-        <!--
-          NOTE: The setting 'android:configChanges="orientation|keyboardHidden"'
-          makes sure that Android will not destroy and re-create the activity 
-          when the user flips the keyboard or changes the orientation of the 
-          device, but calls Activity.onConfigurationChanged() instead.
-          
-          NOTE 2: in order to prevent automatic reactions to orientation 
-          changes in addition to setting proper values for 
-          'android:configChanges', you also must explicitly specify the screen 
-          orientation used by the application, either by setting the attribute 
-          'android:screenOrientation' or in code by calling 
-          Activity.setRequestedOrientation() 
-        -->
         <activity android:label="@string/app_name"
                   android:configChanges="orientation|keyboardHidden"
                   android:name=".menupp">
@@ -52,6 +36,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+        </activity>
+        
+        <activity android:label="@string/menu_list"
+            	  android:configChanges="orientation|keyboardHidden"
+            	  android:name=".MenuList">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
 
     </application>
