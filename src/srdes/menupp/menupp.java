@@ -58,7 +58,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     private MenuList menuList;
     
     // Our OpenGL view:
-    private QCARSampleGLView mGlView;
+    public static QCARSampleGLView mGlView;
     
     // The view to display the sample splash screen:
     private View loaderScreen;
@@ -68,14 +68,8 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     private Button userGuideButton;
     private Button aboutUsButton;
     
-    // The minimum time the splash screen should be visible:
-    private static final long MIN_SPLASH_SCREEN_TIME = 2000;    
-    
-    // The time when the splash screen has become visible:
-    long mSplashScreenStartTime = 0;
-    
     // Our renderer:
-    private menuppRenderer mRenderer;
+    public static menuppRenderer mRenderer;
     
     // Display size of the device
     private int mScreenWidth = 0;
@@ -93,6 +87,9 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     
     // The textures we will use for rendering:
     private Vector<Texture> mTextures;
+    
+    // Status Value
+    public static int applicationStatus = -1;
     
     /** Static initializer block to load native libraries on start-up. */
     static
@@ -250,6 +247,10 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     {
         DebugLog.LOGD("menupp::onCreate");
         super.onCreate(savedInstanceState);
+    	if (applicationStatus == 33){
+    		return;
+    	}
+
         
         // Set the loader screen
         setContentView(R.layout.loader);
@@ -261,11 +262,12 @@ public class menupp extends Activity implements android.view.View.OnClickListene
         // Query the QCAR initialization flags:
         mQCARFlags = getInitializationFlags();
         
-        // Update the application status to start initializing application
-        updateApplicationStatus(APPSTATUS_INIT_APP);
-        
         //Initialize any other Activities
         menuList = new MenuList();
+        
+        // Update the application status to start initializing application
+        updateApplicationStatus(APPSTATUS_INIT_APP);  
+
     }
 
     
@@ -309,7 +311,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     
     
     /** Native methods for starting and stopping the camera. */ 
-    private native void startCamera();
+    public static native void startCamera();
     private native void stopCamera();
 
 
@@ -318,6 +320,15 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     {
         DebugLog.LOGD("menupp::onResume");
         super.onResume();
+    	if (applicationStatus == 33) {
+    		mRenderer.mIsActive = true;
+    	    addContentView(mGlView, new LayoutParams(
+            LayoutParams.FILL_PARENT,
+            LayoutParams.FILL_PARENT));
+    	    applicationStatus = -1;
+    	    updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
+    	}
+
         
         // QCAR-specific resume operation
         QCAR.onResume();
@@ -399,7 +410,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     
     /** NOTE: this method is synchronized because of a potential concurrent
      * access by menupp::onResume() and InitQCARTask::onPostExecute(). */
-    private synchronized void updateApplicationStatus(int appStatus)
+    public synchronized void updateApplicationStatus(int appStatus)
     {
         // Exit if there is no change in status
         if (mAppStatus == appStatus)
@@ -483,6 +494,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
                 userGuideButton.setOnClickListener(this);
                 aboutUsButton = (Button) findViewById(R.id.about_us);
                 aboutUsButton.setOnClickListener(this);
+                           	      
                 break;
                 
             case APPSTATUS_CAMERA_STOPPED:
@@ -685,19 +697,6 @@ public class menupp extends Activity implements android.view.View.OnClickListene
 		switch(v.getId()) {
 		
 		case R.id.select_rest:
-		    // Activate the renderer
-//		    mRenderer.mIsActive = true;
-//		
-//		    // Now add the GL surface view. It is important
-//		    // that the OpenGL ES surface view gets added
-//		    // BEFORE the camera is started and video
-//		    // background is configured.
-//		    addContentView(mGlView, new LayoutParams(
-//		                    LayoutParams.FILL_PARENT,
-//		                    LayoutParams.FILL_PARENT));
-//		      
-//		    // Start the camera:
-//		    updateApplicationStatus(APPSTATUS_CAMERA_RUNNING);
 			Intent intent = new Intent(this, MenuList.class);
 			startActivity(intent);
 			break;
@@ -710,6 +709,6 @@ public class menupp extends Activity implements android.view.View.OnClickListene
 	        setContentView(R.layout.about_us);
 			break;
 		}
-
 	}    
+	
 }
