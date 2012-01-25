@@ -21,6 +21,8 @@ http://developer.android.com/sdk/ndk/index.html
 
 Run Eclipse and go to Help->Install New Software..
 
+*if it complains about not having Java, download JDK from here http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
 Enter this URL to install the Android ADT Plugin:
 https://dl-ssl.google.com/android/eclipse/
 
