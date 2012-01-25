@@ -1,0 +1,6 @@
+#summary A diagram to outline flow and structure of Menu++.
+
+= Introduction =
+
+Below is a flow diagram for Menu++. Activities are indicated by the different colors. The red processes represent asynchronous tasks executed in the background.
+
