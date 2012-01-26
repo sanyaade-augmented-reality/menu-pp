@@ -36,8 +36,8 @@ public class MenuList extends ListActivity{
 		super.onListItemClick(l, v, position, id);
 		
 		String menu = menus[position];	//TODO: this will allow other menu configurations to be loaded for just one
-	    menupp.applicationStatus = 33;
-	    startActivity(new Intent(this, menupp.class));
+	    //menupp.applicationStatus = 33;
+	    startActivity(new Intent(this, QcarEngine.class));
 
 	}
 	protected void onPause() {
