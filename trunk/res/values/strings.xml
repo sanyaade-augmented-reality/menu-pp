@@ -2,6 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, MenuppActivity!</string>
+    <string name="qcar_engine">QCAR Engine</string>
     <string name="app_title">Menu++</string>
     <string name="app_name">Menu++</string>
     <string name="loading">Initializing Components...</string>
@@ -9,6 +10,7 @@
     <string name="user_guide">User Guide</string>
     <string name="about_us">About Us</string>
     <string name="menu_list">Menu List</string>
+   
     <string-array name="menus">
     	<item>Demo Menu</item>
     </string-array>

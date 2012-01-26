@@ -74,7 +74,7 @@ static const float kObjectScale = 3.f;
 
 
 JNIEXPORT int JNICALL
-Java_srdes_menupp_menupp_getOpenGlEsVersionNative(JNIEnv *, jobject)
+Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
 {
 #ifdef USE_OPENGL_ES_1_1        
     return 1;
@@ -85,14 +85,14 @@ Java_srdes_menupp_menupp_getOpenGlEsVersionNative(JNIEnv *, jobject)
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menupp_setActivityPortraitMode(JNIEnv *, jobject, jboolean isPortrait)
+Java_srdes_menupp_QcarEngine_setActivityPortraitMode(JNIEnv *, jobject, jboolean isPortrait)
 {
     isActivityInPortraitMode = isPortrait;
 }
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menupp_onQCARInitializedNative(JNIEnv *, jobject)
+Java_srdes_menupp_QcarEngine_onQCARInitializedNative(JNIEnv *, jobject)
 {
     // Comment in to enable tracking of up to 2 targets simultaneously and
     // split the work over multiple frames:
@@ -261,7 +261,7 @@ configureVideoBackground()
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menupp_initApplicationNative(
+Java_srdes_menupp_QcarEngine_initApplicationNative(
                             JNIEnv* env, jobject obj, jint width, jint height)
 {
     LOG("Java_srdes_menupp_menupp_initApplicationNative");
@@ -316,7 +316,7 @@ Java_srdes_menupp_menupp_initApplicationNative(
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menupp_deinitApplicationNative(
+Java_srdes_menupp_QcarEngine_deinitApplicationNative(
                                                         JNIEnv* env, jobject obj)
 {
     LOG("Java_srdes_menupp_menupp_deinitApplicationNative");
@@ -339,7 +339,7 @@ Java_srdes_menupp_menupp_deinitApplicationNative(
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menupp_startCamera(JNIEnv *,
+Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *,
                                                                          jobject)
 {
     LOG("Java_srdes_menupp_menupp_startCamera");
@@ -382,7 +382,7 @@ Java_srdes_menupp_menupp_startCamera(JNIEnv *,
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menupp_stopCamera(JNIEnv *,
+Java_srdes_menupp_QcarEngine_stopCamera(JNIEnv *,
                                                                    jobject)
 {
     LOG("Java_srdes_menupp_menupp_stopCamera");

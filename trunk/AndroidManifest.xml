@@ -38,9 +38,39 @@
 
         </activity>
         
+        <activity android:label="@string/qcar_engine"
+            	  android:configChanges="orientation|keyboardHidden"
+            	  android:name=".QcarEngine">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
         <activity android:label="@string/menu_list"
             	  android:configChanges="orientation|keyboardHidden"
             	  android:name=".MenuList">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <activity android:label="@string/about_us"
+            	  android:configChanges="orientation|keyboardHidden"
+            	  android:name=".AboutUs">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <activity android:label="@string/user_guide"
+            	  android:configChanges="orientation|keyboardHidden"
+            	  android:name=".UserGuide">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
