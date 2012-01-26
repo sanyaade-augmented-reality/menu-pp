@@ -23,13 +23,14 @@
     <application
         android:icon="@drawable/menupp_icon"
         android:label="@string/app_name"
-        android:launchMode="standard"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:debuggable="true">
 
         <activity android:label="@string/app_name"
+                  android:launchMode="singleTop"
                   android:configChanges="orientation|keyboardHidden"
                   android:name=".menupp">
+                  
                   
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,6 +40,7 @@
         </activity>
         
         <activity android:label="@string/qcar_engine"
+                  android:launchMode="singleTop"
             	  android:configChanges="orientation|keyboardHidden"
             	  android:name=".QcarEngine">
             
@@ -49,7 +51,8 @@
         </activity>
         
         <activity android:label="@string/menu_list"
-            	  android:configChanges="orientation|keyboardHidden"
+            	  android:launchMode="singleTop"
+            	  android:configChanges="orientation|keyboardHidden"            	  
             	  android:name=".MenuList">
             
             <intent-filter>
@@ -59,6 +62,7 @@
         </activity>
         
         <activity android:label="@string/about_us"
+            	  android:launchMode="singleTop"
             	  android:configChanges="orientation|keyboardHidden"
             	  android:name=".AboutUs">
             
@@ -69,6 +73,7 @@
         </activity>
         
         <activity android:label="@string/user_guide"
+            	  android:launchMode="singleTop"
             	  android:configChanges="orientation|keyboardHidden"
             	  android:name=".UserGuide">
             

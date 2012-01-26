@@ -30,7 +30,7 @@ public class QcarEngine extends Activity {
 	private final static int QCAR_CAMERA_RUNNING = 5;
 	
 	// Status that determines current state of QcarEngine
-	private static int qcarStatus = QCAR_UNINIT;
+	private int qcarStatus = QCAR_UNINIT;
 	private static boolean qcarInitComplete = false;
 	
 	// Asynchronous tasks that must be completed for initialization
@@ -99,6 +99,27 @@ public class QcarEngine extends Activity {
 			updateQcarStatus(QCAR_INIT);
 		}
 	}
+	
+	@Override
+	protected void onResume() {
+		DebugLog.LOGD("QcarEngine::onResume");
+		super.onResume();
+		
+		// QCAR-specific resume operation
+		QCAR.onResume();
+		
+        // We may start the camera only if the QCAR SDK has already been 
+        // initialized
+        if (qcarStatus == QCAR_CAMERA_STOPPED)
+            updateQcarStatus(QCAR_CAMERA_RUNNING);
+        
+        // Resume the GL view:
+        if (mGlView != null)
+        {
+            mGlView.setVisibility(View.VISIBLE);
+            mGlView.onResume();
+        } 
+	}
 
 	@Override
 	protected void onPause() {
@@ -116,63 +137,10 @@ public class QcarEngine extends Activity {
         
         if (qcarStatus == QCAR_CAMERA_RUNNING)
         {
-            updateQcarStatus(QCAR_CAMERA_STOPPED);
+            updateQcarStatus(QCAR_CAMERA_RUNNING);
         }
 	}
 
-	@Override
-	protected void onResume() {
-		DebugLog.LOGD("QcarEngine::onResume");
-		super.onResume();
-		
-		// QCAR-specific resume operation
-		QCAR.onResume();
-		
-		if (qcarInitComplete) {
-			
-			int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-	        // Apply screen orientation
-	        setRequestedOrientation(screenOrientation);
-	        
-	        // Pass on screen orientation info to native code
-	        setActivityPortraitMode(screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	        
-            // Activate the renderer
-            mRenderer.mIsActive = true;
-
-            //qcarView.setVisibility(View.INVISIBLE);
-            // Now add the GL surface view. It is important
-            // that the OpenGL ES surface view gets added
-            // BEFORE the camera is started and video
-            // background is configured.
-            addContentView(mGlView, new LayoutParams(
-                            LayoutParams.FILL_PARENT,
-                            LayoutParams.FILL_PARENT));
-            
-			//updateQcarStatus(QCAR_CAMERA_RUNNING);
-            startCamera();
-		}
-	  
-		// Resume the GL view:
-		if (mGlView != null)
-		{
-			mGlView.setVisibility(View.VISIBLE);
-			mGlView.onResume();
-		}
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
-	
     /** The final call you receive before your activity is destroyed.*/
     protected void onDestroy()
     {
@@ -205,6 +173,7 @@ public class QcarEngine extends Activity {
         QCAR.deinit();
         
         System.gc();
+        
     }
 	
 	public synchronized void updateQcarStatus(int status) {
@@ -268,15 +237,46 @@ public class QcarEngine extends Activity {
             // NOTE: This is only a hint. There is no guarantee that the
             // garbage collector will actually be run.
             System.gc();
+            
+            int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            
+            // Apply screen orientation
+            setRequestedOrientation(screenOrientation);
+            
+            // Pass on screen orientation info to native code
+            setActivityPortraitMode(screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            
+            // Activate the renderer
+            mRenderer.mIsActive = true;
 
             // Native post initialization:
             onQCARInitializedNative();
+               
+            // Now add the GL surface view. It is important
+            // that the OpenGL ES surface view gets added
+            // BEFORE the camera is started and video
+            // background is configured.
+            addContentView(mGlView, new LayoutParams(
+                            LayoutParams.FILL_PARENT,
+                            LayoutParams.FILL_PARENT));
             
-            qcarInitComplete = true;
-            
-            // Pass control back to menupp
-            startActivity(new Intent(this, menupp.class));
+            // Start the camera:
+            updateQcarStatus(QCAR_CAMERA_RUNNING);
             break;
+            
+        case QCAR_CAMERA_STOPPED:
+            // Call the native function to stop the camera
+            stopCamera();
+            break;
+            
+        case QCAR_CAMERA_RUNNING:
+            // Call the native function to start the camera
+            startCamera(); 
+            break;
+            
+        default:
+            throw new RuntimeException("QcarEngine::Invalid application state");
+            
 		}
 		
 	}
