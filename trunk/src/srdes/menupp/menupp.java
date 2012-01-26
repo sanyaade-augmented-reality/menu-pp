@@ -53,11 +53,9 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     private static final String NATIVE_LIB_QCAR = "QCAR"; 
 
     // Application activities
-    private MenuList menuList;
-    private QcarEngine qcarEngine;
-    
-    // Our OpenGL view:
-    public static QCARSampleGLView mGlView;
+    private Intent menuList;
+    private Intent userGuide;
+    private Intent aboutUs;
     
     // The view to display the sample splash screen:
     private View loaderScreen;
@@ -67,9 +65,6 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     private Button userGuideButton;
     private Button aboutUsButton;
     
-    // Our renderer:
-    public static menuppRenderer mRenderer;
-    
     // Display size of the device
     public static int mScreenWidth = 0;
     public static int mScreenHeight = 0;
@@ -77,12 +72,6 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     // The current application status
     private static int mAppStatus = APPSTATUS_UNINITED;
 
-    // QCAR initialization flags
-    private int mQCARFlags = 0;
-    
-    // The textures we will use for rendering:
-    private Vector<Texture> mTextures;
-    
     // Flags status of activity
     private static boolean appInitComplete = false;
     
@@ -100,7 +89,28 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     {
         DebugLog.LOGD("menupp::onCreate");
         super.onCreate(savedInstanceState);
-
+        
+        // Initialize application elements that do not rely on QCAR components  
+        initApplication();
+        
+        // Initialize Intents for Respective Activities
+        menuList = new Intent(this, MenuList.class);
+        userGuide = new Intent(this, UserGuide.class);
+        aboutUs = new Intent(this, AboutUs.class);
+        
+        // Set the app view
+        setContentView(R.layout.home_screen);
+        
+        // Initialize buttons on home view
+        selectRestButton = (Button) findViewById(R.id.select_rest);
+        selectRestButton.setOnClickListener(this);      
+        userGuideButton = (Button) findViewById(R.id.user_guide);
+        userGuideButton.setOnClickListener(this);
+        aboutUsButton = (Button) findViewById(R.id.about_us);
+        aboutUsButton.setOnClickListener(this);
+        
+        // Flag that class is all ready init
+        appInitComplete = true;           	      
     }
 
 
@@ -110,12 +120,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
         DebugLog.LOGD("menupp::onResume");
         super.onResume();
         
-        if (mAppStatus == APPSTATUS_UNINITED) {
-        	// Update the application status to start initializing application
-        	updateApplicationStatus(APPSTATUS_INIT_APP);
-        } else {
-        	updateApplicationStatus(APPSTATUS_INITED);
-        }    
+ 
     }
     
 
@@ -158,12 +163,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
                 
                 // Proceed to next application initialization status
                 updateApplicationStatus(APPSTATUS_INIT_QCAR_ENGINE);
-                break;
-                
-            case APPSTATUS_INIT_QCAR_ENGINE:
-            	// Initialize qcar elements
-            	startActivity(new Intent(this, QcarEngine.class));
-            	break;
+                break;              
                 
             case APPSTATUS_INITED:
                 // Set the app view
@@ -265,15 +265,15 @@ public class menupp extends Activity implements android.view.View.OnClickListene
 		switch(v.getId()) {
 		
 		case R.id.select_rest:
-			startActivity(new Intent(this, MenuList.class));
+			startActivity(menuList);
 			break;
 			
 		case R.id.user_guide:
-	        startActivity(new Intent(this, UserGuide.class));
+	        startActivity(userGuide);
 			break;
 			
 		case R.id.about_us:
-			startActivity(new Intent(this, AboutUs.class));
+			startActivity(aboutUs);
 			break;
 		}
 	}    
