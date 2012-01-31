@@ -128,6 +128,7 @@
     -->
     <!-- <uses-feature android:name="android.hardware.camera" /> -->
     
+    <uses-permission android:name="android.permission.FLASHLIGHT"></uses-permission>
     <!-- 
         Add this permission to get access to the camera
     -->
