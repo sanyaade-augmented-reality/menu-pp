@@ -9,6 +9,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -56,7 +58,7 @@ public class QcarEngine extends Activity {
     private native boolean toggleFlash(boolean flash);
     private native boolean autofocus();
     private native boolean setFocusMode(int mode);
-    
+        
 	// Native Function Prototypes
     /** native method for querying the OpenGL ES version.
      * Returns 1 for OpenGl ES 1.1, returns 2 for OpenGl ES 2.0. */
@@ -77,6 +79,10 @@ public class QcarEngine extends Activity {
     
     /** Tells native code whether we are in portrait or landscape mode */
     private native void setActivityPortraitMode(boolean isPortrait);
+    
+    /** Native function to create/destroy a Virtual Button.
+     *  Existing buttons will be destroyed and non-existing will be created. */
+    private native void addButtonToToggle(int virtualButtonIdx);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +174,7 @@ public class QcarEngine extends Activity {
         // Unload texture
         mTextures.clear();
         mTextures = null;
-        
+                
         // Deinitialize QCAR SDK
         QCAR.deinit();
         
@@ -285,10 +291,10 @@ public class QcarEngine extends Activity {
     use for rendering. */
     private void loadTextures()
     {
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBrass.png",
-                                                 getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("TextureTeapotBlue.png",
-                                                 getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("enchiladas.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
     }
     
     /** Configure QCAR with the desired version of OpenGL ES. */
@@ -388,6 +394,53 @@ public class QcarEngine extends Activity {
         
         return true;
     }
+        /*
+    	DebugLog.LOGD("VirtualButtons::onOptionsItemSelected " + item.getItemId());
+
+		// This flag gets only set to false if no item is handled or handline
+		// failed
+		boolean itemHandled = true;
+		
+		// Handle menu items
+		switch (item.getItemId())
+		{
+		case 0:
+		    addButtonToToggle(0);
+		    break;
+		
+		case 1:
+		    addButtonToToggle(1);
+		    break;
+		
+		case 2:
+		    addButtonToToggle(2);
+		    break;
+		
+		case 3:
+		    addButtonToToggle(3);
+		    break;
+		
+		case 4:
+		    mFlash = !mFlash;
+		    itemHandled = toggleFlash(mFlash);
+		    DebugLog.LOGI("Toggle flash " + (mFlash?"ON":"OFF") + " " + 
+		                    (itemHandled?"WORKED":"FAILED") + "!!");
+		    break;
+		
+		case 5:
+		    itemHandled = autofocus();
+		    DebugLog.LOGI("Autofocus requested" +
+		            (itemHandled ? " successfully." :
+		            ".  Not supported in current mode or on this device."));
+		    break;
+		    
+		default:
+		    itemHandled = false;
+		    break;
+		}
+		
+		return itemHandled;
+    }*/
     
     /** Returns the number of registered textures. */
     public int getTextureCount()
