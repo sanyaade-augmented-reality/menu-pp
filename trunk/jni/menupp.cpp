@@ -110,7 +110,6 @@ int buttonMask                  = 0;
 
 // Virtual Button runtime creation:
 bool updateBtns                   = false;
-const char* virtualButtonColors[] = {"red", "blue", "yellow", "green"};
 const int NUM_BUTTONS             = 4;
 
 
@@ -139,7 +138,7 @@ QCAR::Matrix44F projectionMatrix;
 
 // Constants:
 //static const float kObjectScale = 3.f;
-static const float kObjectScale = 200;
+static const float kObjectScale = 300;
 
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
@@ -249,29 +248,36 @@ class VirtualButton_UpdateCallback : public QCAR::UpdateCallback
 
             if (buttonMask & BUTTON_1)
             {
-                LOG("Toggle Button 1");
+                LOG("Toggle enchilada button");
 
                 toggleVirtualButton(imageTarget, "enchiladas", -180, 180, 180, -180);
 
             }
             if (buttonMask & BUTTON_2)
             {
-                LOG("Toggle Button 2");
+                LOG("Toggle hot dog button");
 
                 toggleVirtualButton(imageTarget, "hotdog", -180, 180, 180, -180);
             }
             if (buttonMask & BUTTON_3)
             {
-                LOG("Toggle Button 3");
+                LOG("Toggle pizza button");
 
                 toggleVirtualButton(imageTarget, "pizza", -180, 180, 180, -180);
             }
+
             if (buttonMask & BUTTON_4)
             {
-                LOG("Toggle Button 4");
+                LOG("Toggle omelete button");
 
-                toggleVirtualButton(imageTarget, virtualButtonColors[3],
-                                    76.57f, -53.52f, 109.50f, -65.87f);
+                toggleVirtualButton(imageTarget, "omelete", -180, 180, 180, -180);
+            }
+
+            if (buttonMask & 16)
+            {
+            	LOG("Toggle burger button.");
+
+            	toggleVirtualButton(imageTarget, "burger", -180, 180, 180, -180);
             }
 
             buttonMask = 0;
@@ -281,7 +287,7 @@ class VirtualButton_UpdateCallback : public QCAR::UpdateCallback
 } qcarUpdate;
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *, jobject)
+Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 {
     //LOG("Java_com_qualcomm_QCARSamples_ImageTargets_GLRenderer_renderFrame");
 
@@ -314,13 +320,11 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *, jobject)
             QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
 
         // The image target:
-        //assert(trackable->getType() == QCAR::Trackable::IMAGE_TARGET);
-        //const QCAR::ImageTarget* target =
-        //    static_cast<const QCAR::ImageTarget*>(trackable);
+        assert(trackable->getType() == QCAR::Trackable::IMAGE_TARGET);
+        const QCAR::ImageTarget* target =
+            static_cast<const QCAR::ImageTarget*>(trackable);
 
-        //const QCAR::VirtualButton* button = target->getVirtualButton(0);
-
-
+        const QCAR::VirtualButton* button = target->getVirtualButton(0);
 
         // Choose the texture based on the target name:
         Texture* imgTexture;
@@ -339,10 +343,14 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *, jobject)
 
 
         // If the button is pressed, than use this texture:
-        //if (button->isPressed() && strcmp(trackable->getName(), "item_1" == 0))
-        //{
-        	//imgTexture = textures[2];
-        //}
+        if (button->isPressed())
+        {
+        	LOG("button was pressed!");
+        	jstring js = env->NewStringUTF(trackable->getName());
+            jclass javaClass = env->GetObjectClass(obj);
+            jmethodID method = env->GetMethodID(javaClass, "viewEntree", "(Ljava/lang/String;)V");
+            env->CallVoidMethod(obj, method, js);
+        }
 
 
 
@@ -360,65 +368,22 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *, jobject)
         // Draw object:
         glBindTexture(GL_TEXTURE_2D, thisTexture->mTextureID);
         glTexCoordPointer(2, GL_FLOAT, 0, (const GLvoid*) &teapotTexCoords[0]);
-	//glTexCoordPointer(2, GL_FLOAT, 0, bananaTexCoords);
 
         glVertexPointer(3, GL_FLOAT, 0, (const GLvoid*) &teapotVertices[0]);
-	//glVertexPointer(3, GL_FLOAT, 0, bananaVerts);
 
         glNormalPointer(GL_FLOAT, 0,  (const GLvoid*) &teapotNormals[0]);
-	//glVertexPointer(3, GL_FLOAT, 0, bananaVerts);
 
         glDrawElements(GL_TRIANGLES, NUM_TEAPOT_OBJECT_INDEX, GL_UNSIGNED_SHORT,
                        (const GLvoid*) &teapotIndices[0]);
 
-	//glDrawArrays(GL_TRIANGLES, 0, bananaNumVerts);
 #else
-
-        /*
-        QCAR::Matrix44F modelViewProjection;
-
-        SampleUtils::translatePoseMatrix(0.0f, 0.0f, kObjectScale,
-                                         &modelViewMatrix.data[0]);
-        SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, kObjectScale,
-                                     &modelViewMatrix.data[0]);
-        SampleUtils::multiplyMatrix(&projectionMatrix.data[0],
-                                    &modelViewMatrix.data[0] ,
-                                    &modelViewProjection.data[0]);
-
-        glUseProgram(shaderProgramID);
-         
-        glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0,
-                              (const GLvoid*) &teapotVertices[0]);
-                              //(const GLvoid*) bananaVerts);
-        glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0,
-                              (const GLvoid*) &teapotNormals[0]);
-                              //(const GLvoid*) bananaNormals);
-        glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0,
-                              (const GLvoid*) &teapotTexCoords[0]);
-                              //(const GLvoid*) bananaTexCoords);
-        
-        glEnableVertexAttribArray(vertexHandle);
-        glEnableVertexAttribArray(normalHandle);
-        glEnableVertexAttribArray(textureCoordHandle);
-        
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, thisTexture->mTextureID);
-        glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE,
-                           (GLfloat*)&modelViewProjection.data[0] );
-        glDrawElements(GL_TRIANGLES, NUM_TEAPOT_OBJECT_INDEX, GL_UNSIGNED_SHORT,
-                       (const GLvoid*) &teapotIndices[0]);
-
-	//glDrawArrays(GL_TRIANGLES, 0, bananaNumVerts);
-
-        SampleUtils::checkGlError("menupp renderFrame");
-        */
 
     	// Place an image on the target using a 3D plane
 
             QCAR::Matrix44F modelViewProjection;
 
-            SampleUtils::translatePoseMatrix(0.0f, 0.0f, kObjectScale,
-                                             &modelViewMatrix.data[0]);
+            //SampleUtils::translatePoseMatrix(0.0f, 0.0f, kObjectScale, &modelViewMatrix.data[0]);
+            SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
             SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f,
                                          &modelViewMatrix.data[0]);
             SampleUtils::multiplyMatrix(&projectionMatrix.data[0],
