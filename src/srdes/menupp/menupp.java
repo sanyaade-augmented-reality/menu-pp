@@ -118,9 +118,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     protected void onResume()
     {
         DebugLog.LOGD("menupp::onResume");
-        super.onResume();
-        
- 
+        super.onResume();        
     }
     
 
