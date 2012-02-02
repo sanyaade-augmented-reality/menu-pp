@@ -10,6 +10,7 @@
     <string name="user_guide">User Guide</string>
     <string name="about_us">About Us</string>
     <string name="menu_list">Menu List</string>
+    <string name="view_entree">Entree View!</string>
    
     <string-array name="menus">
     	<item>Demo Menu</item>

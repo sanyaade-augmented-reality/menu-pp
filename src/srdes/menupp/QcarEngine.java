@@ -114,6 +114,8 @@ public class QcarEngine extends Activity {
 		// QCAR-specific resume operation
 		QCAR.onResume();
 		
+		menuppRenderer.context = this;
+		
         // We may start the camera only if the QCAR SDK has already been 
         // initialized
         if (qcarStatus == QCAR_CAMERA_STOPPED)

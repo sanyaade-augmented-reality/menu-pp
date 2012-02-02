@@ -17,6 +17,8 @@ package srdes.menupp;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
+import android.content.Intent;
 import android.opengl.GLSurfaceView;
 
 import com.qualcomm.QCAR.QCAR;
@@ -26,6 +28,9 @@ import com.qualcomm.QCAR.QCAR;
 public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;
+    
+    // Context that calls rendering frame
+    public static Context context;
     
     /** Native function for initializing the renderer. */
     public native void initRendering();
@@ -74,5 +79,10 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 
         // Call our native function to render content
         renderFrame();
+    }
+    
+    public void viewEntree(String trackableName) {
+    	Intent intent = new Intent (context, ViewEntree.class);
+    	context.startActivity(intent);
     }
 }

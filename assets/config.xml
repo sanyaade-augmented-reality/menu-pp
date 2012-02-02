@@ -1,15 +1,20 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig xsi:noNamespaceSchemaLocation="qcar_config.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <Tracking>
-        <ImageTarget name="item_1" size="375 375"/>
+        <ImageTarget name="item_1" size="375 375">
               <VirtualButton name="enchiladas" rectangle="-180 180 180 -180" enabled="true" />
-        <ImageTarget name="item_2" size="375 375"/>
+        </ImageTarget>
+        <ImageTarget name="item_2" size="375 375">
               <VirtualButton name="hotdog" rectangle="-180 180 180 -180" enabled="true" />
-        <ImageTarget name="item_3" size="375 375"/>
+        </ImageTarget>
+        <ImageTarget name="item_3" size="375 375">
               <VirtualButton name="pizza" rectangle="-180 180 180 -180" enabled="true" />
-        <ImageTarget name="item_4" size="375 375"/>
-              <VirtualButton name="hamburger" rectangle="-180 180 180 -180" enabled="true" />
-        <ImageTarget name="item_5" size="375 375"/>
+        </ImageTarget>
+        <ImageTarget name="item_4" size="375 375">
               <VirtualButton name="omelete" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
+        <ImageTarget name="item_5" size="375 375">
+              <VirtualButton name="burger" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
     </Tracking>
 </QCARConfig>

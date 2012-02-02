@@ -82,6 +82,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        
+        <activity android:label="@string/view_entree"
+            	  android:launchMode="singleTop"
+            	  android:configChanges="orientation|keyboardHidden"
+            	  android:name=".ViewEntree">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
     </application>
     
