@@ -32,8 +32,7 @@ public class ViewEntree extends Activity {
     protected void onPause()
     {
         DebugLog.LOGD("ViewEntree::onPause");
-        super.onPause();
-        
+        super.onPause();        
     }
     
     

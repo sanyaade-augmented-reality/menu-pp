@@ -83,6 +83,7 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     
     public void viewEntree(String trackableName) {
     	Intent intent = new Intent (context, ViewEntree.class);
+    	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	context.startActivity(intent);
     }
 }
