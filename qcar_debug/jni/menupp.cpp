@@ -57,6 +57,11 @@ static const float planeVertices[] =
     -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 0.0,
 };
 
+static const float rectPlaneVertices[] =
+{
+    -5.0, -0.5, 0.0, 5.0, -0.5, 0.0, 5.0, 0.5, 0.0, -5.0, 0.5, 0.0,
+};
+
 static const float planeTexcoords[] =
 {
     0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
@@ -296,17 +301,6 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 
     // Render video background:
     QCAR::State state = QCAR::Renderer::getInstance().begin();
-        
-#ifdef USE_OPENGL_ES_1_1
-    // Set GL11 flags:
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-        
-#endif
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -341,87 +335,42 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         	imgTexture = textures[4];
         } else continue;
 
+		// Place an image on the target using a 3D plane
+		QCAR::Matrix44F modelViewProjection;
 
-        // If the button is pressed, than use this texture:
-        if (button->isPressed())
-        {
-        	LOG("button was pressed!");
-        	jstring js = env->NewStringUTF(trackable->getName());
-            jclass javaClass = env->GetObjectClass(obj);
-            jmethodID method = env->GetMethodID(javaClass, "viewEntree", "(Ljava/lang/String;)V");
-            env->CallVoidMethod(obj, method, js);
-        }
+		SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+		SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+		SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
 
+		glUseProgram(shaderProgramID);
 
+		if (button->isPressed())
+		{
+			SampleUtils::translatePoseMatrix(-5.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectPlaneVertices[0]);
+			imgTexture = textures[4];
+		}
+		else
+		{
+			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
+		}
+		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
+		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
 
-#ifdef USE_OPENGL_ES_1_1
-        // Load projection matrix:
-        glMatrixMode(GL_PROJECTION);
-        glLoadMatrixf(projectionMatrix.data);
+		glEnableVertexAttribArray(vertexHandle);
+		glEnableVertexAttribArray(normalHandle);
+		glEnableVertexAttribArray(textureCoordHandle);
 
-        // Load model view matrix:
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(modelViewMatrix.data);
-        glTranslatef(0.f, 0.f, kObjectScale);
-        glScalef(kObjectScale, kObjectScale, kObjectScale);
-
-        // Draw object:
-        glBindTexture(GL_TEXTURE_2D, thisTexture->mTextureID);
-        glTexCoordPointer(2, GL_FLOAT, 0, (const GLvoid*) &teapotTexCoords[0]);
-
-        glVertexPointer(3, GL_FLOAT, 0, (const GLvoid*) &teapotVertices[0]);
-
-        glNormalPointer(GL_FLOAT, 0,  (const GLvoid*) &teapotNormals[0]);
-
-        glDrawElements(GL_TRIANGLES, NUM_TEAPOT_OBJECT_INDEX, GL_UNSIGNED_SHORT,
-                       (const GLvoid*) &teapotIndices[0]);
-
-#else
-
-    	// Place an image on the target using a 3D plane
-
-            QCAR::Matrix44F modelViewProjection;
-
-            //SampleUtils::translatePoseMatrix(0.0f, 0.0f, kObjectScale, &modelViewMatrix.data[0]);
-            SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-            SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f,
-                                         &modelViewMatrix.data[0]);
-            SampleUtils::multiplyMatrix(&projectionMatrix.data[0],
-                                        &modelViewMatrix.data[0] ,
-                                        &modelViewProjection.data[0]);
-
-            glUseProgram(shaderProgramID);
-
-            glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0,
-                                  (const GLvoid*) &planeVertices[0]);
-            glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0,
-                                  (const GLvoid*) &planeNormals[0]);
-            glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0,
-                                  (const GLvoid*) &planeTexcoords[0]);
-
-            glEnableVertexAttribArray(vertexHandle);
-            glEnableVertexAttribArray(normalHandle);
-            glEnableVertexAttribArray(textureCoordHandle);
-
-            glBindTexture(GL_TEXTURE_2D, imgTexture->mTextureID);
-            glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&modelViewProjection.data[0] );
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &planeIndices[0]);
-#endif
-
+		glBindTexture(GL_TEXTURE_2D, imgTexture->mTextureID);
+		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&modelViewProjection.data[0] );
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &planeIndices[0]);
     }
 
     glDisable(GL_DEPTH_TEST);
 
-#ifdef USE_OPENGL_ES_1_1        
-    glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-#else
     glDisableVertexAttribArray(vertexHandle);
     glDisableVertexAttribArray(normalHandle);
     glDisableVertexAttribArray(textureCoordHandle);
-#endif
 
     QCAR::Renderer::getInstance().end();
 }
@@ -562,15 +511,6 @@ Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *,
     // Start the camera:
     if (!QCAR::CameraDevice::getInstance().start())
         return;
-
-    // Uncomment to enable flash
-    //if(QCAR::CameraDevice::getInstance().setFlashTorchMode(true))
-    //	LOG("IMAGE TARGETS : enabled torch");
-
-    // Uncomment to enable infinity focus mode, or any other supported focus mode
-    // See CameraDevice.h for supported focus modes
-    //if(QCAR::CameraDevice::getInstance().setFocusMode(QCAR::CameraDevice::FOCUS_MODE_INFINITY))
-    //	LOG("IMAGE TARGETS : enabled infinity focus");
 
     // Start the tracker:
     QCAR::Tracker::getInstance().start();

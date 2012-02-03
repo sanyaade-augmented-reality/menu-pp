@@ -140,6 +140,12 @@ public class QcarEngine extends Activity {
             mGlView.onPause();
         }
         
+        // Turn flash off if it was left on
+        if (mFlash == true) {
+        	mFlash = !mFlash;
+            boolean result = toggleFlash(mFlash);
+            DebugLog.LOGI("Toggle flash "+(mFlash?"ON":"OFF")+" "+(result?"WORKED":"FAILED")+"!!");
+        }
         // QCAR-specific pause operation
         QCAR.onPause();
         
@@ -397,53 +403,6 @@ public class QcarEngine extends Activity {
         
         return true;
     }
-        /*
-    	DebugLog.LOGD("VirtualButtons::onOptionsItemSelected " + item.getItemId());
-
-		// This flag gets only set to false if no item is handled or handline
-		// failed
-		boolean itemHandled = true;
-		
-		// Handle menu items
-		switch (item.getItemId())
-		{
-		case 0:
-		    addButtonToToggle(0);
-		    break;
-		
-		case 1:
-		    addButtonToToggle(1);
-		    break;
-		
-		case 2:
-		    addButtonToToggle(2);
-		    break;
-		
-		case 3:
-		    addButtonToToggle(3);
-		    break;
-		
-		case 4:
-		    mFlash = !mFlash;
-		    itemHandled = toggleFlash(mFlash);
-		    DebugLog.LOGI("Toggle flash " + (mFlash?"ON":"OFF") + " " + 
-		                    (itemHandled?"WORKED":"FAILED") + "!!");
-		    break;
-		
-		case 5:
-		    itemHandled = autofocus();
-		    DebugLog.LOGI("Autofocus requested" +
-		            (itemHandled ? " successfully." :
-		            ".  Not supported in current mode or on this device."));
-		    break;
-		    
-		default:
-		    itemHandled = false;
-		    break;
-		}
-		
-		return itemHandled;
-    }*/
     
     /** Returns the number of registered textures. */
     public int getTextureCount()
