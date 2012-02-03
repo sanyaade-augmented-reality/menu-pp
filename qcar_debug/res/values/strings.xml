@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, MenuppActivity!</string>
+    <string name="qcar_engine">QCAR Engine</string>
+    <string name="app_title">Menu++</string>
+    <string name="app_name">Menu++</string>
+    <string name="loading">Initializing Camera...</string>
+    <string name="pick_rest">Select a Restaurant</string>
+    <string name="user_guide">User Guide</string>
+    <string name="about_us">About Us</string>
+    <string name="menu_list">Menu List</string>
+    <string name="view_entree">Entree View!</string>
+   
+    <string-array name="menus">
+    	<item>Demo Menu</item>
+    </string-array>
+
+</resources>
