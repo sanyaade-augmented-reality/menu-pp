@@ -44,11 +44,15 @@
 #include "CubeShaders.h"
 #include "Teapot.h"
 #include "banana.h"
+#include "menupp.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+// Keep reference of the entree targets
+//static EntreeTargets* entreeTargets;
 
 // Plane Definitions
 // Define a plane to bind an image to..
@@ -59,7 +63,7 @@ static const float planeVertices[] =
 
 static const float rectPlaneVertices[] =
 {
-    -5.0, -0.5, 0.0, 5.0, -0.5, 0.0, 5.0, 0.5, 0.0, -5.0, 0.5, 0.0,
+    -1.5, -0.5, 0.0, 1.5, -0.5, 0.0, 1.5, 0.5, 0.0, -1.5, 0.5, 0.0,
 };
 
 static const float planeTexcoords[] =
@@ -122,6 +126,12 @@ const int NUM_BUTTONS             = 4;
 int textureCount                = 0;
 Texture** textures              = 0;
 
+// Entrees
+int entreeCount = 0;
+EntreeTarget** entreeTargets = 0;
+bool entreesContainerCreated = false;
+bool entreesCreated = false;
+
 // OpenGL ES 2.0 specific:
 #ifdef USE_OPENGL_ES_2_0
 unsigned int shaderProgramID    = 0;
@@ -144,6 +154,11 @@ QCAR::Matrix44F projectionMatrix;
 // Constants:
 //static const float kObjectScale = 3.f;
 static const float kObjectScale = 300;
+
+// Function prototypes
+static void markItemSelected(string entreeName);
+static bool checkItemSelected(string entreeName);
+
 
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
@@ -306,54 +321,64 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
     glEnable(GL_CULL_FACE);
 
     // Did we find any trackables this frame?
-    for(int tIdx = 0; tIdx < state.getNumActiveTrackables(); tIdx++)
+    for(int i = 0; i < state.getNumActiveTrackables(); i++)
     {
         // Get the trackable:
-        const QCAR::Trackable* trackable = state.getActiveTrackable(tIdx);
-        QCAR::Matrix44F modelViewMatrix =
-            QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
+        const QCAR::Trackable* trackable = state.getActiveTrackable(i);
+        QCAR::Matrix44F modelViewMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
 
         // The image target:
         assert(trackable->getType() == QCAR::Trackable::IMAGE_TARGET);
-        const QCAR::ImageTarget* target =
-            static_cast<const QCAR::ImageTarget*>(trackable);
+        const QCAR::ImageTarget* target = static_cast<const QCAR::ImageTarget*>(trackable);
 
         const QCAR::VirtualButton* button = target->getVirtualButton(0);
 
         // Choose the texture based on the target name:
         Texture* imgTexture;
 
-        if(strcmp(trackable->getName(), "item_1") == 0) {
+        if(strcmp(trackable->getName(), "item_1") == 0)
+        {
         	imgTexture = textures[0];
-        } else if (strcmp(trackable->getName(), "item_2") == 0) {
+        } else if (strcmp(trackable->getName(), "item_2") == 0)
+        {
         	imgTexture = textures[1];
-        } else if (strcmp(trackable->getName(), "item_3") == 0) {
+        } else if (strcmp(trackable->getName(), "item_3") == 0)
+        {
         	imgTexture = textures[2];
-        } else if (strcmp(trackable->getName(), "item_4") == 0) {
+        } else if (strcmp(trackable->getName(), "item_4") == 0)
+        {
         	imgTexture = textures[3];
-        } else if (strcmp(trackable->getName(), "item_5") == 0) {
+        } else if (strcmp(trackable->getName(), "item_5") == 0)
+        {
         	imgTexture = textures[4];
         } else continue;
 
 		// Place an image on the target using a 3D plane
 		QCAR::Matrix44F modelViewProjection;
 
-		SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-		SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
-		SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
-
-		glUseProgram(shaderProgramID);
-
-		if (button->isPressed())
+		if (button->isPressed() || checkItemSelected((string) trackable->getName()))
 		{
-			SampleUtils::translatePoseMatrix(-5.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+			markItemSelected((string) trackable->getName());
+			SampleUtils::translatePoseMatrix(-1000.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+			SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+			SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
+
+			glUseProgram(shaderProgramID);
+
 			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectPlaneVertices[0]);
-			imgTexture = textures[4];
+			imgTexture = textures[5];
 		}
 		else
 		{
+			SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+			SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+			SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
+
+			glUseProgram(shaderProgramID);
+
 			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
 		}
+
 		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
 		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
 
@@ -382,8 +407,7 @@ configureVideoBackground()
 {
     // Get the default video mode:
     QCAR::CameraDevice& cameraDevice = QCAR::CameraDevice::getInstance();
-    QCAR::VideoMode videoMode = cameraDevice.
-                                getVideoMode(QCAR::CameraDevice::MODE_DEFAULT);
+    QCAR::VideoMode videoMode = cameraDevice.getVideoMode(QCAR::CameraDevice::MODE_DEFAULT);
 
 
     // Configure the video background
@@ -396,8 +420,7 @@ configureVideoBackground()
     if (isActivityInPortraitMode)
     {
         //LOG("configureVideoBackground PORTRAIT");
-        config.mSize.data[0] = videoMode.mHeight
-                                * (screenHeight / (float)videoMode.mWidth);
+        config.mSize.data[0] = videoMode.mHeight * (screenHeight / (float)videoMode.mWidth);
         config.mSize.data[1] = screenHeight;
     }
     else
@@ -425,8 +448,7 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
     // Handle to the activity class:
     jclass activityClass = env->GetObjectClass(obj);
 
-    jmethodID getTextureCountMethodID = env->GetMethodID(activityClass,
-                                                    "getTextureCount", "()I");
+    jmethodID getTextureCountMethodID = env->GetMethodID(activityClass, "getTextureCount", "()I");
     if (getTextureCountMethodID == 0)
     {
         LOG("Function getTextureCount() not found.");
@@ -461,7 +483,6 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
             LOG("GetTexture() returned zero pointer");
             return;
         }
-        LOG("Texture Registered");
         textures[i] = Texture::create(env, textureObject);
     }
 }
@@ -571,31 +592,38 @@ Java_srdes_menupp_menuppRenderer_initRendering(
         glBindTexture(GL_TEXTURE_2D, textures[i]->mTextureID);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]->mWidth,
-                textures[i]->mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE,
-                (GLvoid*)  textures[i]->mData);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]->mWidth, textures[i]->mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)  textures[i]->mData);
     }
 #ifndef USE_OPENGL_ES_1_1
-  
-    shaderProgramID     = SampleUtils::createProgramFromBuffer(cubeMeshVertexShader,
-                                                            cubeFragmentShader);
 
-    vertexHandle        = glGetAttribLocation(shaderProgramID,
-                                                "vertexPosition");
-    normalHandle        = glGetAttribLocation(shaderProgramID,
-                                                "vertexNormal");
-    textureCoordHandle  = glGetAttribLocation(shaderProgramID,
-                                                "vertexTexCoord");
-    mvpMatrixHandle     = glGetUniformLocation(shaderProgramID,
-                                                "modelViewProjectionMatrix");
+    shaderProgramID     = SampleUtils::createProgramFromBuffer(cubeMeshVertexShader, cubeFragmentShader);
+    vertexHandle        = glGetAttribLocation(shaderProgramID, "vertexPosition");
+    normalHandle        = glGetAttribLocation(shaderProgramID, "vertexNormal");
+    textureCoordHandle  = glGetAttribLocation(shaderProgramID, "vertexTexCoord");
+    mvpMatrixHandle     = glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
 
 #endif
 
     // OpenGL setup for Virtual Buttons
-    vbShaderProgramID   = SampleUtils::createProgramFromBuffer(lineMeshVertexShader,
-                                                               lineFragmentShader);
-
+    vbShaderProgramID   = SampleUtils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
     vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
+
+    // Render video background:
+    QCAR::State state = QCAR::Renderer::getInstance().begin();
+
+	LOG("Creating array of entree targets...");
+	entreeCount = state.getNumTrackables();
+	entreeTargets = new EntreeTarget*[entreeCount];
+	entreesContainerCreated = true;
+
+	for (int i = 0 ; i < entreeCount ; i++)
+	{
+		entreeTargets[i] = new EntreeTarget();
+		entreeTargets[i]->itemName = (string) state.getTrackable(i)->getName();
+		entreeTargets[i]->itemSelected = false;
+	}
+
+	QCAR::Renderer::getInstance().end();
 
 }
 
@@ -614,6 +642,35 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
     configureVideoBackground();
 }
 
+EntreeTarget::EntreeTarget()
+{}
+
+
+EntreeTarget::~EntreeTarget()
+{
+}
+
+void markItemSelected(string entreeName)
+{
+	for (int i = 0 ; i < entreeCount ; i++)
+	{
+		if (strcmp(entreeName,entreeTargets[i]->itemName) == 0)
+		{
+			entreeTargets[i]->itemSelected = true;
+		}
+	}
+}
+
+bool checkItemSelected(string entreeName)
+{
+	for (int i = 0 ; i < entreeCount ; i++)
+	{
+		if (strcmp(entreeName,entreeTargets[i]->itemName) == 0)
+		{
+			return entreeTargets[i]->itemSelected;
+		}
+	}
+}
 
 #ifdef __cplusplus
 }
