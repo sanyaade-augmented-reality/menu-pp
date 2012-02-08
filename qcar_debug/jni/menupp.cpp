@@ -18,13 +18,8 @@
 #include <string.h>
 #include <assert.h>
 
-#ifdef USE_OPENGL_ES_1_1
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-#else
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#endif
 
 #include <QCAR/QCAR.h>
 #include <QCAR/CameraDevice.h>
@@ -42,9 +37,7 @@
 #include "SampleUtils.h"
 #include "Texture.h"
 #include "CubeShaders.h"
-#include "Teapot.h"
-#include "banana.h"
-#include "menupp.h"
+#include "EntreeTarget.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -57,23 +50,43 @@ extern "C"
 // Plane Definitions
 // Define a plane to bind an image to..
 static const float planeVertices[] =
-{
-    -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 0.0,
+{//	  x	    y	 z
+    -0.5, -0.5, 0.0,
+     0.5, -0.5, 0.0,
+     0.5,  0.5, 0.0,
+    -0.5,  0.5, 0.0,
 };
 
 static const float rectPlaneVertices[] =
-{
-    -1.5, -0.5, 0.0, 1.5, -0.5, 0.0, 1.5, 0.5, 0.0, -1.5, 0.5, 0.0,
+{//	  x 	y	 z
+    -1.5, -0.5, 0.0,
+     1.5, -0.5, 0.0,
+     1.5,  0.5, 0.0,
+    -1.5,  0.5, 0.0,
 };
 
 static const float planeTexcoords[] =
-{
-    0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0
+{//	 x	  y
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0
+};
+
+static const float rectTexCoords[] =
+{//  x    y
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0
 };
 
 static const float planeNormals[] =
-{
-    0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0
+{//	 x    y    z
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0
 };
 
 static const unsigned short planeIndices[] =
@@ -86,7 +99,8 @@ enum BUTTONS
     BUTTON_1                    = 1,
     BUTTON_2                    = 2,
     BUTTON_3                    = 4,
-    BUTTON_4                    = 8
+    BUTTON_4                    = 8,
+    BUTTON_5					= 16
 };
 
 static const char* lineMeshVertexShader = " \
@@ -119,7 +133,7 @@ int buttonMask                  = 0;
 
 // Virtual Button runtime creation:
 bool updateBtns                   = false;
-const int NUM_BUTTONS             = 4;
+const int NUM_BUTTONS             = 5;
 
 
 // Textures:
@@ -129,8 +143,7 @@ Texture** textures              = 0;
 // Entrees
 int entreeCount = 0;
 EntreeTarget** entreeTargets = 0;
-bool entreesContainerCreated = false;
-bool entreesCreated = false;
+int entreeInfoBase = 0;
 
 // OpenGL ES 2.0 specific:
 #ifdef USE_OPENGL_ES_2_0
@@ -154,10 +167,6 @@ QCAR::Matrix44F projectionMatrix;
 // Constants:
 //static const float kObjectScale = 3.f;
 static const float kObjectScale = 300;
-
-// Function prototypes
-static void markItemSelected(string entreeName);
-static bool checkItemSelected(string entreeName);
 
 
 JNIEXPORT int JNICALL
@@ -201,6 +210,10 @@ Java_srdes_menupp_QcarEngine_addButtonToToggle(JNIEnv */*env*/, jobject /*obj*/,
 
         case 3:
             buttonMask |= BUTTON_4;
+            break;
+
+        case 4:
+            buttonMask |= BUTTON_5;
             break;
     }
     updateBtns = true;
@@ -293,7 +306,7 @@ class VirtualButton_UpdateCallback : public QCAR::UpdateCallback
                 toggleVirtualButton(imageTarget, "omelete", -180, 180, 180, -180);
             }
 
-            if (buttonMask & 16)
+            if (buttonMask & BUTTON_5)
             {
             	LOG("Toggle burger button.");
 
@@ -309,6 +322,7 @@ class VirtualButton_UpdateCallback : public QCAR::UpdateCallback
 JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 {
+	int trackableId;
     //LOG("Java_com_qualcomm_QCARSamples_ImageTargets_GLRenderer_renderFrame");
 
     // Clear color and depth buffer 
@@ -321,7 +335,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
     glEnable(GL_CULL_FACE);
 
     // Did we find any trackables this frame?
-    for(int i = 0; i < state.getNumActiveTrackables(); i++)
+    for(int i = 0 ; i < state.getNumActiveTrackables(); i++)
     {
         // Get the trackable:
         const QCAR::Trackable* trackable = state.getActiveTrackable(i);
@@ -333,40 +347,31 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 
         const QCAR::VirtualButton* button = target->getVirtualButton(0);
 
+        // Capture Id
+        trackableId = trackable->getId();
+
         // Choose the texture based on the target name:
         Texture* imgTexture;
 
-        if(strcmp(trackable->getName(), "item_1") == 0)
-        {
-        	imgTexture = textures[0];
-        } else if (strcmp(trackable->getName(), "item_2") == 0)
-        {
-        	imgTexture = textures[1];
-        } else if (strcmp(trackable->getName(), "item_3") == 0)
-        {
-        	imgTexture = textures[2];
-        } else if (strcmp(trackable->getName(), "item_4") == 0)
-        {
-        	imgTexture = textures[3];
-        } else if (strcmp(trackable->getName(), "item_5") == 0)
-        {
-        	imgTexture = textures[4];
-        } else continue;
+        imgTexture = textures[trackableId];
 
 		// Place an image on the target using a 3D plane
 		QCAR::Matrix44F modelViewProjection;
 
-		if (button->isPressed() || checkItemSelected((string) trackable->getName()))
+		if (button->isPressed() || entreeTargets[trackableId]->itemSelected == true)
 		{
-			markItemSelected((string) trackable->getName());
-			SampleUtils::translatePoseMatrix(-1000.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-			SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+			entreeTargets[trackableId]->itemSelected = true;
+			SampleUtils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+			//SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+			SampleUtils::scalePoseMatrix(400, 400, 1.0f, &modelViewMatrix.data[0]);
 			SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
 
 			glUseProgram(shaderProgramID);
 
 			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectPlaneVertices[0]);
-			imgTexture = textures[5];
+			glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
+			glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectTexCoords[0]);
+			imgTexture = textures[entreeInfoBase + trackableId];
 		}
 		else
 		{
@@ -377,10 +382,9 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 			glUseProgram(shaderProgramID);
 
 			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
+			glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
+			glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
 		}
-
-		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
-		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
 
 		glEnableVertexAttribArray(vertexHandle);
 		glEnableVertexAttribArray(normalHandle);
@@ -427,8 +431,7 @@ configureVideoBackground()
     {
         //LOG("configureVideoBackground LANDSCAPE");
         config.mSize.data[0] = screenWidth;
-        config.mSize.data[1] = videoMode.mHeight
-                            * (screenWidth / (float)videoMode.mWidth);
+        config.mSize.data[1] = videoMode.mHeight * (screenWidth / (float)videoMode.mWidth);
     }
 
     // Set the config:
@@ -464,8 +467,7 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
 
     textures = new Texture*[textureCount];
 
-    jmethodID getTextureMethodID = env->GetMethodID(activityClass,
-        "getTexture", "(I)Lsrdes/menupp/Texture;");
+    jmethodID getTextureMethodID = env->GetMethodID(activityClass, "getTexture", "(I)Lsrdes/menupp/Texture;");
 
     if (getTextureMethodID == 0)
     {
@@ -489,8 +491,7 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_QcarEngine_deinitApplicationNative(
-                                                        JNIEnv* env, jobject obj)
+Java_srdes_menupp_QcarEngine_deinitApplicationNative(JNIEnv* env, jobject obj)
 {
     LOG("Java_srdes_menupp_menupp_deinitApplicationNative");
 
@@ -512,8 +513,7 @@ Java_srdes_menupp_QcarEngine_deinitApplicationNative(
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *,
-                                                                         jobject)
+Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *, jobject)
 {
     LOG("Java_srdes_menupp_menupp_startCamera");
 
@@ -525,8 +525,7 @@ Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *,
     configureVideoBackground();
 
     // Select the default mode:
-    if (!QCAR::CameraDevice::getInstance().selectVideoMode(
-                                QCAR::CameraDevice::MODE_DEFAULT))
+    if (!QCAR::CameraDevice::getInstance().selectVideoMode(QCAR::CameraDevice::MODE_DEFAULT))
         return;
 
     // Start the camera:
@@ -538,16 +537,13 @@ Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *,
  
     // Cache the projection matrix:
     const QCAR::Tracker& tracker = QCAR::Tracker::getInstance();
-    const QCAR::CameraCalibration& cameraCalibration =
-                                    tracker.getCameraCalibration();
-    projectionMatrix = QCAR::Tool::getProjectionGL(cameraCalibration, 2.0f,
-                                            2000.0f);
+    const QCAR::CameraCalibration& cameraCalibration = tracker.getCameraCalibration();
+    projectionMatrix = QCAR::Tool::getProjectionGL(cameraCalibration, 2.0f, 2000.0f);
 }
 
 
 JNIEXPORT void JNICALL
-Java_srdes_menupp_QcarEngine_stopCamera(JNIEnv *,
-                                                                   jobject)
+Java_srdes_menupp_QcarEngine_stopCamera(JNIEnv *, jobject)
 {
     LOG("Java_srdes_menupp_menupp_stopCamera");
 
@@ -585,6 +581,8 @@ Java_srdes_menupp_menuppRenderer_initRendering(
     // Define clear color
     glClearColor(0.0f, 0.0f, 0.0f, QCAR::requiresAlpha() ? 0.0f : 1.0f);
     
+    glEnable(GL_TEXTURE_2D);
+
     // Now generate the OpenGL texture objects and add settings
     for (int i = 0; i < textureCount; ++i)
     {
@@ -611,18 +609,17 @@ Java_srdes_menupp_menuppRenderer_initRendering(
     // Render video background:
     QCAR::State state = QCAR::Renderer::getInstance().begin();
 
-	LOG("Creating array of entree targets...");
 	entreeCount = state.getNumTrackables();
+	entreeInfoBase = entreeCount;
 	entreeTargets = new EntreeTarget*[entreeCount];
-	entreesContainerCreated = true;
 
 	for (int i = 0 ; i < entreeCount ; i++)
 	{
-		entreeTargets[i] = new EntreeTarget();
-		entreeTargets[i]->itemName = (string) state.getTrackable(i)->getName();
-		entreeTargets[i]->itemSelected = false;
+		string trackableName = (string) state.getTrackable(i)->getName();
+		int trackableId = state.getTrackable(i)->getId();
+		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
+		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
-
 	QCAR::Renderer::getInstance().end();
 
 }
@@ -640,36 +637,6 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
 
     // Reconfigure the video background
     configureVideoBackground();
-}
-
-EntreeTarget::EntreeTarget()
-{}
-
-
-EntreeTarget::~EntreeTarget()
-{
-}
-
-void markItemSelected(string entreeName)
-{
-	for (int i = 0 ; i < entreeCount ; i++)
-	{
-		if (strcmp(entreeName,entreeTargets[i]->itemName) == 0)
-		{
-			entreeTargets[i]->itemSelected = true;
-		}
-	}
-}
-
-bool checkItemSelected(string entreeName)
-{
-	for (int i = 0 ; i < entreeCount ; i++)
-	{
-		if (strcmp(entreeName,entreeTargets[i]->itemName) == 0)
-		{
-			return entreeTargets[i]->itemSelected;
-		}
-	}
 }
 
 #ifdef __cplusplus
