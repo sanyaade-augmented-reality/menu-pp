@@ -304,7 +304,14 @@ public class QcarEngine extends Activity {
         mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));
+        
         mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("hotdog_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));
+
+        
     }
     
     /** Configure QCAR with the desired version of OpenGL ES. */
