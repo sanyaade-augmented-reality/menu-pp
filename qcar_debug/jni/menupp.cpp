@@ -1,16 +1,17 @@
-/*==============================================================================
-            Copyright (c) 2010-2011 QUALCOMM Incorporated.
-            All Rights Reserved.
-            Qualcomm Confidential and Proprietary
-            
-@file 
-    menupp.cpp
-
-@brief
-    Skeleton repo for menupp 
-
-==============================================================================*/
-
+/**
+ * @file	menupp.cpp
+ *
+ * @author	Aaron Alaniz (webheadz3@gmail.com)
+ *
+ * @brief	This code provides services for Menu++ to interface with Qualcomm's
+ * 			Augmented Reality SDK. With these services we are able render textures
+ * 			in the camera environment. The virtual buttons and tracking of the image
+ * 			targets are thanks to Qualcomm's libraries.
+ *
+ * @note    Copyright (c) 2010-2011 QUALCOMM Incorporated.
+ *          All Rights Reserved.
+ *          Qualcomm Confidential and Proprietary
+ **/
 
 #include <jni.h>
 #include <android/log.h>
@@ -34,114 +35,17 @@
 #include <QCAR/CameraCalibration.h>
 #include <QCAR/UpdateCallback.h>
 
-#include "SampleUtils.h"
+#include "Planes.h"
+#include "Utils.h"
 #include "Texture.h"
 #include "CubeShaders.h"
 #include "EntreeTarget.h"
+#include "Menupp.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-// Keep reference of the entree targets
-//static EntreeTargets* entreeTargets;
-
-// Plane Definitions
-// Define a plane to bind an image to..
-static const float planeVertices[] =
-{//	  x	    y	 z
-    -0.5, -0.5, 0.0,
-     0.5, -0.5, 0.0,
-     0.5,  0.5, 0.0,
-    -0.5,  0.5, 0.0,
-};
-
-static const float rectPlaneVertices[] =
-{//	  x 	y	 z
-    -1.5, -0.5, 0.0,
-     1.5, -0.5, 0.0,
-     1.5,  0.5, 0.0,
-    -1.5,  0.5, 0.0,
-};
-
-static const float planeTexcoords[] =
-{//	 x	  y
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0
-};
-
-static const float rectTexCoords[] =
-{//  x    y
-    0.0, 0.0,
-    1.0, 0.0,
-    1.0, 1.0,
-    0.0, 1.0
-};
-
-static const float planeNormals[] =
-{//	 x    y    z
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0
-};
-
-static const float rectNormals[] =
-{//	 x    y    z
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0
-};
-
-static const unsigned short planeIndices[] =
-{//	x  y
-    0, 1,
-    2, 0,
-    2, 3
-};
-
-static const unsigned short rectIndices[] =
-{// x  y
-    0, 1,
-    2, 0,
-    2, 3
-};
-
-enum BUTTONS
-{
-    BUTTON_1                    = 1,
-    BUTTON_2                    = 2,
-    BUTTON_3                    = 4,
-    BUTTON_4                    = 8,
-    BUTTON_5					= 16
-};
-
-static const char* lineMeshVertexShader = " \
-  \
-attribute vec4 vertexPosition; \
- \
-uniform mat4 modelViewProjectionMatrix; \
- \
-void main() \
-{ \
-   gl_Position = modelViewProjectionMatrix * vertexPosition; \
-} \
-";
-
-
-static const char* lineFragmentShader = " \
- \
-precision mediump float; \
- \
-void main() \
-{ \
-   gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); \
-} \
-";
 
 // OpenGL ES 2.0 specific (Virtual Buttons):
 unsigned int vbShaderProgramID  = 0;
@@ -152,24 +56,21 @@ int buttonMask                  = 0;
 bool updateBtns                   = false;
 const int NUM_BUTTONS             = 5;
 
-
-// Textures:
+// Texture defines
 int textureCount                = 0;
 Texture** textures              = 0;
 
-// Entrees
+// Entrees defines
 int entreeCount = 0;
 EntreeTarget** entreeTargets = 0;
 int entreeInfoBase = 0;
 
-// OpenGL ES 2.0 specific:
-#ifdef USE_OPENGL_ES_2_0
+// OpenGL ES 2.0 specific
 unsigned int shaderProgramID    = 0;
 GLint vertexHandle              = 0;
 GLint normalHandle              = 0;
 GLint textureCoordHandle        = 0;
 GLint mvpMatrixHandle           = 0;
-#endif
 
 // Screen dimensions:
 unsigned int screenWidth        = 0;
@@ -181,10 +82,8 @@ bool isActivityInPortraitMode   = false;
 // The projection matrix used for rendering virtual objects:
 QCAR::Matrix44F projectionMatrix;
 
-// Constants:
-//static const float kObjectScale = 3.f;
+// Constants
 static const float kObjectScale = 300;
-
 
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
@@ -195,7 +94,6 @@ Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
     return 2;
 #endif
 }
-
 
 JNIEXPORT void JNICALL
 Java_srdes_menupp_QcarEngine_setActivityPortraitMode(JNIEnv *, jobject, jboolean isPortrait)
@@ -386,9 +284,9 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		}
 
 		//  Position and size the plane for the entree description
-		SampleUtils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
-		SampleUtils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
-		SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &entreeInfoMatrix.data[0], &entreeInfoProjection.data[0]);
+		Utils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
+		Utils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
+		Utils::multiplyMatrix(&projectionMatrix.data[0], &entreeInfoMatrix.data[0], &entreeInfoProjection.data[0]);
 
 		// Install program object to be apart of renderering
 		glUseProgram(shaderProgramID);
@@ -409,14 +307,14 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &rectIndices[0]);
 
 		// Position and size the plane for the entree image
-		SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-		SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
-		SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
+		Utils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+		Utils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+		Utils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
 
 		// Establish dimensions of the plane and bound textures
 		glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
 		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
-		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
+		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexCoords[0]);
 
 		// Enable vertex handles again
 		glEnableVertexAttribArray(vertexHandle);
@@ -437,15 +335,11 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
     QCAR::Renderer::getInstance().end();
 }
 
-
-
-void
-configureVideoBackground()
+void configureVideoBackground()
 {
     // Get the default video mode:
     QCAR::CameraDevice& cameraDevice = QCAR::CameraDevice::getInstance();
     QCAR::VideoMode videoMode = cameraDevice.getVideoMode(QCAR::CameraDevice::MODE_DEFAULT);
-
 
     // Configure the video background
     QCAR::VideoBackgroundConfig config;
@@ -625,18 +519,15 @@ Java_srdes_menupp_menuppRenderer_initRendering(
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]->mWidth, textures[i]->mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)  textures[i]->mData);
     }
-#ifndef USE_OPENGL_ES_1_1
 
-    shaderProgramID     = SampleUtils::createProgramFromBuffer(cubeMeshVertexShader, cubeFragmentShader);
+    shaderProgramID     = Utils::createProgramFromBuffer(cubeMeshVertexShader, cubeFragmentShader);
     vertexHandle        = glGetAttribLocation(shaderProgramID, "vertexPosition");
     normalHandle        = glGetAttribLocation(shaderProgramID, "vertexNormal");
     textureCoordHandle  = glGetAttribLocation(shaderProgramID, "vertexTexCoord");
     mvpMatrixHandle     = glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
 
-#endif
-
     // OpenGL setup for Virtual Buttons
-    vbShaderProgramID   = SampleUtils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
+    vbShaderProgramID   = Utils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
     vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
 
     // Render video background:
@@ -654,9 +545,7 @@ Java_srdes_menupp_menuppRenderer_initRendering(
 		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
 	QCAR::Renderer::getInstance().end();
-
 }
-
 
 JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_updateRendering(

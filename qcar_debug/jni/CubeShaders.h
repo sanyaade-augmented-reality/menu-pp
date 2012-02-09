@@ -1,15 +1,12 @@
-/*==============================================================================
-            Copyright (c) 2010-2011 QUALCOMM Incorporated.
-            All Rights Reserved.
-            Qualcomm Confidential and Proprietary
-            
-@file 
-    CubeShaders.h
-
-@brief
-    Defines OpenGL shaders as char* strings.
-
-==============================================================================*/
+/**
+ * @file 	CubeShaders.h
+ *
+ * @brief	Defines OpenGL shaders as char* strings.
+ *
+ * @note	Copyright (c) 2010-2011 QUALCOMM Incorporated.
+ *          All Rights Reserved.
+ *          Qualcomm Confidential and Proprietary
+ **/
 
 #ifndef _QCAR_CUBE_SHADERS_H_
 #define _QCAR_CUBE_SHADERS_H_

@@ -1,3 +1,9 @@
+/**
+ * @file	EntreeTarget.h
+ *
+ * @brief	Provides class definition of entree targets.
+ */
+
 using namespace std;
 
 typedef char* string;
