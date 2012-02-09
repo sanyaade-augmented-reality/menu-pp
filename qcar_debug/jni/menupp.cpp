@@ -89,9 +89,26 @@ static const float planeNormals[] =
     0.0, 0.0, 1.0
 };
 
+static const float rectNormals[] =
+{//	 x    y    z
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0
+};
+
 static const unsigned short planeIndices[] =
-{
-    0, 1, 2, 0, 2, 3
+{//	x  y
+    0, 1,
+    2, 0,
+    2, 3
+};
+
+static const unsigned short rectIndices[] =
+{// x  y
+    0, 1,
+    2, 0,
+    2, 3
 };
 
 enum BUTTONS
@@ -340,6 +357,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         // Get the trackable:
         const QCAR::Trackable* trackable = state.getActiveTrackable(i);
         QCAR::Matrix44F modelViewMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
+        QCAR::Matrix44F entreeInfoMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
 
         // The image target:
         assert(trackable->getType() == QCAR::Trackable::IMAGE_TARGET);
@@ -351,56 +369,71 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         trackableId = trackable->getId();
 
         // Choose the texture based on the target name:
-        Texture* imgTexture;
-
-        imgTexture = textures[trackableId];
+        Texture* imgTexture = textures[trackableId];
 
 		// Place an image on the target using a 3D plane
 		QCAR::Matrix44F modelViewProjection;
+		QCAR::Matrix44F entreeInfoProjection;
 
-		if (button->isPressed() || entreeTargets[trackableId]->itemSelected == true)
+		// Check to see if the entree has been selected by the user
+		if (button->isPressed())
 		{
 			entreeTargets[trackableId]->itemSelected = true;
-			SampleUtils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-			//SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
-			SampleUtils::scalePoseMatrix(400, 400, 1.0f, &modelViewMatrix.data[0]);
-			SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
-
-			glUseProgram(shaderProgramID);
-
-			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectPlaneVertices[0]);
-			glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
-			glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectTexCoords[0]);
-			imgTexture = textures[entreeInfoBase + trackableId];
-		}
-		else
-		{
-			SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-			SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
-			SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
-
-			glUseProgram(shaderProgramID);
-
-			glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
-			glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
-			glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
+            jstring js = env->NewStringUTF(trackable->getName());
+			jclass javaClass = env->GetObjectClass(obj);
+			jmethodID method = env->GetMethodID(javaClass, "viewEntree", "(Ljava/lang/String;)V");
+			env->CallVoidMethod(obj, method, js);
 		}
 
+		//  Position and size the plane for the entree description
+		SampleUtils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
+		SampleUtils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
+		SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &entreeInfoMatrix.data[0], &entreeInfoProjection.data[0]);
+
+		// Install program object to be apart of renderering
+		glUseProgram(shaderProgramID);
+
+		// Establish dimensions of the plane and bound texture
+		glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectPlaneVertices[0]);
+		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectNormals[0]);
+		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectTexCoords[0]);
+
+		// Enable vertex handles
 		glEnableVertexAttribArray(vertexHandle);
 		glEnableVertexAttribArray(normalHandle);
 		glEnableVertexAttribArray(textureCoordHandle);
 
+		// Bind the appropriate entree description to the plane and draw the image
+		glBindTexture(GL_TEXTURE_2D, textures[entreeInfoBase + trackableId]->mTextureID);
+		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&entreeInfoProjection.data[0] );
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &rectIndices[0]);
+
+		// Position and size the plane for the entree image
+		SampleUtils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
+		SampleUtils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
+		SampleUtils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
+
+		// Establish dimensions of the plane and bound textures
+		glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
+		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeNormals[0]);
+		glVertexAttribPointer(textureCoordHandle, 2, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeTexcoords[0]);
+
+		// Enable vertex handles again
+		glEnableVertexAttribArray(vertexHandle);
+		glEnableVertexAttribArray(normalHandle);
+		glEnableVertexAttribArray(textureCoordHandle);
+
+		// Bind the correct entree image and draw
 		glBindTexture(GL_TEXTURE_2D, imgTexture->mTextureID);
 		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&modelViewProjection.data[0] );
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &planeIndices[0]);
     }
 
+    // Clean up
     glDisable(GL_DEPTH_TEST);
-
     glDisableVertexAttribArray(vertexHandle);
     glDisableVertexAttribArray(normalHandle);
     glDisableVertexAttribArray(textureCoordHandle);
-
     QCAR::Renderer::getInstance().end();
 }
 
