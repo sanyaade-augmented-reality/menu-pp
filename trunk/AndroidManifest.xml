@@ -93,6 +93,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".EntreeEdit"></activity>
+        <activity android:label="@string/entree_tab_manage"
+            	  android:launchMode="singleTop"
+            	  android:configChanges="orientation|keyboardHidden"
+            	  android:name=".EntreeTabManage">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ViewReview"></activity>
 
     </application>
     

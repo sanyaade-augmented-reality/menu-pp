@@ -81,8 +81,8 @@ public class menuppRenderer implements GLSurfaceView.Renderer
         renderFrame();
     }
     
-    public void viewEntree(String trackableName) {
-    	Intent intent = new Intent (context, ViewEntree.class);
+    public void entreeTabManage(String trackableName) {
+    	Intent intent = new Intent (context, EntreeTabManage.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	context.startActivity(intent);
     }
