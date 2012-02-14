@@ -40,7 +40,7 @@ public class Texture
     {
         InputStream inputStream = null;
         try
-        {	
+        {
             inputStream = assets.open(fileName, AssetManager.ACCESS_BUFFER);
              
             BufferedInputStream bufferedStream = new BufferedInputStream(inputStream);

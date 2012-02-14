@@ -273,17 +273,17 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		QCAR::Matrix44F modelViewProjection;
 		QCAR::Matrix44F entreeInfoProjection;
 
-		// Check to see if the entree has been selected by the user
-		if (button->isPressed())
-		{
-			entreeTargets[trackableId]->itemSelected = true;
-            jstring js = env->NewStringUTF(trackable->getName());
-			jclass javaClass = env->GetObjectClass(obj);
-			jmethodID method = env->GetMethodID(javaClass, "viewEntree", "(Ljava/lang/String;)V");
-			env->CallVoidMethod(obj, method, js);
-		}
-
-		//  Position and size the plane for the entree description
+        // If the button is pressed, than use this texture:
+        if (button->isPressed())
+        {
+        	LOG("button was pressed!");
+        	jstring js = env->NewStringUTF(trackable->getName());
+            jclass javaClass = env->GetObjectClass(obj);
+            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(Ljava/lang/String;)V");
+            env->CallVoidMethod(obj, method, js);
+        }
+        
+        //  Position and size the plane for the entree description
 		Utils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
 		Utils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
 		Utils::multiplyMatrix(&projectionMatrix.data[0], &entreeInfoMatrix.data[0], &entreeInfoProjection.data[0]);
@@ -564,3 +564,4 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
 #ifdef __cplusplus
 }
 #endif
+
