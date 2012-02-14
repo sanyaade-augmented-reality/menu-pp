@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xsi:noNamespaceSchemaLocation="qcar_config.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Tracking>
+        <ImageTarget name="item_1" size="375 375">
+              <VirtualButton name="item_1" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
+        <ImageTarget name="item_2" size="375 375">
+              <VirtualButton name="item_2" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
+        <ImageTarget name="item_3" size="375 375">
+              <VirtualButton name="item_3" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
+        <ImageTarget name="item_4" size="375 375">
+              <VirtualButton name="item_4" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
+        <ImageTarget name="item_5" size="375 375">
+              <VirtualButton name="item_5" rectangle="-180 180 180 -180" enabled="true" />
+        </ImageTarget>
+    </Tracking>
+</QCARConfig>
