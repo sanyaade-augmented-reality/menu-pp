@@ -348,7 +348,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         	LOG("button was pressed!");
         	jstring js = env->NewStringUTF(trackable->getName());
             jclass javaClass = env->GetObjectClass(obj);
-            jmethodID method = env->GetMethodID(javaClass, "viewEntree", "(Ljava/lang/String;)V");
+            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(Ljava/lang/String;)V");
             env->CallVoidMethod(obj, method, js);
         }
 

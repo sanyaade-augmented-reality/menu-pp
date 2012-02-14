@@ -10,8 +10,16 @@
     <string name="user_guide">User Guide</string>
     <string name="about_us">About Us</string>
     <string name="menu_list">Menu List</string>
-    <string name="view_entree">Entree View!</string>
-   
+    <string name="view_entree">Entree Title</string>
+    <string name="no_reviews">Be the first to write a review!</string>
+    <string name="review_title">Title</string>
+    <string name="review_body">Review</string>
+    <string name="confirm">Confirm</string>
+    <string name="menu_insert">Add Review</string>
+    <string name="review_write">Write a Review</string>
+    <string name="entree_tab_manage">Entree View Tab Manager</string>
+    <string name="entree_description">Insert description of entree here</string>
+    
     <string-array name="menus">
     	<item>Demo Menu</item>
     </string-array>
