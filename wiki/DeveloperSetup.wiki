@@ -60,10 +60,19 @@ Go to the Builders page on the left side of the window and edit NDK Builder
 change the path to [wherever you put the Android NDK]\android-ndk-r7\ndk-build 
 
 
-upon the implementation of Gestures for the user guide menu, you may have to install a support package jar.
+= Upon the implementation of Gestures for the user guide menu, you may have to install a support package jar. =
+
 
 1) open your Android SDK Manager. Should be under Window in Eclipse.
+
+
 2) Go to Extras and check Android Support Package.
+
+
 3) Right click your project and go to Android Tools -> Add Compatibility Library..
+
+
 4) If you receive an error message it should name the folder that you need to copy your android-support-v4.jar into.
+
+
 5) After moving the .jar and running Add Compatibility Library successfully, add the same .jar to your build path similar to how you added the QCAR.jar
