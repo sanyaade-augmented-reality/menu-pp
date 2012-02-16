@@ -75,4 +75,4 @@ change the path to [wherever you put the Android NDK]\android-ndk-r7\ndk-build
 4) If you receive an error message it should name the folder that you need to copy your android-support-v4.jar into.
 
 
-5) After moving the .jar and running Add Compatibility Library successfully, add the same .jar to your build path similar to how you added the QCAR.jar
+5) After moving the .jar, run Add Compatibility Library again. After a successful run, check your Build Paths for the android-support-v4.jar If it's there you are done
