@@ -1,3 +1,5 @@
+#summary How to set up Doxygen
+
 This should hopefully explain how to get doxygen working in Eclipse...
 
 Download eclox from the page below and follow the install directions on that page.
