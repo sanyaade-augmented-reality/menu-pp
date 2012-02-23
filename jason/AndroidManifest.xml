@@ -26,10 +26,10 @@
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
         android:debuggable="true">
 
-        <activity android:label="@string/app_name"
+                <activity android:label="@string/app_name"
                   android:launchMode="singleTop"
                   android:configChanges="orientation|keyboardHidden"
-                  android:name=".menupp">
+                  android:name=".Splash">
                   
                   
             <intent-filter>
@@ -39,10 +39,23 @@
 
         </activity>
         
+        <activity android:label="@string/app_name"
+                  android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name=".menupp">
+                  
+                  
+            <intent-filter>
+                <action android:name="android.intent.action.MENUPP" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+        
         <activity android:label="@string/qcar_engine"
                   android:launchMode="singleTop"
-            	  android:configChanges="orientation|keyboardHidden"
-            	  android:name=".QcarEngine">
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name=".QcarEngine">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -51,9 +64,9 @@
         </activity>
         
         <activity android:label="@string/menu_list"
-            	  android:launchMode="singleTop"
-            	  android:configChanges="orientation|keyboardHidden"            	  
-            	  android:name=".MenuList">
+                  android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden"                      
+                  android:name=".MenuList">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -62,9 +75,9 @@
         </activity>
         
         <activity android:label="@string/about_us"
-            	  android:launchMode="singleTop"
-            	  android:configChanges="orientation|keyboardHidden"
-            	  android:name=".AboutUs">
+                  android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name=".AboutUs">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -73,9 +86,9 @@
         </activity>
         
         <activity android:label="@string/user_guide"
-            	  android:launchMode="singleTop"
-            	  android:configChanges="orientation|keyboardHidden"
-            	  android:name=".UserGuide">
+                  android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name=".UserGuide">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -84,9 +97,9 @@
         </activity>
         
         <activity android:label="@string/view_entree"
-            	  android:launchMode="singleTop"
-            	  android:configChanges="orientation|keyboardHidden"
-            	  android:name=".ViewEntree">
+                  android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name=".ViewEntree">
             
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
