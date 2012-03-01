@@ -6,6 +6,8 @@
  * 			openGL ES related tasks.
  */
 
+#define MAX_TRACKABLES 4
+
 enum BUTTONS
 {
     BUTTON_1                    = 1,
@@ -13,6 +15,13 @@ enum BUTTONS
     BUTTON_3                    = 4,
     BUTTON_4                    = 8,
     BUTTON_5					= 16
+};
+
+enum ActionType {
+    ACTION_DOWN,
+    ACTION_MOVE,
+    ACTION_UP,
+    ACTION_CANCEL
 };
 
 static const char* lineMeshVertexShader = " \

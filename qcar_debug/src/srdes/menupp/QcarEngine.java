@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -47,8 +48,12 @@ public class QcarEngine extends Activity {
 	
 	// Our Default Activity View
 	private static View qcarView;
+	
     // Our OpenGL view:
     public static QCARSampleGLView mGlView;
+    
+    // Gui Manager
+    private GUIManager mGUIManager;
     
 	// Textures for application
 	private static Vector<Texture> mTextures;
@@ -83,6 +88,9 @@ public class QcarEngine extends Activity {
     /** Native function to create/destroy a Virtual Button.
      *  Existing buttons will be destroyed and non-existing will be created. */
     private native void addButtonToToggle(int virtualButtonIdx);
+    
+    /** Native function to receive touch events. */
+    public native void nativeTouchEvent(int actionType, int pointerId, float x, float y);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +135,11 @@ public class QcarEngine extends Activity {
             mGlView.setVisibility(View.VISIBLE);
             mGlView.onResume();
         } 
+        
+        if (mGUIManager != null)
+        {
+            mGUIManager.initButtons();
+        }
 	}
 
 	@Override
@@ -148,6 +161,11 @@ public class QcarEngine extends Activity {
         }
         // QCAR-specific pause operation
         QCAR.onPause();
+        
+        if (mGUIManager != null)
+        {
+            mGUIManager.deinitButtons();
+        }
         
         if (qcarStatus == QCAR_CAMERA_RUNNING)
         {
@@ -252,7 +270,8 @@ public class QcarEngine extends Activity {
             // garbage collector will actually be run.
             System.gc();
             
-            int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            //int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             
             // Apply screen orientation
             setRequestedOrientation(screenOrientation);
@@ -273,6 +292,12 @@ public class QcarEngine extends Activity {
             addContentView(mGlView, new LayoutParams(
                             LayoutParams.FILL_PARENT,
                             LayoutParams.FILL_PARENT));
+            
+            addContentView(mGUIManager.getOverlayView(), new LayoutParams(
+                    LayoutParams.FILL_PARENT,
+                    LayoutParams.FILL_PARENT));
+            
+            mGUIManager.initButtons();
             
             // Start the camera:
             updateQcarStatus(QCAR_CAMERA_RUNNING);
@@ -303,6 +328,11 @@ public class QcarEngine extends Activity {
         mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));     
+        mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("enchiladas.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));
         
         mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
@@ -310,8 +340,11 @@ public class QcarEngine extends Activity {
         mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));
-
-        
+        mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("hotdog_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));    
     }
     
     /** Configure QCAR with the desired version of OpenGL ES. */
@@ -349,6 +382,9 @@ public class QcarEngine extends Activity {
         
         mRenderer = new menuppRenderer();
         mGlView.setRenderer(mRenderer);
+        
+        mGUIManager = new GUIManager(getApplicationContext());
+        mRenderer.setGUIManager(mGUIManager);
  
     }
     
@@ -361,11 +397,8 @@ public class QcarEngine extends Activity {
         menu.add("Toggle flash");
         menu.add("Autofocus");
         
-        SubMenu focusModes = menu.addSubMenu("Focus Modes");
-        focusModes.add("Auto Focus").setCheckable(true);
-        focusModes.add("Fixed Focus").setCheckable(true);
-        focusModes.add("Infinity").setCheckable(true);
-        focusModes.add("Macro Mode").setCheckable(true);
+
+
         
         return true;
     }
@@ -551,6 +584,59 @@ public class QcarEngine extends Activity {
             // Done loading the tracker, update application status: 
             updateQcarStatus(QCAR_INITED);
         }
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        int action = event.getAction();
+        int actionType = -1;
+        int pointerIndex = -1;
+        
+        switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                actionType = 0;
+                break;
+            
+            case MotionEvent.ACTION_POINTER_DOWN:
+                pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+                actionType = 0;
+                break;
+            
+            case MotionEvent.ACTION_UP:
+                actionType = 2;
+                break;
+            
+            case MotionEvent.ACTION_POINTER_UP:
+                pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
+                actionType = 2;
+                break;
+            
+            case MotionEvent.ACTION_CANCEL:
+                actionType = 3;
+                break;
+        }
+        
+        
+        if (pointerIndex != -1) {
+            int pointerId = event.getPointerId(pointerIndex);
+            float x = event.getX(pointerIndex);
+            float y = event.getY(pointerIndex);
+            //float x = event.getRawX();
+            //float y = event.getRawY();
+            nativeTouchEvent(actionType, pointerId, x, y);
+            
+        } else {
+            for (int i = 0; i < event.getPointerCount(); i++) {
+                int pointerId = event.getPointerId(i);
+                float x = event.getX(i);
+                float y = event.getY(i);
+                //float x = event.getRawX();
+                //float y = event.getRawY();
+                nativeTouchEvent(actionType, pointerId, x, y);
+            }
+        }
+        return true;
     }
 
 }

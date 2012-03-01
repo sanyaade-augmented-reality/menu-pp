@@ -4,7 +4,7 @@
  * @brief	Provides class definition of entree targets.
  */
 
-using namespace std;
+#include <QCAR/Tool.h>
 
 typedef char* string;
 
@@ -13,10 +13,18 @@ public:
 	int itemId;
 	string itemName;
 	bool itemSelected;
+	bool itemActive;
+	QCAR::Matrix44F curPose;
 
-    /// Constructor
+    // Constructor
     EntreeTarget(string name, int id);
 
-    /// Destructor.
+    // Destructor.
     ~EntreeTarget();
+
+    // Set current pose matrix
+    void setPose(QCAR::Matrix44F pose);
+
+    // Check to see if active
+    bool isActive();
 };
