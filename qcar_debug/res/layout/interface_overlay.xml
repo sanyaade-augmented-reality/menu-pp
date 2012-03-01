@@ -7,19 +7,20 @@
     
    	<Button android:id="@+id/next_button"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="100px"
-        android:layout_height="70px"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:text="@string/next"
+        android:background="@drawable/customarrowr"
     />
 
     <Button
         android:id="@+id/back_button"
         style="?android:attr/buttonStyleSmall"
-        android:layout_width="100px"
-        android:layout_height="70px"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_alignParentBottom="true"
-        android:text="@string/back" />
+        android:background="@drawable/customarrowl"
+     />
     
 </RelativeLayout>
