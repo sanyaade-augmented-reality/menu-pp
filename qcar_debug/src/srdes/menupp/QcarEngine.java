@@ -88,9 +88,6 @@ public class QcarEngine extends Activity {
     /** Native function to create/destroy a Virtual Button.
      *  Existing buttons will be destroyed and non-existing will be created. */
     private native void addButtonToToggle(int virtualButtonIdx);
-    
-    /** Native function to receive touch events. */
-    public native void nativeTouchEvent(int actionType, int pointerId, float x, float y);
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -585,58 +582,4 @@ public class QcarEngine extends Activity {
             updateQcarStatus(QCAR_INITED);
         }
     }
-    
-    @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        int action = event.getAction();
-        int actionType = -1;
-        int pointerIndex = -1;
-        
-        switch (action & MotionEvent.ACTION_MASK) {
-            case MotionEvent.ACTION_DOWN:
-                actionType = 0;
-                break;
-            
-            case MotionEvent.ACTION_POINTER_DOWN:
-                pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-                actionType = 0;
-                break;
-            
-            case MotionEvent.ACTION_UP:
-                actionType = 2;
-                break;
-            
-            case MotionEvent.ACTION_POINTER_UP:
-                pointerIndex = (action & MotionEvent.ACTION_POINTER_ID_MASK) >> MotionEvent.ACTION_POINTER_ID_SHIFT;
-                actionType = 2;
-                break;
-            
-            case MotionEvent.ACTION_CANCEL:
-                actionType = 3;
-                break;
-        }
-        
-        
-        if (pointerIndex != -1) {
-            int pointerId = event.getPointerId(pointerIndex);
-            float x = event.getX(pointerIndex);
-            float y = event.getY(pointerIndex);
-            //float x = event.getRawX();
-            //float y = event.getRawY();
-            nativeTouchEvent(actionType, pointerId, x, y);
-            
-        } else {
-            for (int i = 0; i < event.getPointerCount(); i++) {
-                int pointerId = event.getPointerId(i);
-                float x = event.getX(i);
-                float y = event.getY(i);
-                //float x = event.getRawX();
-                //float y = event.getRawY();
-                nativeTouchEvent(actionType, pointerId, x, y);
-            }
-        }
-        return true;
-    }
-
 }
