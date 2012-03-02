@@ -64,7 +64,7 @@ endif
 # C ***AND*** C++ source files.
 #
 # NOTE: flag "-Wno-write-strings" removes warning about deprecated conversion
-#       from string constant to ‘char*’
+#       from string constant to ï¿½char*ï¿½
 
 LOCAL_CFLAGS := -Wno-write-strings $(OPENGLES_DEF)
 

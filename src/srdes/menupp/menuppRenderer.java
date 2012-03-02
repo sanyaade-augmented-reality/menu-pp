@@ -23,11 +23,12 @@ import android.opengl.GLSurfaceView;
 
 import com.qualcomm.QCAR.QCAR;
 
-
 /** The renderer class for the ImageTargets sample. */
 public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;
+
+	private GUIManager mGUIManager;
     
     // Context that calls rendering frame
     public static Context context;
@@ -85,5 +86,11 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     	Intent intent = new Intent (context, EntreeTabManage.class);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	context.startActivity(intent);
+    }
+    
+    /** Setter for the gui manager. */
+    public void setGUIManager(GUIManager guiManager)
+    {
+        mGUIManager = guiManager;
     }
 }

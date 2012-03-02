@@ -19,6 +19,8 @@
     <string name="review_write">Write a Review</string>
     <string name="entree_tab_manage">Entree View Tab Manager</string>
     <string name="entree_description">Insert description of entree here</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
     
     <string-array name="menus">
     	<item>Demo Menu</item>
