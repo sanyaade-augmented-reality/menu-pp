@@ -609,7 +609,7 @@ Java_srdes_menupp_GUIManager_nativeNext(JNIEnv* env, jobject obj)
 JNIEXPORT void JNICALL
 Java_srdes_menupp_GUIManager_nativeBack(JNIEnv* env, jobject obj)
 {
-	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + entreeImageBase + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
+	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + (entreeImageBase - MAX_TRACKABLES) + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
 	entreeNameBase = entreeImageBase + (textureCount / 2);
 	textureCeiling = ((textureCount / 2) - entreeImageBase < MAX_TRACKABLES) ?  (textureCount / 2 - entreeImageBase) : (MAX_TRACKABLES);
 }
