@@ -282,7 +282,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
             jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(Ljava/lang/String;)V");
             env->CallVoidMethod(obj, method, js);
         }
-        
+
         //  Position and size the plane for the entree description
 		Utils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
 		Utils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
@@ -324,6 +324,10 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		// Bind the correct entree image and draw
 		glBindTexture(GL_TEXTURE_2D, imgTexture->mTextureID);
 		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&modelViewProjection.data[0] );
+
+	    // Enable 2D Textures
+	    glEnable(GL_TEXTURE_2D);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &planeIndices[0]);
     }
 
@@ -507,8 +511,6 @@ Java_srdes_menupp_menuppRenderer_initRendering(
 
     // Define clear color
     glClearColor(0.0f, 0.0f, 0.0f, QCAR::requiresAlpha() ? 0.0f : 1.0f);
-    
-    glEnable(GL_TEXTURE_2D);
 
     // Now generate the OpenGL texture objects and add settings
     for (int i = 0; i < textureCount; ++i)

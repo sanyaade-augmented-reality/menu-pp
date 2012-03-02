@@ -1,0 +1,67 @@
+.TH "srdes::menupp::menuppRenderer" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srdes::menupp::menuppRenderer \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "native void \fBinitRendering\fP ()"
+.br
+.ti -1c
+.RI "native void \fBupdateRendering\fP (int width, int height)"
+.br
+.ti -1c
+.RI "void \fBonSurfaceCreated\fP (GL10 gl, EGLConfig config)"
+.br
+.ti -1c
+.RI "void \fBonSurfaceChanged\fP (GL10 gl, int width, int height)"
+.br
+.ti -1c
+.RI "native void \fBrenderFrame\fP ()"
+.br
+.ti -1c
+.RI "void \fBonDrawFrame\fP (GL10 gl)"
+.br
+.ti -1c
+.RI "void \fBentreeTabManage\fP (String trackableName)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "boolean \fBmIsActive\fP = false"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static Context \fBcontext\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+The renderer class for the ImageTargets sample. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void srdes.menupp.menuppRenderer.entreeTabManage (StringtrackableName)"
+.SS "native void srdes.menupp.menuppRenderer.initRendering ()"Native function for initializing the renderer. 
+.SS "void srdes.menupp.menuppRenderer.onDrawFrame (GL10gl)"Called to draw the current frame. 
+.SS "void srdes.menupp.menuppRenderer.onSurfaceChanged (GL10gl, intwidth, intheight)"Called when the surface changed size. 
+.SS "void srdes.menupp.menuppRenderer.onSurfaceCreated (GL10gl, EGLConfigconfig)"Called when the surface is created or recreated. 
+.SS "native void srdes.menupp.menuppRenderer.renderFrame ()"The native render function. 
+.SS "native void srdes.menupp.menuppRenderer.updateRendering (intwidth, intheight)"Native function to update the renderer. 
+.SH "Member Data Documentation"
+.PP 
+.SS "Context \fBsrdes.menupp.menuppRenderer.context\fP\fC [static]\fP"
+.SS "boolean \fBsrdes.menupp.menuppRenderer.mIsActive\fP = false"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

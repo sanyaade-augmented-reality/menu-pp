@@ -1,0 +1,169 @@
+.TH "srdes::menupp::menupp" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srdes::menupp::menupp \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits android::app::Activity.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBupdateApplicationStatus\fP (int appStatus)"
+.br
+.ti -1c
+.RI "void \fBonClick\fP (View v)"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static boolean \fBloadLibrary\fP (String nLibName)"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static int \fBmScreenWidth\fP = 0"
+.br
+.ti -1c
+.RI "static int \fBmScreenHeight\fP = 0"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBonCreate\fP (Bundle savedInstanceState)"
+.br
+.ti -1c
+.RI "void \fBonResume\fP ()"
+.br
+.ti -1c
+.RI "void \fBonPause\fP ()"
+.br
+.ti -1c
+.RI "void \fBonDestroy\fP ()"
+.br
+.in -1c
+.SS "Static Package Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB[static initializer]\fP"
+.br
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBinitApplication\fP ()"
+.br
+.ti -1c
+.RI "native void \fBinitApplicationNative\fP (int width, int height)"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "Intent \fBmenuList\fP"
+.br
+.ti -1c
+.RI "Intent \fBuserGuide\fP"
+.br
+.ti -1c
+.RI "Intent \fBaboutUs\fP"
+.br
+.ti -1c
+.RI "View \fBloaderScreen\fP"
+.br
+.ti -1c
+.RI "Button \fBselectRestButton\fP"
+.br
+.ti -1c
+.RI "Button \fBuserGuideButton\fP"
+.br
+.ti -1c
+.RI "Button \fBaboutUsButton\fP"
+.br
+.in -1c
+.SS "Static Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "static final int \fBAPPSTATUS_UNINITED\fP = -1"
+.br
+.ti -1c
+.RI "static final int \fBAPPSTATUS_INIT_APP\fP = 0"
+.br
+.ti -1c
+.RI "static final int \fBAPPSTATUS_INIT_QCAR_ENGINE\fP = 1"
+.br
+.ti -1c
+.RI "static final int \fBAPPSTATUS_INIT_APP_AR\fP = 2"
+.br
+.ti -1c
+.RI "static final int \fBAPPSTATUS_INIT_TRACKER\fP = 3"
+.br
+.ti -1c
+.RI "static final int \fBAPPSTATUS_INITED\fP = 4"
+.br
+.ti -1c
+.RI "static final String \fBNATIVE_LIB_SAMPLE\fP = 'menupp'"
+.br
+.ti -1c
+.RI "static final String \fBNATIVE_LIB_QCAR\fP = 'QCAR'"
+.br
+.ti -1c
+.RI "static int \fBmAppStatus\fP = \fBAPPSTATUS_UNINITED\fP"
+.br
+.ti -1c
+.RI "static boolean \fBappInitComplete\fP = false"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+The main activity for the menupp sample. 
+.SH "Member Function Documentation"
+.PP 
+.SS "srdes.menupp.menupp.[static initializer] ()\fC [static, package]\fP"Static initializer block to load native libraries on start-up. 
+.SS "void srdes.menupp.menupp.initApplication ()\fC [private]\fP"Initialize application GUI elements that are not related to AR. 
+.SS "native void srdes.menupp.menupp.initApplicationNative (intwidth, intheight)\fC [private]\fP"Native function to initialize the application. 
+.SS "static boolean srdes.menupp.menupp.loadLibrary (StringnLibName)\fC [static]\fP"A helper for loading native libraries stored in 'libs/armeabi*'. 
+.SS "void srdes.menupp.menupp.onClick (Viewv)"
+.SS "void srdes.menupp.menupp.onCreate (BundlesavedInstanceState)\fC [protected]\fP"Called when the activity first starts or the user navigates back to an activity. 
+.SS "void srdes.menupp.menupp.onDestroy ()\fC [protected]\fP"The final call you receive before your activity is destroyed. 
+.SS "void srdes.menupp.menupp.onPause ()\fC [protected]\fP"Called when the system is about to start resuming a previous activity. 
+.SS "void srdes.menupp.menupp.onResume ()\fC [protected]\fP"Called when the activity will start interacting with the user. 
+.SS "void srdes.menupp.menupp.updateApplicationStatus (intappStatus)"NOTE: this method is synchronized because of a potential concurrent access by \fBmenupp.onResume()\fP and InitQCARTask.onPostExecute(). 
+.SH "Member Data Documentation"
+.PP 
+.SS "Intent \fBsrdes.menupp.menupp.aboutUs\fP\fC [private]\fP"
+.SS "Button \fBsrdes.menupp.menupp.aboutUsButton\fP\fC [private]\fP"
+.SS "boolean \fBsrdes.menupp.menupp.appInitComplete\fP = false\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.menupp.APPSTATUS_INIT_APP\fP = 0\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.menupp.APPSTATUS_INIT_APP_AR\fP = 2\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.menupp.APPSTATUS_INIT_QCAR_ENGINE\fP = 1\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.menupp.APPSTATUS_INIT_TRACKER\fP = 3\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.menupp.APPSTATUS_INITED\fP = 4\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.menupp.APPSTATUS_UNINITED\fP = -1\fC [static, private]\fP"
+.SS "View \fBsrdes.menupp.menupp.loaderScreen\fP\fC [private]\fP"
+.SS "int \fBsrdes.menupp.menupp.mAppStatus\fP = \fBAPPSTATUS_UNINITED\fP\fC [static, private]\fP"
+.SS "Intent \fBsrdes.menupp.menupp.menuList\fP\fC [private]\fP"
+.SS "int \fBsrdes.menupp.menupp.mScreenHeight\fP = 0\fC [static]\fP"
+.SS "int \fBsrdes.menupp.menupp.mScreenWidth\fP = 0\fC [static]\fP"
+.SS "final String \fBsrdes.menupp.menupp.NATIVE_LIB_QCAR\fP = 'QCAR'\fC [static, private]\fP"
+.SS "final String \fBsrdes.menupp.menupp.NATIVE_LIB_SAMPLE\fP = 'menupp'\fC [static, private]\fP"
+.SS "Button \fBsrdes.menupp.menupp.selectRestButton\fP\fC [private]\fP"
+.SS "Intent \fBsrdes.menupp.menupp.userGuide\fP\fC [private]\fP"
+.SS "Button \fBsrdes.menupp.menupp.userGuideButton\fP\fC [private]\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

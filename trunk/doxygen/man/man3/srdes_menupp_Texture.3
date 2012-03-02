@@ -1,0 +1,69 @@
+.TH "srdes::menupp::Texture" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srdes::menupp::Texture \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "byte[] \fBgetData\fP ()"
+.br
+.RI "\fIThe pixel data. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBTexture\fP \fBloadTextureFromApk\fP (String fileName, AssetManager assets)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "int \fBmWidth\fP"
+.br
+.ti -1c
+.RI "int \fBmHeight\fP"
+.br
+.RI "\fIThe width of the texture. \fP"
+.ti -1c
+.RI "int \fBmChannels\fP"
+.br
+.RI "\fIThe height of the texture. \fP"
+.ti -1c
+.RI "byte[] \fBmData\fP"
+.br
+.RI "\fIThe number of channels. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBTexture\fP is a support class for the QCAR samples applications.
+.PP
+Exposes functionality for loading a texture from the APK. 
+.SH "Member Function Documentation"
+.PP 
+.SS "byte [] srdes.menupp.Texture.getData ()"
+.PP
+The pixel data. Returns the raw data 
+.SS "static \fBTexture\fP srdes.menupp.Texture.loadTextureFromApk (StringfileName, AssetManagerassets)\fC [static]\fP"Factory function to load a texture from the APK. 
+.SH "Member Data Documentation"
+.PP 
+.SS "int \fBsrdes.menupp.Texture.mChannels\fP"
+.PP
+The height of the texture. 
+.SS "byte [] \fBsrdes.menupp.Texture.mData\fP"
+.PP
+The number of channels. 
+.SS "int \fBsrdes.menupp.Texture.mHeight\fP"
+.PP
+The width of the texture. 
+.SS "int \fBsrdes.menupp.Texture.mWidth\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

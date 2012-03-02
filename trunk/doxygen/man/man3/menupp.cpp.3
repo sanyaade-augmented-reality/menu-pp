@@ -1,0 +1,243 @@
+.TH "jni/menupp.cpp" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+jni/menupp.cpp \- 
+.PP
+This code provides services for Menu++ to interface with Qualcomm's Augmented Reality SDK. With these services we are able render textures in the camera environment. The virtual buttons and tracking of the image targets are thanks to Qualcomm's libraries.  
+
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <jni.h>\fP
+.br
+\fC#include <android/log.h>\fP
+.br
+\fC#include <stdio.h>\fP
+.br
+\fC#include <string.h>\fP
+.br
+\fC#include <assert.h>\fP
+.br
+\fC#include <GLES2/gl2.h>\fP
+.br
+\fC#include <GLES2/gl2ext.h>\fP
+.br
+\fC#include <QCAR/QCAR.h>\fP
+.br
+\fC#include <QCAR/CameraDevice.h>\fP
+.br
+\fC#include <QCAR/Renderer.h>\fP
+.br
+\fC#include <QCAR/ImageTarget.h>\fP
+.br
+\fC#include <QCAR/VirtualButton.h>\fP
+.br
+\fC#include <QCAR/Rectangle.h>\fP
+.br
+\fC#include <QCAR/VideoBackgroundConfig.h>\fP
+.br
+\fC#include <QCAR/Trackable.h>\fP
+.br
+\fC#include <QCAR/Tool.h>\fP
+.br
+\fC#include <QCAR/Tracker.h>\fP
+.br
+\fC#include <QCAR/CameraCalibration.h>\fP
+.br
+\fC#include <QCAR/UpdateCallback.h>\fP
+.br
+\fC#include 'Planes.h'\fP
+.br
+\fC#include 'Utils.h'\fP
+.br
+\fC#include 'Texture.h'\fP
+.br
+\fC#include 'CubeShaders.h'\fP
+.br
+\fC#include 'EntreeTarget.h'\fP
+.br
+\fC#include 'Menupp.h'\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBVirtualButton_UpdateCallback\fP"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "JNIEXPORT int JNICALL \fBJava_srdes_menupp_QcarEngine_getOpenGlEsVersionNative\fP (JNIEnv *, jobject)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_setActivityPortraitMode\fP (JNIEnv *, jobject, jboolean isPortrait)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_addButtonToToggle\fP (JNIEnv *, jobject, jint virtualButtonIdx)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_onQCARInitializedNative\fP (JNIEnv *, jobject)"
+.br
+.ti -1c
+.RI "bool \fBtoggleVirtualButton\fP (QCAR::ImageTarget *imageTarget, const char *name, float left, float top, float right, float bottom)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_menuppRenderer_renderFrame\fP (JNIEnv *env, jobject obj)"
+.br
+.ti -1c
+.RI "void \fBconfigureVideoBackground\fP ()"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_initApplicationNative\fP (JNIEnv *env, jobject obj, jint width, jint height)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_deinitApplicationNative\fP (JNIEnv *env, jobject obj)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_startCamera\fP (JNIEnv *, jobject)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_QcarEngine_stopCamera\fP (JNIEnv *, jobject)"
+.br
+.ti -1c
+.RI "JNIEXPORT jboolean JNICALL \fBJava_srdes_menupp_QcarEngine_toggleFlash\fP (JNIEnv *, jobject, jboolean flash)"
+.br
+.ti -1c
+.RI "JNIEXPORT jboolean JNICALL \fBJava_srdes_menupp_QcarEngine_autofocus\fP (JNIEnv *, jobject)"
+.br
+.ti -1c
+.RI "JNIEXPORT jboolean JNICALL \fBJava_srdes_menupp_QcarEngine_setFocusMode\fP (JNIEnv *, jobject, jint mode)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_menuppRenderer_initRendering\fP (JNIEnv *env, jobject obj)"
+.br
+.ti -1c
+.RI "JNIEXPORT void JNICALL \fBJava_srdes_menupp_menuppRenderer_updateRendering\fP (JNIEnv *env, jobject obj, jint width, jint height)"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "unsigned int \fBvbShaderProgramID\fP = 0"
+.br
+.ti -1c
+.RI "GLint \fBvbVertexHandle\fP = 0"
+.br
+.ti -1c
+.RI "int \fBbuttonMask\fP = 0"
+.br
+.ti -1c
+.RI "bool \fBupdateBtns\fP = false"
+.br
+.ti -1c
+.RI "const int \fBNUM_BUTTONS\fP = 5"
+.br
+.ti -1c
+.RI "int \fBtextureCount\fP = 0"
+.br
+.ti -1c
+.RI "\fBTexture\fP ** \fBtextures\fP = 0"
+.br
+.ti -1c
+.RI "int \fBentreeCount\fP = 0"
+.br
+.ti -1c
+.RI "\fBEntreeTarget\fP ** \fBentreeTargets\fP = 0"
+.br
+.ti -1c
+.RI "int \fBentreeInfoBase\fP = 0"
+.br
+.ti -1c
+.RI "unsigned int \fBshaderProgramID\fP = 0"
+.br
+.ti -1c
+.RI "GLint \fBvertexHandle\fP = 0"
+.br
+.ti -1c
+.RI "GLint \fBnormalHandle\fP = 0"
+.br
+.ti -1c
+.RI "GLint \fBtextureCoordHandle\fP = 0"
+.br
+.ti -1c
+.RI "GLint \fBmvpMatrixHandle\fP = 0"
+.br
+.ti -1c
+.RI "unsigned int \fBscreenWidth\fP = 0"
+.br
+.ti -1c
+.RI "unsigned int \fBscreenHeight\fP = 0"
+.br
+.ti -1c
+.RI "bool \fBisActivityInPortraitMode\fP = false"
+.br
+.ti -1c
+.RI "QCAR::Matrix44F \fBprojectionMatrix\fP"
+.br
+.ti -1c
+.RI "\fBVirtualButton_UpdateCallback\fP \fBqcarUpdate\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+This code provides services for Menu++ to interface with Qualcomm's Augmented Reality SDK. With these services we are able render textures in the camera environment. The virtual buttons and tracking of the image targets are thanks to Qualcomm's libraries. 
+
+\fBAuthor:\fP
+.RS 4
+Aaron Alaniz (webheadz3@gmail.com)
+.RE
+.PP
+\fBNote:\fP
+.RS 4
+Copyright (c) 2010-2011 QUALCOMM Incorporated. All Rights Reserved. Qualcomm Confidential and Proprietary 
+.RE
+.PP
+
+.SH "Function Documentation"
+.PP 
+.SS "void configureVideoBackground ()"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_menuppRenderer_initRendering (JNIEnv *env, jobjectobj)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_menuppRenderer_renderFrame (JNIEnv *env, jobjectobj)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_menuppRenderer_updateRendering (JNIEnv *env, jobjectobj, jintwidth, jintheight)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_addButtonToToggle (JNIEnv *, jobject, jintvirtualButtonIdx)"
+.SS "JNIEXPORT jboolean JNICALL Java_srdes_menupp_QcarEngine_autofocus (JNIEnv *, jobject)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_deinitApplicationNative (JNIEnv *env, jobjectobj)"
+.SS "JNIEXPORT int JNICALL Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative (JNIEnv *, jobject)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_initApplicationNative (JNIEnv *env, jobjectobj, jintwidth, jintheight)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_onQCARInitializedNative (JNIEnv *, jobject)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_setActivityPortraitMode (JNIEnv *, jobject, jbooleanisPortrait)"
+.SS "JNIEXPORT jboolean JNICALL Java_srdes_menupp_QcarEngine_setFocusMode (JNIEnv *, jobject, jintmode)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_startCamera (JNIEnv *, jobject)"
+.SS "JNIEXPORT void JNICALL Java_srdes_menupp_QcarEngine_stopCamera (JNIEnv *, jobject)"
+.SS "JNIEXPORT jboolean JNICALL Java_srdes_menupp_QcarEngine_toggleFlash (JNIEnv *, jobject, jbooleanflash)"
+.SS "bool toggleVirtualButton (QCAR::ImageTarget *imageTarget, const char *name, floatleft, floattop, floatright, floatbottom)"
+.SH "Variable Documentation"
+.PP 
+.SS "int \fBbuttonMask\fP = 0"
+.SS "int \fBentreeCount\fP = 0"
+.SS "int \fBentreeInfoBase\fP = 0"
+.SS "\fBEntreeTarget\fP** \fBentreeTargets\fP = 0"
+.SS "bool \fBisActivityInPortraitMode\fP = false"
+.SS "GLint \fBmvpMatrixHandle\fP = 0"
+.SS "GLint \fBnormalHandle\fP = 0"
+.SS "const int \fBNUM_BUTTONS\fP = 5"
+.SS "QCAR::Matrix44F \fBprojectionMatrix\fP"
+.SS " \fBVirtualButton_UpdateCallback\fP  \fBqcarUpdate\fP"
+.SS "unsigned int \fBscreenHeight\fP = 0"
+.SS "unsigned int \fBscreenWidth\fP = 0"
+.SS "unsigned int \fBshaderProgramID\fP = 0"
+.SS "GLint \fBtextureCoordHandle\fP = 0"
+.SS "int \fBtextureCount\fP = 0"
+.SS "\fBTexture\fP** \fBtextures\fP = 0"
+.SS "bool \fBupdateBtns\fP = false"
+.SS "unsigned int \fBvbShaderProgramID\fP = 0"
+.SS "GLint \fBvbVertexHandle\fP = 0"
+.SS "GLint \fBvertexHandle\fP = 0"
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

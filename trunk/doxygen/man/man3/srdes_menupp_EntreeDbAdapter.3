@@ -1,0 +1,182 @@
+.TH "srdes::menupp::EntreeDbAdapter" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srdes::menupp::EntreeDbAdapter \- 
+.SH SYNOPSIS
+.br
+.PP
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBDatabaseHelper\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBEntreeDbAdapter\fP (Context ctx)"
+.br
+.ti -1c
+.RI "\fBEntreeDbAdapter\fP \fBopen\fP ()  throws SQLException "
+.br
+.ti -1c
+.RI "void \fBclose\fP ()"
+.br
+.ti -1c
+.RI "long \fBcreateReview\fP (String title, String body)"
+.br
+.ti -1c
+.RI "boolean \fBdeleteReview\fP (long rowId)"
+.br
+.ti -1c
+.RI "Cursor \fBfetchAllEntrees\fP ()"
+.br
+.ti -1c
+.RI "Cursor \fBfetchEntree\fP (long rowId)  throws SQLException "
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static final String \fBKEY_TITLE\fP = 'title'"
+.br
+.ti -1c
+.RI "static final String \fBKEY_BODY\fP = 'body'"
+.br
+.ti -1c
+.RI "static final String \fBKEY_ROWID\fP = '_id'"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "DatabaseHelper \fBmDbHelper\fP"
+.br
+.ti -1c
+.RI "SQLiteDatabase \fBmDb\fP"
+.br
+.ti -1c
+.RI "final Context \fBmCtx\fP"
+.br
+.in -1c
+.SS "Static Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "static final String \fBTAG\fP = 'EntreeDbAdapter'"
+.br
+.ti -1c
+.RI "static final String \fBDATABASE_CREATE\fP = 'title text not null, body text not null);'"
+.br
+.ti -1c
+.RI "static final String \fBDATABASE_NAME\fP = 'data'"
+.br
+.ti -1c
+.RI "static final String \fBDATABASE_TABLE\fP = 'entrees'"
+.br
+.ti -1c
+.RI "static final int \fBDATABASE_VERSION\fP = 2"
+.br
+.in -1c
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "srdes.menupp.EntreeDbAdapter.EntreeDbAdapter (Contextctx)"Constructor - takes the context to allow the database to be opened/created
+.PP
+\fBParameters:\fP
+.RS 4
+\fIctx\fP the Context within which to work 
+.RE
+.PP
+
+.SH "Member Function Documentation"
+.PP 
+.SS "void srdes.menupp.EntreeDbAdapter.close ()"
+.SS "long srdes.menupp.EntreeDbAdapter.createReview (Stringtitle, Stringbody)"Create a new note using the title and body provided. If the note is successfully created return the new rowId for that note, otherwise return a -1 to indicate failure.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItitle\fP the title of the note 
+.br
+\fIbody\fP the body of the note 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+rowId or -1 if failed 
+.RE
+.PP
+
+.SS "boolean srdes.menupp.EntreeDbAdapter.deleteReview (longrowId)"Delete the note with the given rowId
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrowId\fP id of note to delete 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+true if deleted, false otherwise 
+.RE
+.PP
+
+.SS "Cursor srdes.menupp.EntreeDbAdapter.fetchAllEntrees ()"Return a Cursor over the list of all notes in the database
+.PP
+\fBReturns:\fP
+.RS 4
+Cursor over all notes 
+.RE
+.PP
+
+.SS "Cursor srdes.menupp.EntreeDbAdapter.fetchEntree (longrowId)  throws SQLException "Return a Cursor positioned at the note that matches the given rowId
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrowId\fP id of note to retrieve 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+Cursor positioned to matching note, if found 
+.RE
+.PP
+\fBExceptions:\fP
+.RS 4
+\fISQLException\fP if note could not be found/retrieved 
+.RE
+.PP
+
+.SS "\fBEntreeDbAdapter\fP srdes.menupp.EntreeDbAdapter.open ()  throws SQLException "Open the notes database. If it cannot be opened, try to create a new instance of the database. If it cannot be created, throw an exception to signal the failure
+.PP
+\fBReturns:\fP
+.RS 4
+this (self reference, allowing this to be chained in an initialization call) 
+.RE
+.PP
+\fBExceptions:\fP
+.RS 4
+\fISQLException\fP if the database could be neither opened or created 
+.RE
+.PP
+
+.SH "Member Data Documentation"
+.PP 
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.DATABASE_CREATE\fP = 'title text not null, body text not null);'\fC [static, private]\fP"Database creation sql statement 
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.DATABASE_NAME\fP = 'data'\fC [static, private]\fP"
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.DATABASE_TABLE\fP = 'entrees'\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.EntreeDbAdapter.DATABASE_VERSION\fP = 2\fC [static, private]\fP"
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.KEY_BODY\fP = 'body'\fC [static]\fP"
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.KEY_ROWID\fP = '_id'\fC [static]\fP"
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.KEY_TITLE\fP = 'title'\fC [static]\fP"
+.SS "final Context \fBsrdes.menupp.EntreeDbAdapter.mCtx\fP\fC [private]\fP"
+.SS "SQLiteDatabase \fBsrdes.menupp.EntreeDbAdapter.mDb\fP\fC [private]\fP"
+.SS "DatabaseHelper \fBsrdes.menupp.EntreeDbAdapter.mDbHelper\fP\fC [private]\fP"
+.SS "final String \fBsrdes.menupp.EntreeDbAdapter.TAG\fP = 'EntreeDbAdapter'\fC [static, private]\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.
