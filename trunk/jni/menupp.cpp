@@ -17,6 +17,7 @@
 #include <android/log.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <assert.h>
 
 #include <GLES2/gl2.h>
@@ -56,14 +57,20 @@ int buttonMask                  = 0;
 bool updateBtns                   = false;
 const int NUM_BUTTONS             = 5;
 
+// Touch screen button
+bool itemSelected 				  = false;
+
 // Texture defines
 int textureCount                = 0;
 Texture** textures              = 0;
+int textureCeiling				= 0;
+int textureFloor				= 0;
 
 // Entrees defines
 int entreeCount = 0;
 EntreeTarget** entreeTargets = 0;
-int entreeInfoBase = 0;
+int entreeImageBase = 0;
+int entreeNameBase = 0;
 
 // OpenGL ES 2.0 specific
 unsigned int shaderProgramID    = 0;
@@ -75,6 +82,9 @@ GLint mvpMatrixHandle           = 0;
 // Screen dimensions:
 unsigned int screenWidth        = 0;
 unsigned int screenHeight       = 0;
+float halfScreenWidth 			= 0;
+float halfScreenHeight			= 0;
+
 
 // Indicates whether screen is in portrait (true) or landscape (false) mode
 bool isActivityInPortraitMode   = false;
@@ -82,8 +92,22 @@ bool isActivityInPortraitMode   = false;
 // The projection matrix used for rendering virtual objects:
 QCAR::Matrix44F projectionMatrix;
 
+QCAR::Matrix44F inverseProjMatrix;
+
+QCAR::Matrix44F modelViewMatrices[4];
+
+QCAR::Matrix44F viewProjection;
+
+int activeMask = 0;
+
 // Constants
 static const float kObjectScale = 300;
+
+// Function prototypes
+bool linePlaneIntersection(QCAR::Vec3F lineStart, QCAR::Vec3F lineEnd,
+                      QCAR::Vec3F planeNormal,QCAR::Vec3F &intersection,
+                      QCAR::Vec3F v0, QCAR::Vec3F v1, QCAR::Vec3F v2);
+
 
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
@@ -238,7 +262,7 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 {
 	int trackableId;
-    //LOG("Java_com_qualcomm_QCARSamples_ImageTargets_GLRenderer_renderFrame");
+	QCAR::Matrix44F entreeImageMatrix, entreeNameMatrix;
 
     // Clear color and depth buffer 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -250,12 +274,17 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
     glEnable(GL_CULL_FACE);
 
     // Did we find any trackables this frame?
-    for(int i = 0 ; i < state.getNumActiveTrackables(); i++)
+    for(int i = 0 ; i < state.getNumActiveTrackables() && i < textureCeiling; i++)
     {
         // Get the trackable:
         const QCAR::Trackable* trackable = state.getActiveTrackable(i);
-        QCAR::Matrix44F modelViewMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
-        QCAR::Matrix44F entreeInfoMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
+
+        // Capture Id
+        trackableId = trackable->getId();
+
+        entreeImageMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
+
+        entreeNameMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
 
         // The image target:
         assert(trackable->getType() == QCAR::Trackable::IMAGE_TARGET);
@@ -263,15 +292,12 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 
         const QCAR::VirtualButton* button = target->getVirtualButton(0);
 
-        // Capture Id
-        trackableId = trackable->getId();
-
         // Choose the texture based on the target name:
         Texture* imgTexture = textures[trackableId];
 
 		// Place an image on the target using a 3D plane
-		QCAR::Matrix44F modelViewProjection;
-		QCAR::Matrix44F entreeInfoProjection;
+		QCAR::Matrix44F entreeImageProjection;
+		QCAR::Matrix44F entreeNameProjection;
 
         // If the button is pressed, than use this texture:
         if (button->isPressed())
@@ -284,9 +310,9 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         }
 
         //  Position and size the plane for the entree description
-		Utils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
-		Utils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
-		Utils::multiplyMatrix(&projectionMatrix.data[0], &entreeInfoMatrix.data[0], &entreeInfoProjection.data[0]);
+		Utils::translatePoseMatrix(0.0f, 250.0f, 0.0f, &entreeNameMatrix.data[0]);
+		Utils::scalePoseMatrix(150, 100, 1.0f, &entreeNameMatrix.data[0]);
+		Utils::multiplyMatrix(&projectionMatrix.data[0], &entreeNameMatrix.data[0], &entreeNameProjection.data[0]);
 
 		// Install program object to be apart of renderering
 		glUseProgram(shaderProgramID);
@@ -302,14 +328,14 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		glEnableVertexAttribArray(textureCoordHandle);
 
 		// Bind the appropriate entree description to the plane and draw the image
-		glBindTexture(GL_TEXTURE_2D, textures[entreeInfoBase + trackableId]->mTextureID);
-		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&entreeInfoProjection.data[0] );
+		glBindTexture(GL_TEXTURE_2D, textures[entreeNameBase + (trackableId % textureCeiling)]->mTextureID);
+		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&entreeNameProjection.data[0] );
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &rectIndices[0]);
 
 		// Position and size the plane for the entree image
-		Utils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &modelViewMatrix.data[0]);
-		Utils::scalePoseMatrix(kObjectScale, kObjectScale, 1.0f, &modelViewMatrix.data[0]);
-		Utils::multiplyMatrix(&projectionMatrix.data[0], &modelViewMatrix.data[0], &modelViewProjection.data[0]);
+		Utils::translatePoseMatrix(0.0f, 0.0f, 0.0f, &entreeImageMatrix.data[0]);
+		Utils::scalePoseMatrix(375, 375, 1.0f, &entreeImageMatrix.data[0]);
+		Utils::multiplyMatrix(&projectionMatrix.data[0], &entreeImageMatrix.data[0], &entreeImageProjection.data[0]);
 
 		// Establish dimensions of the plane and bound textures
 		glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &planeVertices[0]);
@@ -322,8 +348,8 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		glEnableVertexAttribArray(textureCoordHandle);
 
 		// Bind the correct entree image and draw
-		glBindTexture(GL_TEXTURE_2D, imgTexture->mTextureID);
-		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&modelViewProjection.data[0] );
+		glBindTexture(GL_TEXTURE_2D, textures[entreeImageBase + (trackableId % textureCeiling)]->mTextureID);
+		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&entreeImageProjection.data[0] );
 
 	    // Enable 2D Textures
 	    glEnable(GL_TEXTURE_2D);
@@ -378,6 +404,8 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
     // Store screen dimensions
     screenWidth = width;
     screenHeight = height;
+    halfScreenWidth = screenWidth / 2.0;
+    halfScreenHeight = screenHeight / 2.0;
         
     // Handle to the activity class:
     jclass activityClass = env->GetObjectClass(obj);
@@ -395,6 +423,8 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
         LOG("getTextureCount() returned zero.");
         return;
     }
+
+    textureCeiling = ((textureCount / 2) < MAX_TRACKABLES) ? (textureCount / 2) : (MAX_TRACKABLES);
 
     textures = new Texture*[textureCount];
 
@@ -440,6 +470,8 @@ Java_srdes_menupp_QcarEngine_deinitApplicationNative(JNIEnv* env, jobject obj)
         
         textureCount = 0;
     }
+
+    itemSelected = false;
 }
 
 
@@ -536,13 +568,16 @@ Java_srdes_menupp_menuppRenderer_initRendering(
     QCAR::State state = QCAR::Renderer::getInstance().begin();
 
 	entreeCount = state.getNumTrackables();
-	entreeInfoBase = entreeCount;
+	entreeImageBase = 0;
+	entreeNameBase = entreeImageBase + (textureCount / 2);
 	entreeTargets = new EntreeTarget*[entreeCount];
+	string trackableName;
 
-	for (int i = 0 ; i < entreeCount ; i++)
+	LOG("entree count %d", entreeCount);
+	for (int i = 0, trackableId; i < entreeCount ; i++)
 	{
-		string trackableName = (string) state.getTrackable(i)->getName();
-		int trackableId = state.getTrackable(i)->getId();
+		trackableName = (string) state.getTrackable(i)->getName();
+		trackableId = state.getTrackable(i)->getId();
 		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
 		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
@@ -562,6 +597,24 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
     // Reconfigure the video background
     configureVideoBackground();
 }
+
+JNIEXPORT void JNICALL
+Java_srdes_menupp_GUIManager_nativeNext(JNIEnv* env, jobject obj)
+{
+	entreeImageBase = (entreeImageBase + textureCeiling) % (textureCount / 2);
+	entreeNameBase = entreeImageBase + (textureCount / 2);
+	textureCeiling = ((textureCount / 2) - entreeImageBase < MAX_TRACKABLES) ?  (textureCount / 2 - entreeImageBase) : (MAX_TRACKABLES);
+}
+
+JNIEXPORT void JNICALL
+Java_srdes_menupp_GUIManager_nativeBack(JNIEnv* env, jobject obj)
+{
+	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + entreeImageBase + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
+	entreeNameBase = entreeImageBase + (textureCount / 2);
+	textureCeiling = ((textureCount / 2) - entreeImageBase < MAX_TRACKABLES) ?  (textureCount / 2 - entreeImageBase) : (MAX_TRACKABLES);
+}
+
+
 
 #ifdef __cplusplus
 }

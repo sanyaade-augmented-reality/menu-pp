@@ -17,7 +17,21 @@ EntreeTarget::EntreeTarget(string name, int id)
 	this->itemId = id;
 	strcpy(this->itemName, name);
 	this->itemSelected = false;
+	this->itemActive = false;
 }
 // Destructor
 EntreeTarget::~EntreeTarget()
 {}
+
+// Set Pose
+void EntreeTarget::setPose(QCAR::Matrix44F pose)
+{
+	this->curPose = pose;
+	this->itemActive = true;
+}
+
+// Check to see if item active
+bool EntreeTarget::isActive()
+{
+	return this->itemActive;
+}
