@@ -24,7 +24,7 @@ public class EntreeTabManage extends TabActivity {
 	    intent = new Intent().setClass(this, ViewEntree.class);
 	    Bundle extras = getIntent().getExtras();
 	    //int textureId = extras.getInt("key_entree_id");
-	    intent.putExtra("extras", extras);
+	    intent.putExtras(extras);
 	    /*if(extras != null){
 	    	intent.putExtra("key_entree_id", extras.getInt("key_entree_id"));
 	    } else {

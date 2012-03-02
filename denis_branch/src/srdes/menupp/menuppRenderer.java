@@ -87,7 +87,7 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     	Bundle extras = new Bundle();
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	extras.putInt("key_entree_id", textureId);
-    	intent.putExtra("extras", extras);
+    	intent.putExtras(extras);
     	context.startActivity(intent);
     }
     
