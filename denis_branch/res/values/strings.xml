@@ -19,7 +19,13 @@
     <string name="review_write">Write a Review</string>
     <string name="entree_tab_manage">Entree View Tab Manager</string>
     <string name="entree_description">Insert description of entree here</string>
-    
+    <string name="entree_name">entree_name</string>
+    <string name="entree1">item_1</string>
+    <string name="entree2">item_2</string>
+    <string name="entree3">item_3</string>
+    <string name="entree4">item_4</string>
+    <string name="entree5">item_5</string>
+            
     <string-array name="menus">
     	<item>Demo Menu</item>
     </string-array>

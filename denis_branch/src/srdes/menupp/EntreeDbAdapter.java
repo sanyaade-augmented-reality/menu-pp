@@ -131,7 +131,7 @@ public class EntreeDbAdapter {
 	     * 
 	     * @return Cursor over all notes
 	     */
-	    public Cursor fetchAllEntrees() {
+	    public Cursor fetchAllReviews() {
 
 	        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
 	                KEY_BODY}, null, null, null, null, null);
@@ -144,7 +144,7 @@ public class EntreeDbAdapter {
 	     * @return Cursor positioned to matching note, if found
 	     * @throws SQLException if note could not be found/retrieved
 	     */
-	    public Cursor fetchEntree(long rowId) throws SQLException {
+	    public Cursor fetchReview(long rowId) throws SQLException {
 
 	        Cursor mCursor =
 

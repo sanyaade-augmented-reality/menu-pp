@@ -88,7 +88,7 @@ static const float kObjectScale = 300;
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
 {
-#ifdef USE_OPENGL_ES_1_1        
+#ifdef USE_OPENGL_ES_1_1
     return 1;
 #else
     return 2;
@@ -240,7 +240,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 	int trackableId;
     //LOG("Java_com_qualcomm_QCARSamples_ImageTargets_GLRenderer_renderFrame");
 
-    // Clear color and depth buffer 
+    // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render video background:
@@ -277,12 +277,12 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         if (button->isPressed())
         {
         	LOG("button was pressed!");
-        	jstring js = env->NewStringUTF(trackable->getName());
+        	jstring js = env->NewStringUTF(imgTexture->getName());
             jclass javaClass = env->GetObjectClass(obj);
-            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(Ljava/lang/String;)V");
+            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");//"(Ljava/lang/String;)V");
             env->CallVoidMethod(obj, method, js);
         }
-        
+
         //  Position and size the plane for the entree description
 		Utils::translatePoseMatrix(-900.0f, 0.0f, 0.0f, &entreeInfoMatrix.data[0]);
 		Utils::scalePoseMatrix(400, 400, 1.0f, &entreeInfoMatrix.data[0]);
@@ -347,7 +347,7 @@ void configureVideoBackground()
     config.mSynchronous = true;
     config.mPosition.data[0] = 0.0f;
     config.mPosition.data[1] = 0.0f;
-    
+
     if (isActivityInPortraitMode)
     {
         //LOG("configureVideoBackground PORTRAIT");
@@ -370,11 +370,11 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, jint width, jint height)
 {
     LOG("Java_srdes_menupp_menupp_initApplicationNative");
-    
+
     // Store screen dimensions
     screenWidth = width;
     screenHeight = height;
-        
+
     // Handle to the activity class:
     jclass activityClass = env->GetObjectClass(obj);
 
@@ -385,7 +385,7 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
         return;
     }
 
-    textureCount = env->CallIntMethod(obj, getTextureCountMethodID);    
+    textureCount = env->CallIntMethod(obj, getTextureCountMethodID);
     if (!textureCount)
     {
         LOG("getTextureCount() returned zero.");
@@ -406,7 +406,7 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
     for (int i = 0; i < textureCount; ++i)
     {
 
-        jobject textureObject = env->CallObjectMethod(obj, getTextureMethodID, i); 
+        jobject textureObject = env->CallObjectMethod(obj, getTextureMethodID, i);
         if (textureObject == NULL)
         {
             LOG("GetTexture() returned zero pointer");
@@ -424,16 +424,16 @@ Java_srdes_menupp_QcarEngine_deinitApplicationNative(JNIEnv* env, jobject obj)
 
     // Release texture resources
     if (textures != 0)
-    {    
+    {
         for (int i = 0; i < textureCount; ++i)
         {
             delete textures[i];
             textures[i] = NULL;
         }
-    
+
         delete[]textures;
         textures = NULL;
-        
+
         textureCount = 0;
     }
 }
@@ -461,7 +461,7 @@ Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *, jobject)
 
     // Start the tracker:
     QCAR::Tracker::getInstance().start();
- 
+
     // Cache the projection matrix:
     const QCAR::Tracker& tracker = QCAR::Tracker::getInstance();
     const QCAR::CameraCalibration& cameraCalibration = tracker.getCameraCalibration();
@@ -507,7 +507,10 @@ Java_srdes_menupp_menuppRenderer_initRendering(
 
     // Define clear color
     glClearColor(0.0f, 0.0f, 0.0f, QCAR::requiresAlpha() ? 0.0f : 1.0f);
-    
+
+    // Render video background:
+    QCAR::State state = QCAR::Renderer::getInstance().begin();
+
     glEnable(GL_TEXTURE_2D);
 
     // Now generate the OpenGL texture objects and add settings
@@ -530,20 +533,30 @@ Java_srdes_menupp_menuppRenderer_initRendering(
     vbShaderProgramID   = Utils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
     vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
 
-    // Render video background:
-    QCAR::State state = QCAR::Renderer::getInstance().begin();
-
 	entreeCount = state.getNumTrackables();
 	entreeInfoBase = entreeCount;
-	entreeTargets = new EntreeTarget*[entreeCount];
+	entreeTargets = new EntreeTarget*[textureCount / 2];
 
-	for (int i = 0 ; i < entreeCount ; i++)
+	// Java types to be passed back to menuppRenderer
+	jclass jstringClass = env->FindClass("java/lang/String");
+	jintArray jids = env->NewIntArray(textureCount / 2);
+	jobjectArray jnames = env->NewObjectArray(textureCount / 2, jstringClass, env->NewStringUTF(""));
+	jclass javaClass = env->GetObjectClass(obj);
+	jmethodID method = env->GetMethodID(javaClass, "addTargetsInfo", "([Ljava/lang/String;[I)V");
+
+	LOG("entree count %d", textureCount / 2);
+	for (int i = 0 ; i < textureCount / 2 ; i++)
 	{
-		string trackableName = (string) state.getTrackable(i)->getName();
-		int trackableId = state.getTrackable(i)->getId();
+		string trackableName = (string) textures[i]->getName();
+		int trackableId = (int) textures[i]->getId();
 		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
+		LOG("Adding entree target info to java data structures");
+		env->SetIntArrayRegion(jids, i, 1, &trackableId);
+		env->SetObjectArrayElement(jnames, i, env->NewStringUTF(trackableName));
 		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
+	LOG("Passing target info to java code");
+	env->CallVoidMethod(obj, method, jnames, jids);
 	QCAR::Renderer::getInstance().end();
 }
 
@@ -552,7 +565,7 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
                         JNIEnv* env, jobject obj, jint width, jint height)
 {
     LOG("Java_srdes_menupp_menuppRenderer_updateRendering");
-    
+
     // Update screen dimensions
     screenWidth = width;
     screenHeight = height;

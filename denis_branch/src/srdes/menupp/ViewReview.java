@@ -40,7 +40,7 @@ public class ViewReview extends ListActivity {
 
     private void fillData() {
         // Get all of the rows from the database and create the item list
-        Cursor notesCursor = dbHelper.fetchAllEntrees();
+        Cursor notesCursor = dbHelper.fetchAllReviews();
         startManagingCursor(notesCursor);
 
         // Create an array to specify the fields we want to display in the list (only TITLE)

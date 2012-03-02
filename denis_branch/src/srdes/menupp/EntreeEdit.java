@@ -63,7 +63,7 @@ public class EntreeEdit extends Activity {
     
     private void populateFields(){
     	if(mRowId != null){
-    		Cursor note = mDbHelper.fetchEntree(mRowId);
+    		Cursor note = mDbHelper.fetchReview(mRowId);
     		startManagingCursor(note);
     		mTitleText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_TITLE)));
     		mBodyText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_BODY)));

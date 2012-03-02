@@ -75,6 +75,10 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     // Flags status of activity
     private static boolean appInitComplete = false;
     
+    // Array of entree information
+    public static Entree [] entrees;
+    public static int entreeIndex = 0;
+    
     /** Static initializer block to load native libraries on start-up. */
     static
     {
@@ -274,6 +278,5 @@ public class menupp extends Activity implements android.view.View.OnClickListene
 			startActivity(aboutUs);
 			break;
 		}
-	}    
-	
+	}
 }

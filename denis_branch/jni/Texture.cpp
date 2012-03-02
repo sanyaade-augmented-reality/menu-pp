@@ -29,6 +29,15 @@ Texture::~Texture()
         delete[]mData;
 }
 
+string Texture::getName()
+{
+	return this->mName;
+}
+
+unsigned int Texture::getId()
+{
+	return this->mTextureID;
+}
 
 Texture*
 Texture::create(JNIEnv* env, jobject textureObject)
@@ -56,6 +65,16 @@ Texture::create(JNIEnv* env, jobject textureObject)
         return 0;
     }
     newTexture->mHeight = env->GetIntField(textureObject, heightID);
+
+    // Get name:
+    jfieldID nameID = env->GetFieldID(textureClass, "mName", "Ljava/lang/String;");
+    if (!nameID)
+    {
+        LOG("Field mName not found.");
+        return 0;
+    }
+    jstring name = (jstring) env->GetObjectField(textureObject, nameID);
+    newTexture->mName = (string) env->GetStringUTFChars(name, 0);
 
     // Always use RGBA channels:
     newTexture->mChannelCount = 4;
