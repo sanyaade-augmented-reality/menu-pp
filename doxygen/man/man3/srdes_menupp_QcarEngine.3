@@ -1,0 +1,220 @@
+.TH "srdes::menupp::QcarEngine" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srdes::menupp::QcarEngine \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits android::app::Activity.
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBInitQCARTask\fP"
+.br
+.ti -1c
+.RI "class \fBLoadTrackerTask\fP"
+.br
+.in -1c
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "native int \fBgetOpenGlEsVersionNative\fP ()"
+.br
+.ti -1c
+.RI "native void \fBonQCARInitializedNative\fP ()"
+.br
+.ti -1c
+.RI "synchronized void \fBupdateQcarStatus\fP (int status)"
+.br
+.ti -1c
+.RI "boolean \fBonCreateOptionsMenu\fP (Menu menu)"
+.br
+.ti -1c
+.RI "boolean \fBonOptionsItemSelected\fP (MenuItem item)"
+.br
+.ti -1c
+.RI "int \fBgetTextureCount\fP ()"
+.br
+.ti -1c
+.RI "\fBTexture\fP \fBgetTexture\fP (int i)"
+.br
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static native void \fBstartCamera\fP ()"
+.br
+.in -1c
+.SS "Static Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "static \fBmenuppRenderer\fP \fBmRenderer\fP"
+.br
+.ti -1c
+.RI "static \fBQCARSampleGLView\fP \fBmGlView\fP"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBonCreate\fP (Bundle savedInstanceState)"
+.br
+.ti -1c
+.RI "void \fBonResume\fP ()"
+.br
+.ti -1c
+.RI "void \fBonPause\fP ()"
+.br
+.ti -1c
+.RI "void \fBonDestroy\fP ()"
+.br
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "native boolean \fBtoggleFlash\fP (boolean flash)"
+.br
+.ti -1c
+.RI "native boolean \fBautofocus\fP ()"
+.br
+.ti -1c
+.RI "native boolean \fBsetFocusMode\fP (int mode)"
+.br
+.ti -1c
+.RI "native void \fBinitApplicationNative\fP (int width, int height)"
+.br
+.ti -1c
+.RI "native void \fBstopCamera\fP ()"
+.br
+.ti -1c
+.RI "native void \fBdeinitApplicationNative\fP ()"
+.br
+.ti -1c
+.RI "native void \fBsetActivityPortraitMode\fP (boolean isPortrait)"
+.br
+.ti -1c
+.RI "native void \fBaddButtonToToggle\fP (int virtualButtonIdx)"
+.br
+.ti -1c
+.RI "void \fBloadTextures\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetInitializationFlags\fP ()"
+.br
+.ti -1c
+.RI "void \fBinitApplicationAR\fP ()"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "int \fBqcarStatus\fP = \fBQCAR_UNINIT\fP"
+.br
+.ti -1c
+.RI "\fBInitQCARTask\fP \fBmInitQCARTask\fP"
+.br
+.ti -1c
+.RI "\fBLoadTrackerTask\fP \fBmLoadTrackerTask\fP"
+.br
+.ti -1c
+.RI "MenuItem \fBchecked\fP"
+.br
+.ti -1c
+.RI "boolean \fBmFlash\fP = false"
+.br
+.in -1c
+.SS "Static Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "static final int \fBQCAR_UNINIT\fP = -1"
+.br
+.ti -1c
+.RI "static final int \fBQCAR_INIT\fP = 0"
+.br
+.ti -1c
+.RI "static final int \fBQCAR_INIT_AR\fP = 1"
+.br
+.ti -1c
+.RI "static final int \fBQCAR_INIT_TRACKER\fP = 2"
+.br
+.ti -1c
+.RI "static final int \fBQCAR_INITED\fP = 3"
+.br
+.ti -1c
+.RI "static final int \fBQCAR_CAMERA_STOPPED\fP = 4"
+.br
+.ti -1c
+.RI "static final int \fBQCAR_CAMERA_RUNNING\fP = 5"
+.br
+.ti -1c
+.RI "static boolean \fBqcarInitComplete\fP = false"
+.br
+.ti -1c
+.RI "static int \fBmQCARFlags\fP"
+.br
+.ti -1c
+.RI "static View \fBqcarView\fP"
+.br
+.ti -1c
+.RI "static Vector< \fBTexture\fP > \fBmTextures\fP"
+.br
+.in -1c
+.SH "Member Function Documentation"
+.PP 
+.SS "native void srdes.menupp.QcarEngine.addButtonToToggle (intvirtualButtonIdx)\fC [private]\fP"Native function to create/destroy a Virtual Button. Existing buttons will be destroyed and non-existing will be created. 
+.SS "native boolean srdes.menupp.QcarEngine.autofocus ()\fC [private]\fP"
+.SS "native void srdes.menupp.QcarEngine.deinitApplicationNative ()\fC [private]\fP"Native function to deinitialize the application. 
+.SS "int srdes.menupp.QcarEngine.getInitializationFlags ()\fC [private]\fP"Configure QCAR with the desired version of OpenGL ES. 
+.SS "native int srdes.menupp.QcarEngine.getOpenGlEsVersionNative ()"native method for querying the OpenGL ES version. Returns 1 for OpenGl ES 1.1, returns 2 for OpenGl ES 2.0. 
+.SS "\fBTexture\fP srdes.menupp.QcarEngine.getTexture (inti)"Returns the texture object at the specified index. 
+.SS "int srdes.menupp.QcarEngine.getTextureCount ()"Returns the number of registered textures. 
+.SS "void srdes.menupp.QcarEngine.initApplicationAR ()\fC [private]\fP"Initializes AR application components. 
+.SS "native void srdes.menupp.QcarEngine.initApplicationNative (intwidth, intheight)\fC [private]\fP"Native function to initialize the application. 
+.SS "void srdes.menupp.QcarEngine.loadTextures ()\fC [private]\fP"We want to load specific textures from the APK, which we will later use for rendering. 
+.SS "void srdes.menupp.QcarEngine.onCreate (BundlesavedInstanceState)\fC [protected]\fP"
+.SS "boolean srdes.menupp.QcarEngine.onCreateOptionsMenu (Menumenu)"Invoked the first time when the options menu is displayed to give the Activity a chance to populate its Menu with menu items. 
+.SS "void srdes.menupp.QcarEngine.onDestroy ()\fC [protected]\fP"The final call you receive before your activity is destroyed. 
+.SS "boolean srdes.menupp.QcarEngine.onOptionsItemSelected (MenuItemitem)"Invoked when the user selects an item from the Menu 
+.SS "void srdes.menupp.QcarEngine.onPause ()\fC [protected]\fP"
+.SS "native void srdes.menupp.QcarEngine.onQCARInitializedNative ()"Native sample initialization. 
+.SS "void srdes.menupp.QcarEngine.onResume ()\fC [protected]\fP"
+.SS "native void srdes.menupp.QcarEngine.setActivityPortraitMode (booleanisPortrait)\fC [private]\fP"Tells native code whether we are in portrait or landscape mode 
+.SS "native boolean srdes.menupp.QcarEngine.setFocusMode (intmode)\fC [private]\fP"
+.SS "static native void srdes.menupp.QcarEngine.startCamera ()\fC [static]\fP"Native methods for starting and stopping the camera. 
+.SS "native void srdes.menupp.QcarEngine.stopCamera ()\fC [private]\fP"
+.SS "native boolean srdes.menupp.QcarEngine.toggleFlash (booleanflash)\fC [private]\fP"
+.SS "synchronized void srdes.menupp.QcarEngine.updateQcarStatus (intstatus)"
+.SH "Member Data Documentation"
+.PP 
+.SS "MenuItem \fBsrdes.menupp.QcarEngine.checked\fP\fC [private]\fP"
+.SS "boolean \fBsrdes.menupp.QcarEngine.mFlash\fP = false\fC [private]\fP"
+.SS "\fBQCARSampleGLView\fP \fBsrdes.menupp.QcarEngine.mGlView\fP\fC [static]\fP"
+.SS "\fBInitQCARTask\fP \fBsrdes.menupp.QcarEngine.mInitQCARTask\fP\fC [private]\fP"
+.SS "\fBLoadTrackerTask\fP \fBsrdes.menupp.QcarEngine.mLoadTrackerTask\fP\fC [private]\fP"
+.SS "int \fBsrdes.menupp.QcarEngine.mQCARFlags\fP\fC [static, private]\fP"
+.SS "\fBmenuppRenderer\fP \fBsrdes.menupp.QcarEngine.mRenderer\fP\fC [static]\fP"
+.SS "Vector<\fBTexture\fP> \fBsrdes.menupp.QcarEngine.mTextures\fP\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_CAMERA_RUNNING\fP = 5\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_CAMERA_STOPPED\fP = 4\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_INIT\fP = 0\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_INIT_AR\fP = 1\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_INIT_TRACKER\fP = 2\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_INITED\fP = 3\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.QcarEngine.QCAR_UNINIT\fP = -1\fC [static, private]\fP"
+.SS "boolean \fBsrdes.menupp.QcarEngine.qcarInitComplete\fP = false\fC [static, private]\fP"
+.SS "int \fBsrdes.menupp.QcarEngine.qcarStatus\fP = \fBQCAR_UNINIT\fP\fC [private]\fP"
+.SS "View \fBsrdes.menupp.QcarEngine.qcarView\fP\fC [static, private]\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

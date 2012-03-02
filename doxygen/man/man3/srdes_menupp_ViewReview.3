@@ -1,0 +1,102 @@
+.TH "srdes::menupp::ViewReview" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+srdes::menupp::ViewReview \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+Inherits android::app::ListActivity.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "boolean \fBonCreateOptionsMenu\fP (Menu menu)"
+.br
+.ti -1c
+.RI "boolean \fBonMenuItemSelected\fP (int featureId, MenuItem item)"
+.br
+.ti -1c
+.RI "void \fBonCreateContextMenu\fP (ContextMenu menu, View v, ContextMenuInfo menuInfo)"
+.br
+.ti -1c
+.RI "boolean \fBonContextItemSelected\fP (MenuItem item)"
+.br
+.in -1c
+.SS "Protected Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBonCreate\fP (Bundle savedInstanceState)"
+.br
+.ti -1c
+.RI "void \fBonListItemClick\fP (ListView l, View v, int position, long id)"
+.br
+.ti -1c
+.RI "void \fBonActivityResult\fP (int requestCode, int resultCode, Intent intent)"
+.br
+.ti -1c
+.RI "void \fBonResume\fP ()"
+.br
+.ti -1c
+.RI "void \fBonPause\fP ()"
+.br
+.ti -1c
+.RI "void \fBonDestroy\fP ()"
+.br
+.in -1c
+.SS "Private Member Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBfillData\fP ()"
+.br
+.ti -1c
+.RI "void \fBcreateNote\fP ()"
+.br
+.in -1c
+.SS "Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "\fBEntreeDbAdapter\fP \fBdbHelper\fP"
+.br
+.in -1c
+.SS "Static Private Attributes"
+
+.in +1c
+.ti -1c
+.RI "static final int \fBACTIVITY_CREATE\fP = 0"
+.br
+.ti -1c
+.RI "static final int \fBACTIVITY_EDIT\fP = 1"
+.br
+.ti -1c
+.RI "static final int \fBINSERT_ID\fP = Menu.FIRST"
+.br
+.in -1c
+.SH "Member Function Documentation"
+.PP 
+.SS "void srdes.menupp.ViewReview.createNote ()\fC [private]\fP"
+.SS "void srdes.menupp.ViewReview.fillData ()\fC [private]\fP"
+.SS "void srdes.menupp.ViewReview.onActivityResult (intrequestCode, intresultCode, Intentintent)\fC [protected]\fP"
+.SS "boolean srdes.menupp.ViewReview.onContextItemSelected (MenuItemitem)"
+.SS "void srdes.menupp.ViewReview.onCreate (BundlesavedInstanceState)\fC [protected]\fP"Called when the activity first starts or the user navigates back to an activity. 
+.SS "void srdes.menupp.ViewReview.onCreateContextMenu (ContextMenumenu, Viewv, ContextMenuInfomenuInfo)"
+.SS "boolean srdes.menupp.ViewReview.onCreateOptionsMenu (Menumenu)"
+.SS "void srdes.menupp.ViewReview.onDestroy ()\fC [protected]\fP"The final call you receive before your activity is destroyed. 
+.SS "void srdes.menupp.ViewReview.onListItemClick (ListViewl, Viewv, intposition, longid)\fC [protected]\fP"
+.SS "boolean srdes.menupp.ViewReview.onMenuItemSelected (intfeatureId, MenuItemitem)"
+.SS "void srdes.menupp.ViewReview.onPause ()\fC [protected]\fP"Called when the system is about to start resuming a previous activity. 
+.SS "void srdes.menupp.ViewReview.onResume ()\fC [protected]\fP"Called when the activity will start interacting with the user. 
+.SH "Member Data Documentation"
+.PP 
+.SS "final int \fBsrdes.menupp.ViewReview.ACTIVITY_CREATE\fP = 0\fC [static, private]\fP"
+.SS "final int \fBsrdes.menupp.ViewReview.ACTIVITY_EDIT\fP = 1\fC [static, private]\fP"
+.SS "\fBEntreeDbAdapter\fP \fBsrdes.menupp.ViewReview.dbHelper\fP\fC [private]\fP"
+.SS "final int \fBsrdes.menupp.ViewReview.INSERT_ID\fP = Menu.FIRST\fC [static, private]\fP"
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

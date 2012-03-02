@@ -1,0 +1,108 @@
+.TH "Texture" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Texture \- 
+.PP
+A utility class for textures.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <Texture.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBTexture\fP ()"
+.br
+.RI "\fIConstructor. \fP"
+.ti -1c
+.RI "\fB~Texture\fP ()"
+.br
+.RI "\fIDestructor. \fP"
+.ti -1c
+.RI "unsigned int \fBgetWidth\fP () const "
+.br
+.RI "\fIReturns the width of the texture. \fP"
+.ti -1c
+.RI "unsigned int \fBgetHeight\fP () const "
+.br
+.RI "\fIReturns the height of the texture. \fP"
+.in -1c
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static \fBTexture\fP * \fBcreate\fP (JNIEnv *env, jobject textureObject)"
+.br
+.RI "\fICreate a texture from a jni object: \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "unsigned int \fBmWidth\fP"
+.br
+.RI "\fIThe width of the texture. \fP"
+.ti -1c
+.RI "unsigned int \fBmHeight\fP"
+.br
+.RI "\fIThe height of the texture. \fP"
+.ti -1c
+.RI "unsigned int \fBmChannelCount\fP"
+.br
+.RI "\fIThe number of channels of the texture. \fP"
+.ti -1c
+.RI "unsigned char * \fBmData\fP"
+.br
+.RI "\fIThe pointer to the raw texture data. \fP"
+.ti -1c
+.RI "unsigned int \fBmTextureID\fP"
+.br
+.RI "\fIThe ID of the texture. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A utility class for textures. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Texture::Texture ()"
+.PP
+Constructor. 
+.SS "Texture::~Texture ()"
+.PP
+Destructor. 
+.SH "Member Function Documentation"
+.PP 
+.SS "\fBTexture\fP * Texture::create (JNIEnv *env, jobjecttextureObject)\fC [static]\fP"
+.PP
+Create a texture from a jni object: 
+.SS "unsigned int Texture.getHeight () const"
+.PP
+Returns the height of the texture. 
+.SS "unsigned int Texture.getWidth () const"
+.PP
+Returns the width of the texture. 
+.SH "Member Data Documentation"
+.PP 
+.SS "unsigned int \fBTexture.mChannelCount\fP"
+.PP
+The number of channels of the texture. 
+.SS "unsigned char* \fBTexture.mData\fP"
+.PP
+The pointer to the raw texture data. 
+.SS "unsigned int \fBTexture.mHeight\fP"
+.PP
+The height of the texture. 
+.SS "unsigned int \fBTexture.mTextureID\fP"
+.PP
+The ID of the texture. 
+.SS "unsigned int \fBTexture.mWidth\fP"
+.PP
+The width of the texture. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.

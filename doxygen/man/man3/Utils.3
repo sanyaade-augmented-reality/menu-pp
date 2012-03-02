@@ -1,0 +1,89 @@
+.TH "Utils" 3 "Tue Feb 28 2012" "Menu++" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Utils \- 
+.PP
+A utility class used by the QCAR SDK samples.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <Utils.h>\fP
+.SS "Static Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "static void \fBprintMatrix\fP (const float *matrix)"
+.br
+.RI "\fIPrints a 4x4 matrix. \fP"
+.ti -1c
+.RI "static void \fBcheckGlError\fP (const char *operation)"
+.br
+.RI "\fIPrints GL error information. \fP"
+.ti -1c
+.RI "static void \fBsetRotationMatrix\fP (float angle, float x, float y, float z, float *nMatrix)"
+.br
+.RI "\fISet the rotation components of this 4x4 matrix. \fP"
+.ti -1c
+.RI "static void \fBtranslatePoseMatrix\fP (float x, float y, float z, float *nMatrix=NULL)"
+.br
+.RI "\fISet the translation components of this 4x4 matrix. \fP"
+.ti -1c
+.RI "static void \fBrotatePoseMatrix\fP (float angle, float x, float y, float z, float *nMatrix=NULL)"
+.br
+.RI "\fIApplies a rotation. \fP"
+.ti -1c
+.RI "static void \fBscalePoseMatrix\fP (float x, float y, float z, float *nMatrix=NULL)"
+.br
+.RI "\fIApplies a scaling transformation. \fP"
+.ti -1c
+.RI "static void \fBmultiplyMatrix\fP (float *matrixA, float *matrixB, float *matrixC)"
+.br
+.RI "\fIMultiplies the two matrices A and B and writes the result to C. \fP"
+.ti -1c
+.RI "static unsigned int \fBinitShader\fP (unsigned int shaderType, const char *source)"
+.br
+.RI "\fIInitialize a shader. \fP"
+.ti -1c
+.RI "static unsigned int \fBcreateProgramFromBuffer\fP (const char *vertexShaderBuffer, const char *fragmentShaderBuffer)"
+.br
+.RI "\fICreate a shader program. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+A utility class used by the QCAR SDK samples. 
+.SH "Member Function Documentation"
+.PP 
+.SS "void Utils::checkGlError (const char *operation)\fC [static]\fP"
+.PP
+Prints GL error information. 
+.SS "unsigned int Utils::createProgramFromBuffer (const char *vertexShaderBuffer, const char *fragmentShaderBuffer)\fC [static]\fP"
+.PP
+Create a shader program. 
+.SS "unsigned int Utils::initShader (unsigned intshaderType, const char *source)\fC [static]\fP"
+.PP
+Initialize a shader. 
+.SS "void Utils::multiplyMatrix (float *matrixA, float *matrixB, float *matrixC)\fC [static]\fP"
+.PP
+Multiplies the two matrices A and B and writes the result to C. 
+.SS "void Utils::printMatrix (const float *matrix)\fC [static]\fP"
+.PP
+Prints a 4x4 matrix. 
+.SS "void Utils::rotatePoseMatrix (floatangle, floatx, floaty, floatz, float *nMatrix = \fCNULL\fP)\fC [static]\fP"
+.PP
+Applies a rotation. 
+.SS "void Utils::scalePoseMatrix (floatx, floaty, floatz, float *nMatrix = \fCNULL\fP)\fC [static]\fP"
+.PP
+Applies a scaling transformation. 
+.SS "void Utils::setRotationMatrix (floatangle, floatx, floaty, floatz, float *nMatrix)\fC [static]\fP"
+.PP
+Set the rotation components of this 4x4 matrix. 
+.SS "void Utils::translatePoseMatrix (floatx, floaty, floatz, float *nMatrix = \fCNULL\fP)\fC [static]\fP"
+.PP
+Set the translation components of this 4x4 matrix. 
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Menu++ from the source code.
