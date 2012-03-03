@@ -34,7 +34,7 @@ public class Splash extends Activity{
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		//ourSong.release();
+		ourSong.release();
 		finish();
 	}
 }
