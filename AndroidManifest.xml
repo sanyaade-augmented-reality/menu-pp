@@ -29,7 +29,7 @@
         <activity android:label="@string/app_name"
                   android:launchMode="singleTop"
                   android:configChanges="orientation|keyboardHidden"
-                  android:name=".menupp">
+                  android:name=".Splash">
                   
                   
             <intent-filter>
@@ -37,6 +37,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+        </activity>
+        
+        <activity android:label="@string/app_name"
+                  android:launchMode="singleTop"
+                  android:configChanges="orientation|keyboardHidden"
+                  android:name=".menupp">
+                  
+                  
+            <intent-filter>
+                <action android:name="android.intent.action.MENUPP" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         
         <activity android:label="@string/qcar_engine"

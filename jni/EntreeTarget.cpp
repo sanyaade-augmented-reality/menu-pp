@@ -17,7 +17,7 @@ EntreeTarget::EntreeTarget(string name, int id)
 	this->itemId = id;
 	strcpy(this->itemName, name);
 	this->itemSelected = false;
-	this->itemActive = false;
+	//this->itemActive = false;
 }
 // Destructor
 EntreeTarget::~EntreeTarget()

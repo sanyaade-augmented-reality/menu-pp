@@ -2,40 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="@string/app_title"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="30dp" />
+    android:orientation="vertical" 
+    android:background="@drawable/menuppmain"
+    android:gravity="center"
+    >
+    
+    
 
     <Button
         android:id="@+id/select_rest"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="75dp"
-        android:text="@string/pick_rest" />
-
+        android:layout_marginTop="50dp"
+        android:alpha="1"
+        android:background="@drawable/customselectr" />
     <Button
         android:id="@+id/user_guide"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="@string/user_guide" />
+        android:layout_marginTop="25dp"
+        android:alpha="1"
+        android:background="@drawable/customuserg" />
 
     <Button
         android:id="@+id/about_us"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="@string/about_us" />
+        android:layout_marginTop="25dp"
+        android:alpha="1"
+        android:background="@drawable/customaboutus" />
+        
+         />
 
 </LinearLayout>
