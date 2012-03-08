@@ -23,7 +23,7 @@ import android.opengl.GLSurfaceView;
 
 import com.qualcomm.QCAR.QCAR;
 
-/** The renderer class for the ImageTargets sample. */
+/** \brief The renderer class for the ImageTargets sample. */
 public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;

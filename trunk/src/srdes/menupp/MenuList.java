@@ -14,7 +14,9 @@ import android.widget.ListView;
 
 import com.qualcomm.QCAR.QCAR;
 
-
+/**
+ * \brief Displays list of menus.
+ */
 public class MenuList extends ListActivity{
 	
 	private String [] menus;

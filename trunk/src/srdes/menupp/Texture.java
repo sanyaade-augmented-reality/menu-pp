@@ -14,7 +14,9 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-/** Texture is a support class for the QCAR samples applications.
+/**\brief Support class for QCAR samples. 
+ * 
+ * Texture is a support class for the QCAR samples applications.
  * 
  *  Exposes functionality for loading a texture from the APK.
  *  

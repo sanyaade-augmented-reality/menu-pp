@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-
+/**
+ * \brief Displays a review.
+ */
 public class ViewReview extends ListActivity {
 	private static final int ACTIVITY_CREATE=0;
     private static final int ACTIVITY_EDIT=1;

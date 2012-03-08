@@ -23,7 +23,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
+/**
+ * \brief Database interface for entrees/reviews.
+ */
 public class EntreeDbAdapter {
 	
 	 	public static final String KEY_TITLE = "title";

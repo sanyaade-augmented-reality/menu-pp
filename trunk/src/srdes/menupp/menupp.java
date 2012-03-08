@@ -37,7 +37,9 @@ import android.widget.Button;
 import com.qualcomm.QCAR.QCAR;
 
 
-/** The main activity for the menupp sample. */
+/** \brief Main Menu++ activity.
+ * 
+ * The main activity for the menupp sample. */
 public class menupp extends Activity implements android.view.View.OnClickListener
 {
     // Application status constants:

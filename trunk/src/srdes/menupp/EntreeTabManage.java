@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
-
+/**
+ * \brief Manages tabs in entree view.
+ */
 public class EntreeTabManage extends TabActivity {
 
 	public void onCreate(Bundle savedInstanceState) {
