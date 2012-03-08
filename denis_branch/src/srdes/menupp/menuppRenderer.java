@@ -24,11 +24,12 @@ import android.os.Bundle;
 
 import com.qualcomm.QCAR.QCAR;
 
-
 /** The renderer class for the ImageTargets sample. */
 public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;
+
+	private GUIManager mGUIManager;
     
     // Context that calls rendering frame
     public static Context context;
@@ -84,10 +85,9 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     
     public void entreeTabManage(int textureId) {
     	Intent intent = new Intent (context, EntreeTabManage.class);
-    	Bundle extras = new Bundle();
+    	DebugLog.LOGD("Putting extra " + textureId);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-    	extras.putInt("key_entree_id", textureId);
-    	intent.putExtras(extras);
+    	intent.putExtra("key_entree_id", textureId);
     	context.startActivity(intent);
     }
     
@@ -120,7 +120,7 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 		//menupp.entreeIndex = 0;
 		for(int i = 0; i < menupp.entrees.length; i++){
 	        DebugLog.LOGD("Creating entree " + names[i] + " with id " + ids[i]);
-	        menupp.entrees[i] = new Entree(names[i], ids[i]);
+	        menupp.entrees[i] = new Entree(names[i], ids[i], i);
 		}
 		DebugLog.LOGD("Finished initializing target info. Returning to native code.");
     }
@@ -136,4 +136,10 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 		return to_return;
 		//return menupp.entrees[id];
 	}
+	    
+    /** Setter for the gui manager. */
+    public void setGUIManager(GUIManager guiManager)
+    {
+        mGUIManager = guiManager;
+    }
 }

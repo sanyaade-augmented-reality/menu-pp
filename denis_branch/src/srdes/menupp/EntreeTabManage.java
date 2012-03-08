@@ -23,14 +23,13 @@ public class EntreeTabManage extends TabActivity {
 	    // Create an Intent to launch an Activity for the tab (to be reused)
 	    intent = new Intent().setClass(this, ViewEntree.class);
 	    Bundle extras = getIntent().getExtras();
-	    //int textureId = extras.getInt("key_entree_id");
-	    intent.putExtras(extras);
-	    /*if(extras != null){
-	    	intent.putExtra("key_entree_id", extras.getInt("key_entree_id"));
+
+	    if(extras != null){
+	         intent.putExtras(extras);
 	    } else {
-	    	DebugLog.LOGD("No extras found");
+	    	DebugLog.LOGD("null extras");
 	    }
-	    */
+	    
 	    DebugLog.LOGD("setting tabs");
 	    // Initialize a TabSpec for each tab and add it to the TabHost
 	    spec = tabHost.newTabSpec("entree").setIndicator("Entree",
@@ -40,6 +39,11 @@ public class EntreeTabManage extends TabActivity {
 
 	    DebugLog.LOGD("setting intent for other tab");
 	    intent = new Intent().setClass(this, ViewReview.class);
+	    if(extras != null){
+	         intent.putExtras(extras);
+	    } else {
+	    	DebugLog.LOGD("null extras");
+	    }
 	    spec = tabHost.newTabSpec("reviews").setIndicator("Reviews",
 	                      res.getDrawable(R.drawable.ic_tab_reviews))
 	                  .setContent(intent);

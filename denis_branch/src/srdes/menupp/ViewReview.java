@@ -31,16 +31,31 @@ public class ViewReview extends ListActivity {
         super.onCreate(savedInstanceState);
                
         // Set the app view
+        String entree = getEntreeName();
         setContentView(R.layout.reviews_list); 
         dbHelper = new EntreeDbAdapter(this);
         dbHelper.open();
-        fillData();
+        fillData(entree);
         registerForContextMenu(getListView());
     }
+    
+    private String getEntreeName(){
+    	int textureId = getIntent().getIntExtra("key_entree_id", -1);
+    	if(textureId == -1){
+    		DebugLog.LOGD("key_entree_id not found");
+    	}
+    	DebugLog.LOGD("tracking texture: " + Integer.toString(textureId));
+    	Entree cur_entree = ViewEntree.findEntreeById(textureId);
+    	if(cur_entree == null){
+    		DebugLog.LOGD("null cur_entree");
+    		cur_entree.getName();	//to exit here for obvious error message
+    	}
+    	return cur_entree.getName();
+    }
 
-    private void fillData() {
+    private void fillData(String entree) {
         // Get all of the rows from the database and create the item list
-        Cursor notesCursor = dbHelper.fetchAllReviews();
+        Cursor notesCursor = dbHelper.fetchAllReviews(entree);
         startManagingCursor(notesCursor);
 
         // Create an array to specify the fields we want to display in the list (only TITLE)
@@ -66,7 +81,8 @@ public class ViewReview extends ListActivity {
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch(item.getItemId()) {
             case INSERT_ID:
-                createNote();
+            	String entree = getEntreeName();
+                createNote(entree);
                 return true;
         }
 
@@ -91,24 +107,26 @@ public class ViewReview extends ListActivity {
         return super.onContextItemSelected(item);
     }
 
-    private void createNote() {
+    private void createNote(String entree) {
         Intent i = new Intent(this, EntreeEdit.class);
+        i.putExtra("key_entree_name", entree);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        Intent i = new Intent(this, EntreeEdit.class);
+        Intent i = new Intent(this, SingleReview.class);
+    	i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.putExtra(dbHelper.KEY_ROWID, id);
-        startActivityForResult(i, ACTIVITY_EDIT);
+        startActivity(i);
     }
-
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         fillData();
-    }
+    }*/
 
    /** Called when the activity will start interacting with the user.*/
     protected void onResume()

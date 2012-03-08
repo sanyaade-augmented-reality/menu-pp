@@ -39,18 +39,20 @@ public class EntreeEdit extends Activity {
         setContentView(R.layout.review_create);
         setTitle(R.string.review_write);
 
-        mTitleText = (EditText) findViewById(R.id.title);
-        mBodyText = (EditText) findViewById(R.id.body);
+        mTitleText = (EditText) findViewById(R.id.review_title);
+        mBodyText = (EditText) findViewById(R.id.review_body);
 
         Button confirmButton = (Button) findViewById(R.id.confirm);
 
+        DebugLog.LOGD("getting row id");
         mRowId = (savedInstanceState == null) ? null : (Long) savedInstanceState.getSerializable(EntreeDbAdapter.KEY_ROWID);
         if(mRowId == null){
         	Bundle extras = getIntent().getExtras();
         	mRowId = (extras != null) ? extras.getLong(EntreeDbAdapter.KEY_ROWID) : null;
         }
 
-        populateFields();
+        DebugLog.LOGD("row id is " + mRowId);
+       // populateFields();
         confirmButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
@@ -64,21 +66,47 @@ public class EntreeEdit extends Activity {
     private void populateFields(){
     	if(mRowId != null){
     		Cursor note = mDbHelper.fetchReview(mRowId);
+    		DebugLog.LOGD("starting to manage cursor");
     		startManagingCursor(note);
-    		mTitleText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_TITLE)));
-    		mBodyText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_BODY)));
+    		if(note == null){
+    			DebugLog.LOGD("null note");
+    		}
+    		DebugLog.LOGD("setting texts");
+    		int columnIndex = note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_TITLE);
+    		DebugLog.LOGD("column index of title is " + columnIndex);
+    		String text = note.getString(columnIndex);
+    		DebugLog.LOGD("printing to view: " + text);
+    		mTitleText.setText(text);
+    		DebugLog.LOGD("column index of body is " + columnIndex);
+    		columnIndex = note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_BODY);
+    		mBodyText.setText(note.getString(columnIndex));
+    		DebugLog.LOGD("Texts set");
     	}
     }
     
     protected void onSavedInstanceState(Bundle outState){
     	super.onSaveInstanceState(outState);
-    	saveState();
+    	Bundle extras = getIntent().getExtras();
+    	String entree = null;
+    	if(extras != null){
+    		entree = extras.getString("key_entree_name");
+    	} else {
+    		DebugLog.LOGD("null extras");
+    	}
+    	saveState(entree);
     	outState.putSerializable(EntreeDbAdapter.KEY_ROWID, mRowId);
     }
     
     protected void onPause(){
     	super.onPause();
-    	saveState();
+    	Bundle extras = getIntent().getExtras();
+    	String entree = null;
+    	if(extras != null){
+    		entree = extras.getString("key_entree_name");
+    	} else {
+    		DebugLog.LOGD("null extras");
+    	}
+    	saveState(entree);
     }
     
     protected void onResume(){
@@ -86,12 +114,12 @@ public class EntreeEdit extends Activity {
     	populateFields();
     }
     
-    private void saveState(){
+    private void saveState(String entree){
     	String title = mTitleText.getText().toString();
     	String body = mBodyText.getText().toString();
 
     	if(mRowId == null){
-    		long id = mDbHelper.createReview(title, body);
+    		long id = mDbHelper.createReview(title, body, entree);
     		if(id > 0){
     			mRowId = id;
     		}

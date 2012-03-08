@@ -105,6 +105,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ViewReview"></activity>
+        <activity android:name=".SingleReview"></activity>
 
     </application>
     
@@ -177,4 +178,5 @@
      -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
+    <supports-screens android:anyDensity="true" />
 </manifest>

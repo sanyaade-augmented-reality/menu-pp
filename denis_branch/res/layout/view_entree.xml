@@ -19,24 +19,22 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        android:text="@string/entree_name"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="30dp" />
-   <!-- <ImageView
-        android:id="@+id/result_icon"        
+   <ImageView
+        android:id="@+id/entree_image"        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="6dip"
-        android:src="@drawable/enchiladas"/>-->	
-	<TextView android:id="@+id/text1"
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="30dp"
-		android:text="@string/entree_description" 
-		android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="10dp" />
-
+        android:layout_marginRight="6dip"/>	
+   <TextView
+        android:id="@+id/entree_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="15dp" />
+   
 	</LinearLayout>
 	</ScrollView>
 

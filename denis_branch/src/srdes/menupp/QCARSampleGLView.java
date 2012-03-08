@@ -161,7 +161,7 @@ public class QCARSampleGLView extends GLSurfaceView
         public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display)
         {
             if (mUseOpenGLES2)
-            {
+            {            	
                 // This EGL config specification is used to specify 2.0
                 // rendering. We use a minimum size of 4 bits for
                 // red/green/blue, but will perform actual matching in
