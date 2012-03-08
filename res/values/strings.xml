@@ -25,5 +25,6 @@
     <string-array name="menus">
     	<item>Demo Menu</item>
     </string-array>
+    <string name="about_us_details">We are a senior design group in the Electrical and Computer Engineering department of The University of Texas at Austin. Our team consists of Aaron Alaniz, Dustin Behnke, Jason Chang, Denis Sokolov and Larry Zhao. Our faculty mentor is Dr. Nan Sun.</string>
 
 </resources>
