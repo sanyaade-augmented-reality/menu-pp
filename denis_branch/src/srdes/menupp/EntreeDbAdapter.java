@@ -150,7 +150,7 @@ public class EntreeDbAdapter {
 
 	    	DebugLog.LOGD("preparing query");
 	        Cursor mCursor =
-	            mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
+	            mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID,
 	                    KEY_TITLE, KEY_BODY, KEY_ENTREE}, KEY_ROWID + "=" + rowId, null,
 	                    null, null, null, null);
 	        if (mCursor != null) {

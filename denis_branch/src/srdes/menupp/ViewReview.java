@@ -133,8 +133,6 @@ public class ViewReview extends ListActivity {
     {
         DebugLog.LOGD("ViewEntree::onResume");
         super.onResume();
-        
- 
     }
 
     /** Called when the system is about to start resuming a previous activity.*/
