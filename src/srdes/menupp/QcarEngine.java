@@ -20,7 +20,9 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-
+/**
+ * \brief QCAR Engine.
+ */
 public class QcarEngine extends Activity {
 
 	// Possible states of qcar engine

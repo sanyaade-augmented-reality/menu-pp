@@ -8,7 +8,9 @@ package srdes.menupp;
 
 import android.util.Log;
 
-/** DebugLog is a support class for the QCAR samples applications.
+/** \brief Used for debug logs.
+ * 
+ * DebugLog is a support class for the QCAR samples applications.
  * 
  *  Exposes functionality for logging.
  *  
