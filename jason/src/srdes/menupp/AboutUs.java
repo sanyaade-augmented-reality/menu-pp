@@ -3,6 +3,7 @@ package srdes.menupp;
 import android.app.Activity;
 import android.os.Bundle;
 
+
 public class AboutUs extends Activity {
 	
 	@Override

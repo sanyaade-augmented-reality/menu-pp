@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -47,8 +48,12 @@ public class QcarEngine extends Activity {
 	
 	// Our Default Activity View
 	private static View qcarView;
+	
     // Our OpenGL view:
     public static QCARSampleGLView mGlView;
+    
+    // Gui Manager
+    private GUIManager mGUIManager;
     
 	// Textures for application
 	private static Vector<Texture> mTextures;
@@ -127,6 +132,11 @@ public class QcarEngine extends Activity {
             mGlView.setVisibility(View.VISIBLE);
             mGlView.onResume();
         } 
+        
+        if (mGUIManager != null)
+        {
+            mGUIManager.initButtons();
+        }
 	}
 
 	@Override
@@ -148,6 +158,11 @@ public class QcarEngine extends Activity {
         }
         // QCAR-specific pause operation
         QCAR.onPause();
+        
+        if (mGUIManager != null)
+        {
+            mGUIManager.deinitButtons();
+        }
         
         if (qcarStatus == QCAR_CAMERA_RUNNING)
         {
@@ -252,7 +267,8 @@ public class QcarEngine extends Activity {
             // garbage collector will actually be run.
             System.gc();
             
-            int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            //int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             
             // Apply screen orientation
             setRequestedOrientation(screenOrientation);
@@ -273,6 +289,12 @@ public class QcarEngine extends Activity {
             addContentView(mGlView, new LayoutParams(
                             LayoutParams.FILL_PARENT,
                             LayoutParams.FILL_PARENT));
+            
+            addContentView(mGUIManager.getOverlayView(), new LayoutParams(
+                    LayoutParams.FILL_PARENT,
+                    LayoutParams.FILL_PARENT));
+            
+            mGUIManager.initButtons();
             
             // Start the camera:
             updateQcarStatus(QCAR_CAMERA_RUNNING);
@@ -303,6 +325,11 @@ public class QcarEngine extends Activity {
         mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));     
+        mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("enchiladas.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));
         
         mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
@@ -310,8 +337,11 @@ public class QcarEngine extends Activity {
         mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));
-
-        
+        mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("hotdog_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));    
     }
     
     /** Configure QCAR with the desired version of OpenGL ES. */
@@ -349,6 +379,9 @@ public class QcarEngine extends Activity {
         
         mRenderer = new menuppRenderer();
         mGlView.setRenderer(mRenderer);
+        
+        mGUIManager = new GUIManager(getApplicationContext());
+        mRenderer.setGUIManager(mGUIManager);
  
     }
     
@@ -361,11 +394,8 @@ public class QcarEngine extends Activity {
         menu.add("Toggle flash");
         menu.add("Autofocus");
         
-        SubMenu focusModes = menu.addSubMenu("Focus Modes");
-        focusModes.add("Auto Focus").setCheckable(true);
-        focusModes.add("Fixed Focus").setCheckable(true);
-        focusModes.add("Infinity").setCheckable(true);
-        focusModes.add("Macro Mode").setCheckable(true);
+
+
         
         return true;
     }
@@ -552,5 +582,4 @@ public class QcarEngine extends Activity {
             updateQcarStatus(QCAR_INITED);
         }
     }
-
 }
