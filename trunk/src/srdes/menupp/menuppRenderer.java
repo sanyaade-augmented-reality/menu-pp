@@ -89,11 +89,43 @@ public class menuppRenderer implements GLSurfaceView.Renderer
         renderFrame();
     }
     
-    public void entreeTabManage(String trackableName) {
+    public void entreeTabManage(int textureId) {
     	Intent intent = new Intent (context, EntreeTabManage.class);
+    	DebugLog.LOGD("Putting extra " + textureId);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    	intent.putExtra("key_entree_id", textureId);
     	context.startActivity(intent);
     }
+    
+    public void initTargetInfo(int size){
+    	menupp.entrees = new Entree[size];
+		menupp.entreeIndex = 0;
+		for(int i = 0; i < size; i++){
+			menupp.entrees[i] = new Entree();
+		}
+        DebugLog.LOGD("Entree array created with size" + Integer.toString(size));
+    }
+    
+    public void addTargetsInfo(String [] names, int [] ids){
+    	menupp.entrees = new Entree[ids.length];
+        DebugLog.LOGD("Entree array created with size " + Integer.toString(menupp.entrees.length) + " array length " + Integer.toString(names.length) + " " + Integer.toString(ids.length));
+		for(int i = 0; i < menupp.entrees.length; i++){
+	        DebugLog.LOGD("Creating entree " + names[i] + " with id " + ids[i]);
+	        menupp.entrees[i] = new Entree(names[i], ids[i], i);
+		}
+		DebugLog.LOGD("Finished initializing target info. Returning to native code.");
+    }
+	
+	public static Entree findEntreeById(int id){
+		Entree to_return = null;
+		for(int i = 0; i < menupp.entrees.length; i++){
+			if(menupp.entrees[i].getId() == id){
+				to_return = menupp.entrees[i];
+				break;
+			}
+		}
+		return to_return;
+	}
     
     /** Called from native to display a message. */
     public void displayMessage(String text)
