@@ -42,6 +42,7 @@
 #include "CubeShaders.h"
 #include "EntreeTarget.h"
 #include "Menupp.h"
+#include "SampleMath.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -58,7 +59,7 @@ bool updateBtns                   = false;
 const int NUM_BUTTONS             = 5;
 
 // Touch screen button
-bool itemSelected 				  = false;
+bool displayedMessage 			  = false;
 
 // Texture defines
 int textureCount                = 0;
@@ -85,6 +86,10 @@ unsigned int screenHeight       = 0;
 float halfScreenWidth 			= 0;
 float halfScreenHeight			= 0;
 
+// Parameters to internalize Java environment
+JNIEnv* javaEnv;
+jobject javaObj;
+jclass javaClass;
 
 // Indicates whether screen is in portrait (true) or landscape (false) mode
 bool isActivityInPortraitMode   = false;
@@ -98,17 +103,6 @@ QCAR::Matrix44F modelViewMatrices[4];
 
 QCAR::Matrix44F viewProjection;
 
-int activeMask = 0;
-
-// Constants
-static const float kObjectScale = 300;
-
-// Function prototypes
-bool linePlaneIntersection(QCAR::Vec3F lineStart, QCAR::Vec3F lineEnd,
-                      QCAR::Vec3F planeNormal,QCAR::Vec3F &intersection,
-                      QCAR::Vec3F v0, QCAR::Vec3F v1, QCAR::Vec3F v2);
-
-
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
 {
@@ -117,6 +111,31 @@ Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
 #else
     return 2;
 #endif
+}
+
+void displayMessage(char* message)
+{
+    // Use the environment and class stored in initNativeCallback
+    // to call a Java method that displays a message via a toast
+    jstring js = javaEnv->NewStringUTF(message);
+    jmethodID method = javaEnv->GetMethodID(javaClass, "displayMessage", "(Ljava/lang/String;)V");
+    javaEnv->CallVoidMethod(javaObj, method, js);
+}
+
+JNIEXPORT void JNICALL
+Java_srdes_menupp_menuppRenderer_initNativeCallback(JNIEnv* env, jobject obj)
+{
+    // Store the java environment for later use
+    // Note that this environment is only safe for use in this thread
+    javaEnv = env;
+
+    // Store the calling object for later use
+    // Make a global reference to keep it valid beyond the scope of this function
+    javaObj = env->NewGlobalRef(obj);
+
+    // Store the class of the calling object for later use
+    jclass objClass = env->GetObjectClass(obj);
+    javaClass = (jclass) env->NewGlobalRef(objClass);
 }
 
 JNIEXPORT void JNICALL
@@ -272,6 +291,12 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+
+    // If this is our first time seeing the target, display a tip
+    if (!displayedMessage) {
+        displayMessage("Tap the screen to focus at anytime.");
+        displayedMessage = true;
+    }
 
     // Did we find any trackables this frame?
     for(int i = 0 ; i < state.getNumActiveTrackables() && i < textureCeiling; i++)
@@ -456,6 +481,7 @@ Java_srdes_menupp_QcarEngine_deinitApplicationNative(JNIEnv* env, jobject obj)
 {
     LOG("Java_srdes_menupp_menupp_deinitApplicationNative");
 
+    displayedMessage = false;
     // Release texture resources
     if (textures != 0)
     {    
@@ -470,8 +496,6 @@ Java_srdes_menupp_QcarEngine_deinitApplicationNative(JNIEnv* env, jobject obj)
         
         textureCount = 0;
     }
-
-    itemSelected = false;
 }
 
 
@@ -519,6 +543,8 @@ Java_srdes_menupp_QcarEngine_stopCamera(JNIEnv *, jobject)
 JNIEXPORT jboolean JNICALL
 Java_srdes_menupp_QcarEngine_toggleFlash(JNIEnv*, jobject, jboolean flash)
 {
+    jmethodID method = javaEnv->GetMethodID(javaClass, "toggleFlashButton", "()V");
+    javaEnv->CallVoidMethod(javaObj, method);
     return QCAR::CameraDevice::getInstance().setFlashTorchMode((flash==JNI_TRUE)) ? JNI_TRUE : JNI_FALSE;
 }
 
@@ -609,13 +635,10 @@ Java_srdes_menupp_GUIManager_nativeNext(JNIEnv* env, jobject obj)
 JNIEXPORT void JNICALL
 Java_srdes_menupp_GUIManager_nativeBack(JNIEnv* env, jobject obj)
 {
-	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + (entreeImageBase - MAX_TRACKABLES) + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
+	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + entreeImageBase + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
 	entreeNameBase = entreeImageBase + (textureCount / 2);
 	textureCeiling = ((textureCount / 2) - entreeImageBase < MAX_TRACKABLES) ?  (textureCount / 2 - entreeImageBase) : (MAX_TRACKABLES);
 }
-
-
-
 #ifdef __cplusplus
 }
 #endif
