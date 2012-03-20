@@ -22,5 +22,22 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/customarrowl"
      />
-    
+
+    <Button
+        android:id="@+id/flash_on_button"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/next_button"
+        android:background="@drawable/customflashon"/>
+        
+
+    <Button
+        android:id="@+id/flash_off_button"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/next_button"
+        android:background="@drawable/customflashoff"
+        android:visibility="gone"/>    
 </RelativeLayout>

@@ -57,9 +57,6 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     private Intent userGuide;
     private Intent aboutUs;
     
-    // The view to display the sample splash screen:
-    private View loaderScreen;
-    
     // Buttons relevant for the home screen
     private Button selectRestButton;
     private Button userGuideButton;
@@ -222,12 +219,6 @@ public class menupp extends Activity implements android.view.View.OnClickListene
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mScreenWidth = metrics.widthPixels;
         mScreenHeight = metrics.heightPixels;
-
-        // As long as this window is visible to the user, keep the device's
-        // screen turned on and bright.
-        getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
     
     
