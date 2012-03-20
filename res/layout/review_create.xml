@@ -10,8 +10,8 @@
 
 		<TextView android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
-			android:text="@string/review_title" />
-		<EditText android:id="@+id/title" 
+			android:text="@string/review_title_meta" />
+		<EditText android:id="@+id/review_title" 
 		  android:layout_width="wrap_content"
 			android:layout_height="wrap_content" 
 			android:layout_weight="1"/>
@@ -19,8 +19,8 @@
 
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" 
-		android:text="@string/review_body" />
-	<EditText android:id="@+id/body" android:layout_width="match_parent"
+		android:text="@string/review_body_meta" />
+	<EditText android:id="@+id/review_body" android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
 		android:scrollbars="vertical" />

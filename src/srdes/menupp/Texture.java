@@ -27,6 +27,7 @@ public class Texture
     public int mWidth;      /// The width of the texture.
     public int mHeight;     /// The height of the texture.
     public int mChannels;   /// The number of channels.
+    public String mName;	/// The name of the texture
     public byte[] mData;    /// The pixel data.
     
     /** Returns the raw data */
@@ -69,6 +70,7 @@ public class Texture
             texture.mHeight     = bitMap.getHeight();
             texture.mChannels   = 4;
             texture.mData       = dataBytes;
+            texture.mName 		= fileName.substring(0, fileName.length() - 4);
             
             return texture;
         }

@@ -14,6 +14,8 @@
 // Include files
 #include <jni.h>
 
+typedef char* string;
+
 // Forward declarations
 
 /// A utility class for textures.
@@ -33,6 +35,12 @@ public:
     /// Returns the height of the texture.
     unsigned int getHeight() const;
 
+    /// Returns the name of the texture.
+    string getName();
+
+    /// Returns the id of the texture.
+    unsigned int getId();
+
     /// Create a texture from a jni object:
     static Texture* create(JNIEnv* env, jobject textureObject);
  
@@ -41,6 +49,9 @@ public:
 
     /// The height of the texture.
     unsigned int mHeight;
+
+    /// The name of the texture
+    string mName;
 
     /// The number of channels of the texture.
     unsigned int mChannelCount;

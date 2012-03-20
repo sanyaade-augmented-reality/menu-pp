@@ -31,6 +31,7 @@ public class EntreeDbAdapter {
 	 	public static final String KEY_TITLE = "title";
 	    public static final String KEY_BODY = "body";
 	    public static final String KEY_ROWID = "_id";
+	    public static final String KEY_ENTREE = "entree";
 
 	    private static final String TAG = "EntreeDbAdapter";
 	    private DatabaseHelper mDbHelper;
@@ -41,7 +42,7 @@ public class EntreeDbAdapter {
 	     */
 	    private static final String DATABASE_CREATE =
 	        "create table entrees (_id integer primary key autoincrement, "
-	        + "title text not null, body text not null);";
+	        + "title text not null, body text not null, entree text not null);";
 
 	    private static final String DATABASE_NAME = "data";
 	    private static final String DATABASE_TABLE = "entrees";
@@ -109,10 +110,11 @@ public class EntreeDbAdapter {
 	     * @param body the body of the note
 	     * @return rowId or -1 if failed
 	     */
-	    public long createReview(String title, String body) {
+	    public long createReview(String title, String body, String entree) {
 	        ContentValues initialValues = new ContentValues();
 	        initialValues.put(KEY_TITLE, title);
 	        initialValues.put(KEY_BODY, body);
+	        initialValues.put(KEY_ENTREE, entree);
 
 	        return mDb.insert(DATABASE_TABLE, null, initialValues);
 	    }
@@ -133,10 +135,10 @@ public class EntreeDbAdapter {
 	     * 
 	     * @return Cursor over all notes
 	     */
-	    public Cursor fetchAllEntrees() {
+	    public Cursor fetchAllReviews(String entree) {
 
-	        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
-	                KEY_BODY}, null, null, null, null, null);
+	        return mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
+	                KEY_BODY, KEY_ENTREE}, KEY_ENTREE + "='" + entree + "'", null, null, null, null, null);
 	    }
 
 	    /**
@@ -146,18 +148,21 @@ public class EntreeDbAdapter {
 	     * @return Cursor positioned to matching note, if found
 	     * @throws SQLException if note could not be found/retrieved
 	     */
-	    public Cursor fetchEntree(long rowId) throws SQLException {
+	    public Cursor fetchReview(long rowId) throws SQLException {
 
+	    	DebugLog.LOGD("preparing query");
 	        Cursor mCursor =
-
-	            mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
-	                    KEY_TITLE, KEY_BODY}, KEY_ROWID + "=" + rowId, null,
+	            mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID,
+	                    KEY_TITLE, KEY_BODY, KEY_ENTREE}, KEY_ROWID + "=" + rowId, null,
 	                    null, null, null, null);
 	        if (mCursor != null) {
+	        	DebugLog.LOGD("found cursor, moving to first");
 	            mCursor.moveToFirst();
+	            DebugLog.LOGD("cursor moved to first");
+	        } else {
+	        	DebugLog.LOGD("null cursor");
 	        }
 	        return mCursor;
-
 	    }
 
 	    /**

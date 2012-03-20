@@ -12,8 +12,8 @@
     <string name="menu_list">Menu List</string>
     <string name="view_entree">Entree Title</string>
     <string name="no_reviews">Be the first to write a review!</string>
-    <string name="review_title">Title</string>
-    <string name="review_body">Review</string>
+    <string name="review_title_meta">Title</string>
+    <string name="review_body_meta">Review</string>
     <string name="confirm">Confirm</string>
     <string name="menu_insert">Add Review</string>
     <string name="review_write">Write a Review</string>
@@ -21,10 +21,24 @@
     <string name="entree_description">Insert description of entree here</string>
     <string name="next">Next</string>
     <string name="back">Back</string>
-    
+    <string name="entree_name">entree_name</string>
+    <string name="about_us_details">We are a senior design group in the Electrical and Computer Engineering department of The University of Texas at Austin. Our team consists of Aaron Alaniz, Dustin Behnke, Jason Chang, Denis Sokolov and Larry Zhao. Our faculty mentor is Dr. Nan Sun.</string>
+            
     <string-array name="menus">
     	<item>Demo Menu</item>
     </string-array>
-    <string name="about_us_details">We are a senior design group in the Electrical and Computer Engineering department of The University of Texas at Austin. Our team consists of Aaron Alaniz, Dustin Behnke, Jason Chang, Denis Sokolov and Larry Zhao. Our faculty mentor is Dr. Nan Sun.</string>
+    
+    <string-array name="descriptions">
+        <item>Chicken wrapped in a corn tortilla covered in a chipotle sauce and cheese with a side of rice and beans.</item>
+        <item>A hotdog in a bun covered with toppings of your choosing.</item>
+        <item>A round, flat piece of dough with tomato sauce, cheese, and other toppings of your choosing.</item>
+        <item>Pan-fried eggs with cheese and other toppings of your choosing.</item>
+        <item>A ground beef patty placed between two buns with toppings including lettuce, tomatoes, mustard, and others.</item>
+        <item>A round, flat piece of dough with tomato sauce, cheese, and other toppings of your choosing.</item>
+        <item>Pan-fried eggs with cheese and other toppings of your choosing.</item>
+        <item>A hotdog in a bun covered with toppings of your choosing.</item>
+        <item>Chicken wrapped in a corn tortilla covered in a chipotle sauce and cheese with a side of rice and beans.</item>
+        <item>A ground beef patty placed between two buns with toppings including lettuce, tomatoes, mustard, and others.</item>
+    </string-array>
 
 </resources>

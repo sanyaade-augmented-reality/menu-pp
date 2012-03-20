@@ -328,10 +328,10 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         if (button->isPressed())
         {
         	LOG("button was pressed!");
-        	jstring js = env->NewStringUTF(trackable->getName());
+        	//jstring js = env->NewStringUTF(trackable->getName());
             jclass javaClass = env->GetObjectClass(obj);
-            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(Ljava/lang/String;)V");
-            env->CallVoidMethod(obj, method, js);
+            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");
+            env->CallVoidMethod(obj, method, imgTexture->getId());
         }
 
         //  Position and size the plane for the entree description
@@ -565,6 +565,53 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_initRendering(
                                                     JNIEnv* env, jobject obj)
 {
+//    LOG("Java_srdes_menupp_menuppRenderer_initRendering");
+//
+//    // Define clear color
+//    glClearColor(0.0f, 0.0f, 0.0f, QCAR::requiresAlpha() ? 0.0f : 1.0f);
+//
+//    // Now generate the OpenGL texture objects and add settings
+//    for (int i = 0; i < textureCount; ++i)
+//    {
+//        glGenTextures(1, &(textures[i]->mTextureID));
+//        glBindTexture(GL_TEXTURE_2D, textures[i]->mTextureID);
+//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]->mWidth, textures[i]->mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)  textures[i]->mData);
+//    }
+//
+//    shaderProgramID     = Utils::createProgramFromBuffer(cubeMeshVertexShader, cubeFragmentShader);
+//    vertexHandle        = glGetAttribLocation(shaderProgramID, "vertexPosition");
+//    normalHandle        = glGetAttribLocation(shaderProgramID, "vertexNormal");
+//    textureCoordHandle  = glGetAttribLocation(shaderProgramID, "vertexTexCoord");
+//    mvpMatrixHandle     = glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
+//
+//    // OpenGL setup for Virtual Buttons
+//    vbShaderProgramID   = Utils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
+//    vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
+//
+//    // Render video background:
+//    QCAR::State state = QCAR::Renderer::getInstance().begin();
+//
+//	entreeCount = state.getNumTrackables();
+//	entreeImageBase = 0;
+//	entreeNameBase = entreeImageBase + (textureCount / 2);
+//	entreeTargets = new EntreeTarget*[entreeCount];
+//	string trackableName;
+//
+//	LOG("entree count %d", entreeCount);
+//	for (int i = 0, trackableId; i < entreeCount ; i++)
+//	{
+//		trackableName = (string) state.getTrackable(i)->getName();
+//		trackableId = state.getTrackable(i)->getId();
+//		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
+//		LOG("Created entree %s with id %d", trackableName, trackableId);
+//	}
+//	LOG("Passing target info to java code");
+//	env->CallVoid
+//	QCAR::Renderer::getInstance().end();
+//
+	//**********Denis Code********
     LOG("Java_srdes_menupp_menuppRenderer_initRendering");
 
     // Define clear color
@@ -593,20 +640,31 @@ Java_srdes_menupp_menuppRenderer_initRendering(
     // Render video background:
     QCAR::State state = QCAR::Renderer::getInstance().begin();
 
-	entreeCount = state.getNumTrackables();
-	entreeImageBase = 0;
-	entreeNameBase = entreeImageBase + (textureCount / 2);
-	entreeTargets = new EntreeTarget*[entreeCount];
-	string trackableName;
+    entreeImageBase = 0;
+    entreeNameBase = textureCount / 2;
+    entreeTargets = new EntreeTarget*[textureCount / 2];
 
-	LOG("entree count %d", entreeCount);
-	for (int i = 0, trackableId; i < entreeCount ; i++)
+	// Java types to be passed back to menuppRenderer
+	jclass jstringClass = env->FindClass("java/lang/String");
+	jintArray jids = env->NewIntArray(textureCount / 2);
+	jobjectArray jnames = env->NewObjectArray(textureCount / 2, jstringClass, env->NewStringUTF(""));
+	jclass javaClass = env->GetObjectClass(obj);
+	jmethodID method = env->GetMethodID(javaClass, "addTargetsInfo", "([Ljava/lang/String;[I)V");
+
+	LOG("entree count %d", textureCount / 2);
+	for (int i = 0 ; i < textureCount / 2 ; i++)
 	{
-		trackableName = (string) state.getTrackable(i)->getName();
-		trackableId = state.getTrackable(i)->getId();
+		string trackableName = (string) textures[i]->getName();
+		int trackableId = (int) textures[i]->getId();
 		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
+		LOG("Adding entree target info to java data structures");
+		env->SetIntArrayRegion(jids, i, 1, &trackableId);
+		env->SetObjectArrayElement(jnames, i, env->NewStringUTF(trackableName));
 		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
+
+	LOG("Passing target info to java code");
+	env->CallVoidMethod(obj, method, jnames, jids);
 	QCAR::Renderer::getInstance().end();
 }
 
