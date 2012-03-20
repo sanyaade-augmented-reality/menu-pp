@@ -125,6 +125,7 @@ public class GUIManager {
     {
         if (overlayView == null)
             return;
+        
         flashOnButton.setVisibility(View.VISIBLE);
         flashOffButton.setVisibility(View.INVISIBLE);
         
