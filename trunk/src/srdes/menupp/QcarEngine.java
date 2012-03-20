@@ -13,11 +13,13 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 /**
@@ -49,7 +51,8 @@ public class QcarEngine extends Activity {
 	private static int mQCARFlags;
 	
 	// Our Default Activity View
-	private static View qcarView;
+	private static View loaderView;
+	
 	
     // Our OpenGL view:
     public static QCARSampleGLView mGlView;
@@ -61,8 +64,7 @@ public class QcarEngine extends Activity {
 	private static Vector<Texture> mTextures;
 	
     private MenuItem checked;
-    private boolean mFlash = false;
-    private native boolean toggleFlash(boolean flash);
+    public static native boolean toggleFlash(boolean flash);
     private native boolean autofocus();
     private native boolean setFocusMode(int mode);
         
@@ -100,7 +102,7 @@ public class QcarEngine extends Activity {
 			
 			// Set the loader view
 			setContentView(R.layout.loader);
-			qcarView = findViewById(R.layout.loader);
+			loaderView = findViewById(R.id.loader_screen);
 			
 			// Query the QCAR initialization flags
 			mQCARFlags = getInitializationFlags();
@@ -111,6 +113,12 @@ public class QcarEngine extends Activity {
 			
 			updateQcarStatus(QCAR_INIT);
 		}
+		
+        // As long as this window is visible to the user, keep the device's
+        // screen turned on and bright.
+        getWindow().setFlags(
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
+            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
@@ -153,11 +161,12 @@ public class QcarEngine extends Activity {
         }
         
         // Turn flash off if it was left on
-        if (mFlash == true) {
-        	mFlash = !mFlash;
-            boolean result = toggleFlash(mFlash);
-            DebugLog.LOGI("Toggle flash "+(mFlash?"ON":"OFF")+" "+(result?"WORKED":"FAILED")+"!!");
+        if (GUIManager.mFlash == true) {
+        	mGUIManager.mFlash = !mGUIManager.mFlash;
+            boolean result = toggleFlash(mGUIManager.mFlash);
+            DebugLog.LOGI("Toggle flash "+(mGUIManager.mFlash?"ON":"OFF")+" "+(result?"WORKED":"FAILED")+"!!");
         }
+        
         // QCAR-specific pause operation
         QCAR.onPause();
         
@@ -165,11 +174,7 @@ public class QcarEngine extends Activity {
         {
             mGUIManager.deinitButtons();
         }
-        
-        if (qcarStatus == QCAR_CAMERA_RUNNING)
-        {
-            updateQcarStatus(QCAR_CAMERA_RUNNING);
-        }
+
 	}
 
     /** The final call you receive before your activity is destroyed.*/
@@ -186,11 +191,15 @@ public class QcarEngine extends Activity {
             mInitQCARTask = null;
         }
         
-        if (mLoadTrackerTask != null &&
-            mLoadTrackerTask.getStatus() != LoadTrackerTask.Status.FINISHED)
+        if (mLoadTrackerTask != null && mLoadTrackerTask.getStatus() != LoadTrackerTask.Status.FINISHED)
         {
             mLoadTrackerTask.cancel(true);
             mLoadTrackerTask = null;
+        }
+        
+        if (qcarStatus == QCAR_CAMERA_RUNNING)
+        {
+            updateQcarStatus(QCAR_CAMERA_STOPPED);
         }
         
         // Do application deinitialization in native code
@@ -202,9 +211,7 @@ public class QcarEngine extends Activity {
                 
         // Deinitialize QCAR SDK
         QCAR.deinit();
-        
-        System.gc();
-        
+        System.gc();        
     }
 	
 	public synchronized void updateQcarStatus(int status) {
@@ -270,7 +277,6 @@ public class QcarEngine extends Activity {
             System.gc();
             
             int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-            //int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             
             // Apply screen orientation
             setRequestedOrientation(screenOrientation);
@@ -283,7 +289,9 @@ public class QcarEngine extends Activity {
 
             // Native post initialization:
             onQCARInitializedNative();
-               
+                           
+            loaderView.setVisibility(View.INVISIBLE);
+            
             // Now add the GL surface view. It is important
             // that the OpenGL ES surface view gets added
             // BEFORE the camera is started and video
@@ -385,63 +393,6 @@ public class QcarEngine extends Activity {
         mGUIManager = new GUIManager(getApplicationContext());
         mRenderer.setGUIManager(mGUIManager);
  
-    }
-    
-    /** Invoked the first time when the options menu is displayed to give
-     *  the Activity a chance to populate its Menu with menu items. */
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        super.onCreateOptionsMenu(menu);
-        
-        menu.add("Toggle flash");
-        menu.add("Autofocus");
-        
-
-
-        
-        return true;
-    }
-    
-    /** Invoked when the user selects an item from the Menu */
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        if(item.getTitle().equals("Toggle flash"))
-        {
-            mFlash = !mFlash;
-            boolean result = toggleFlash(mFlash);
-            DebugLog.LOGI("Toggle flash "+(mFlash?"ON":"OFF")+" "+(result?"WORKED":"FAILED")+"!!");
-        }
-        else if(item.getTitle().equals("Autofocus"))
-        {
-            boolean result = autofocus();
-            DebugLog.LOGI("Autofocus requested"+(result?" successfully.":".  Not supported in current mode or on this device."));
-        }
-        else 
-        {
-            int arg = -1;
-            if(item.getTitle().equals("Auto Focus"))
-                arg = 0;
-            if(item.getTitle().equals("Fixed Focus"))
-                arg = 1;
-            if(item.getTitle().equals("Infinity"))
-                arg = 2;
-            if(item.getTitle().equals("Macro Mode"))
-                arg = 3;
-            
-            if(arg != -1)
-            {
-                item.setChecked(true);
-                if(checked!= null)
-                    checked.setChecked(false);
-                checked = item;
-                
-                boolean result = setFocusMode(arg);
-                
-                DebugLog.LOGI("Requested Focus mode "+item.getTitle()+(result?" successfully.":".  Not supported on this device."));
-            }
-        }
-        
-        return true;
     }
     
     /** Returns the number of registered textures. */
@@ -583,5 +534,13 @@ public class QcarEngine extends Activity {
             // Done loading the tracker, update application status: 
             updateQcarStatus(QCAR_INITED);
         }
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        boolean result = autofocus();
+        DebugLog.LOGI("Autofocus requested"+(result?" successfully.":".  Not supported in current mode or on this device."));
+    	return true;
     }
 }
