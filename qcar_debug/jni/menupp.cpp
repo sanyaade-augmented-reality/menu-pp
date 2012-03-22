@@ -335,6 +335,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
             jclass javaClass = env->GetObjectClass(obj);
             jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(Ljava/lang/String;)V");
             env->CallVoidMethod(obj, method, js);
+            break;
         }
         
         //  Position and size the plane for the entree description
