@@ -14,7 +14,9 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-/** Texture is a support class for the QCAR samples applications.
+/**\brief Support class for QCAR samples. 
+ * 
+ * Texture is a support class for the QCAR samples applications.
  * 
  *  Exposes functionality for loading a texture from the APK.
  *  
@@ -25,6 +27,7 @@ public class Texture
     public int mWidth;      /// The width of the texture.
     public int mHeight;     /// The height of the texture.
     public int mChannels;   /// The number of channels.
+    public String mName;	/// The name of the texture
     public byte[] mData;    /// The pixel data.
     
     /** Returns the raw data */
@@ -67,6 +70,7 @@ public class Texture
             texture.mHeight     = bitMap.getHeight();
             texture.mChannels   = 4;
             texture.mData       = dataBytes;
+            texture.mName 		= fileName.substring(0, fileName.length() - 4);
             
             return texture;
         }

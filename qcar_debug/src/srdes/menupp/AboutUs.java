@@ -3,7 +3,11 @@ package srdes.menupp;
 import android.app.Activity;
 import android.os.Bundle;
 
-
+/**
+ *\brief Class that displays about us page.
+ * 
+ * Class that displays the about us page.
+ */
 public class AboutUs extends Activity {
 	
 	@Override

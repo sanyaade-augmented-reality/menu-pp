@@ -22,7 +22,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-
+/**
+ * \brief QCAR Engine.
+ */
 public class QcarEngine extends Activity {
 
 	// Possible states of qcar engine
@@ -50,6 +52,7 @@ public class QcarEngine extends Activity {
 	
 	// Our Default Activity View
 	private static View loaderView;
+	
 	
     // Our OpenGL view:
     public static QCARSampleGLView mGlView;
@@ -171,6 +174,7 @@ public class QcarEngine extends Activity {
         {
             mGUIManager.deinitButtons();
         }
+
 	}
 
     /** The final call you receive before your activity is destroyed.*/
@@ -390,7 +394,7 @@ public class QcarEngine extends Activity {
         mRenderer.setGUIManager(mGUIManager);
  
     }
-   
+    
     /** Returns the number of registered textures. */
     public int getTextureCount()
     {
