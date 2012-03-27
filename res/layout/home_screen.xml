@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
-    android:background="@drawable/menuppmain"
+    android:background="@drawable/menuppsplashalt2"
     android:gravity="center"
     >
     
@@ -11,16 +11,16 @@
 
     <Button
         android:id="@+id/select_rest"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:alpha="1"
         android:background="@drawable/customselectr" />
     <Button
         android:id="@+id/user_guide"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
         android:layout_gravity="center"
         android:layout_marginTop="25dp"
         android:alpha="1"
@@ -28,8 +28,8 @@
 
     <Button
         android:id="@+id/about_us"
-        android:layout_width="250dp"
-        android:layout_height="50dp"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
         android:layout_gravity="center"
         android:layout_marginTop="25dp"
         android:alpha="1"
