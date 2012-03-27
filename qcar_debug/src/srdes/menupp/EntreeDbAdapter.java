@@ -16,6 +16,23 @@
 
 package srdes.menupp;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -110,7 +127,61 @@ public class EntreeDbAdapter {
 	     * @param body the body of the note
 	     * @return rowId or -1 if failed
 	     */
+	    private final String INSERT_REVIEW_SCRIPT = "http://www.jsl.grid.webfactional.com/insert_review.php";
 	    public long createReview(String title, String body, String entree) {
+	        //***************External DB Code*********
+	    	InputStream is = null;
+	    	String result = null;
+	        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	        nameValuePairs.add(new BasicNameValuePair("title", title));
+	        nameValuePairs.add(new BasicNameValuePair("body", body));
+	        nameValuePairs.add(new BasicNameValuePair("entree", entree));
+
+	        //http post
+	        try{
+	                HttpClient httpclient = new DefaultHttpClient();
+	                HttpPost httppost = new HttpPost(INSERT_REVIEW_SCRIPT);
+	                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	                HttpResponse response = httpclient.execute(httppost);
+	                HttpEntity entity = response.getEntity();
+	                is = entity.getContent();
+	        }catch(Exception e){
+	                DebugLog.LOGD("Error in http connection "+e.toString());
+	        }
+//XXX - May not need this code but you could add error checking with db connection
+	        //convert response to string 
+//	        try{
+//	                BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
+//	                StringBuilder sb = new StringBuilder();
+//	                String line = null;
+//	                while ((line = reader.readLine()) != null) {
+//	                        sb.append(line + "\n");
+//	                }
+//	                is.close();
+//	                result = sb.toString();
+//	        }catch(Exception e){
+//	                DebugLog.LOGD("Error converting result "+e.toString());
+//	        }
+//	        
+//	        //parse json data
+//	        try{
+//	                JSONArray jArray = new JSONArray(result);
+//	                for(int i = 0 ; i < jArray.length() ;i++ ){
+//	                        JSONObject json_data = jArray.getJSONObject(i);
+//
+//	                        String title = json_data.getString("Title");
+//	                        String body = json_data.getString("Body");
+//	                        int id = json_data.getInt("Id");
+//	                        String entreeName = json_data.getString("Entree");
+//	                        
+//	                        //Get an output to the screen
+//	                        DebugLog.LOGD("Found Review " + title + " for " + entreeName + " with id " + id);
+//	                        DebugLog.LOGD("Body of review: " + body);
+//	                }
+//	        }catch(JSONException e){
+//	                DebugLog.LOGD("Error parsing data "+e.toString());
+//	        }
+	        //***************End External DB Code*********
 	        ContentValues initialValues = new ContentValues();
 	        initialValues.put(KEY_TITLE, title);
 	        initialValues.put(KEY_BODY, body);
