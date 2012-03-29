@@ -19,6 +19,8 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <unistd.h>
+#include <time.h>
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -48,6 +50,8 @@
 extern "C"
 {
 #endif
+
+bool buttonPressed = false;
 
 // OpenGL ES 2.0 specific (Virtual Buttons):
 unsigned int vbShaderProgramID  = 0;
@@ -97,11 +101,15 @@ bool isActivityInPortraitMode   = false;
 // The projection matrix used for rendering virtual objects:
 QCAR::Matrix44F projectionMatrix;
 
-QCAR::Matrix44F inverseProjMatrix;
-
-QCAR::Matrix44F modelViewMatrices[4];
-
-QCAR::Matrix44F viewProjection;
+// timer
+static time_t updateBegin;
+static time_t updateEnd;
+static double updateTimeUsed = 3.5;
+static bool captureUpdateTime = false;
+static time_t focusBegin;
+static time_t focusEnd;
+static time_t focusTimeUsed = 3.5;
+static bool captureFocusTime = false;
 
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
@@ -239,27 +247,26 @@ class VirtualButton_UpdateCallback : public QCAR::UpdateCallback
 
             if (buttonMask & BUTTON_1)
             {
-                LOG("Toggle enchilada button");
+                LOG("Toggle button 1");
 
                 toggleVirtualButton(imageTarget, "enchiladas", -180, 180, 180, -180);
-
             }
             if (buttonMask & BUTTON_2)
             {
-                LOG("Toggle hot dog button");
+                LOG("Toggle button 2");
 
                 toggleVirtualButton(imageTarget, "hotdog", -180, 180, 180, -180);
             }
             if (buttonMask & BUTTON_3)
             {
-                LOG("Toggle pizza button");
+                LOG("Toggle button 3");
 
                 toggleVirtualButton(imageTarget, "pizza", -180, 180, 180, -180);
             }
 
             if (buttonMask & BUTTON_4)
             {
-                LOG("Toggle omelete button");
+                LOG("Toggle button 4");
 
                 toggleVirtualButton(imageTarget, "omelete", -180, 180, 180, -180);
             }
@@ -298,6 +305,16 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         displayedMessage = true;
     }
 
+    if (captureUpdateTime)
+    {
+    	updateEnd = time(NULL);
+    	updateTimeUsed = ((double) updateEnd - updateBegin);
+    }
+
+    if (captureFocusTime) {
+    	focusEnd = time(NULL);
+    	focusTimeUsed = ((double) focusEnd - focusBegin);
+    }
     // Did we find any trackables this frame?
     for(int i = 0 ; i < state.getNumActiveTrackables() && i < textureCeiling; i++)
     {
@@ -325,13 +342,21 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		QCAR::Matrix44F entreeNameProjection;
 
         // If the button is pressed, than use this texture:
-        if (button->isPressed())
+        if (button->isPressed() && !buttonPressed && updateTimeUsed > 3 && focusTimeUsed > 3)
         {
-        	LOG("button was pressed!");
-        	//jstring js = env->NewStringUTF(trackable->getName());
-            jclass javaClass = env->GetObjectClass(obj);
-            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");
-            env->CallVoidMethod(obj, method, imgTexture->getId());
+			buttonPressed = true;
+			captureUpdateTime = false;
+			jclass javaClass = env->GetObjectClass(obj);
+			jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");
+			env->CallVoidMethod(obj, method, imgTexture->getId());
+
+			// Clean up
+			glDisable(GL_DEPTH_TEST);
+			glDisableVertexAttribArray(vertexHandle);
+			glDisableVertexAttribArray(normalHandle);
+			glDisableVertexAttribArray(textureCoordHandle);
+			QCAR::Renderer::getInstance().end();
+            return;
         }
 
         //  Position and size the plane for the entree description
@@ -405,13 +430,13 @@ void configureVideoBackground()
     
     if (isActivityInPortraitMode)
     {
-        //LOG("configureVideoBackground PORTRAIT");
+        LOG("configureVideoBackground PORTRAIT");
         config.mSize.data[0] = videoMode.mHeight * (screenHeight / (float)videoMode.mWidth);
         config.mSize.data[1] = screenHeight;
     }
     else
     {
-        //LOG("configureVideoBackground LANDSCAPE");
+        LOG("configureVideoBackground LANDSCAPE");
         config.mSize.data[0] = screenWidth;
         config.mSize.data[1] = videoMode.mHeight * (screenWidth / (float)videoMode.mWidth);
     }
@@ -434,6 +459,10 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
         
     // Handle to the activity class:
     jclass activityClass = env->GetObjectClass(obj);
+
+    // Register callback function that gets called every time a tracking cycle
+    // has finished and we have a new AR state avaible
+    QCAR::registerCallback(&qcarUpdate);
 
     jmethodID getTextureCountMethodID = env->GetMethodID(activityClass, "getTextureCount", "()I");
     if (getTextureCountMethodID == 0)
@@ -551,6 +580,8 @@ Java_srdes_menupp_QcarEngine_toggleFlash(JNIEnv*, jobject, jboolean flash)
 JNIEXPORT jboolean JNICALL
 Java_srdes_menupp_QcarEngine_autofocus(JNIEnv*, jobject)
 {
+	focusBegin = time(NULL);
+	captureFocusTime = true;
     return QCAR::CameraDevice::getInstance().startAutoFocus()?JNI_TRUE:JNI_FALSE;
 }
 
@@ -565,53 +596,6 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_initRendering(
                                                     JNIEnv* env, jobject obj)
 {
-//    LOG("Java_srdes_menupp_menuppRenderer_initRendering");
-//
-//    // Define clear color
-//    glClearColor(0.0f, 0.0f, 0.0f, QCAR::requiresAlpha() ? 0.0f : 1.0f);
-//
-//    // Now generate the OpenGL texture objects and add settings
-//    for (int i = 0; i < textureCount; ++i)
-//    {
-//        glGenTextures(1, &(textures[i]->mTextureID));
-//        glBindTexture(GL_TEXTURE_2D, textures[i]->mTextureID);
-//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]->mWidth, textures[i]->mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)  textures[i]->mData);
-//    }
-//
-//    shaderProgramID     = Utils::createProgramFromBuffer(cubeMeshVertexShader, cubeFragmentShader);
-//    vertexHandle        = glGetAttribLocation(shaderProgramID, "vertexPosition");
-//    normalHandle        = glGetAttribLocation(shaderProgramID, "vertexNormal");
-//    textureCoordHandle  = glGetAttribLocation(shaderProgramID, "vertexTexCoord");
-//    mvpMatrixHandle     = glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
-//
-//    // OpenGL setup for Virtual Buttons
-//    vbShaderProgramID   = Utils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
-//    vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
-//
-//    // Render video background:
-//    QCAR::State state = QCAR::Renderer::getInstance().begin();
-//
-//	entreeCount = state.getNumTrackables();
-//	entreeImageBase = 0;
-//	entreeNameBase = entreeImageBase + (textureCount / 2);
-//	entreeTargets = new EntreeTarget*[entreeCount];
-//	string trackableName;
-//
-//	LOG("entree count %d", entreeCount);
-//	for (int i = 0, trackableId; i < entreeCount ; i++)
-//	{
-//		trackableName = (string) state.getTrackable(i)->getName();
-//		trackableId = state.getTrackable(i)->getId();
-//		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
-//		LOG("Created entree %s with id %d", trackableName, trackableId);
-//	}
-//	LOG("Passing target info to java code");
-//	env->CallVoid
-//	QCAR::Renderer::getInstance().end();
-//
-	//**********Denis Code********
     LOG("Java_srdes_menupp_menuppRenderer_initRendering");
 
     // Define clear color
@@ -657,10 +641,8 @@ Java_srdes_menupp_menuppRenderer_initRendering(
 		string trackableName = (string) textures[i]->getName();
 		int trackableId = (int) textures[i]->getId();
 		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
-		LOG("Adding entree target info to java data structures");
 		env->SetIntArrayRegion(jids, i, 1, &trackableId);
 		env->SetObjectArrayElement(jnames, i, env->NewStringUTF(trackableName));
-		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
 
 	LOG("Passing target info to java code");
@@ -677,6 +659,12 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
     // Update screen dimensions
     screenWidth = width;
     screenHeight = height;
+
+    if (buttonPressed) {
+    	buttonPressed = false;
+    	captureUpdateTime = true;
+    	updateBegin = time(NULL);
+    }
 
     // Reconfigure the video background
     configureVideoBackground();
