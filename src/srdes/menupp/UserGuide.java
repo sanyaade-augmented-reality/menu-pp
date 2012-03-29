@@ -37,7 +37,7 @@ public class UserGuide extends Activity {
     	
     		 
             public int getCount() {
-                return 5;
+                return 6;
             }
      
             public Object instantiateItem(View collection, int position) {
@@ -48,19 +48,22 @@ public class UserGuide extends Activity {
                 int resId = 0;
                 switch (position) {
                 case 0:
-                    resId = R.layout.splash;
+                    resId = R.layout.slide1;
                     break;
                 case 1:
-                    resId = R.layout.splash;
+                    resId = R.layout.slide2;
                     break;
                 case 2:
-                    resId = R.layout.splash;
+                    resId = R.layout.slide3;
                     break;
                 case 3:
-                    resId = R.layout.splash;
+                    resId = R.layout.slide4;
                     break;
                 case 4:
-                    resId = R.layout.splash;
+                    resId = R.layout.slide5;
+                    break;
+                case 5:
+                    resId = R.layout.slide6;
                     break;
                 }
      
