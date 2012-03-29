@@ -1,22 +1,5 @@
 package srdes.menupp;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -72,60 +55,7 @@ public class ViewReview extends ListActivity {
     	return cur_entree.getName();
     }
 
-    private final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
-    
     private void fillData(String entree) {
-        //***************External DB Code*********
-    	InputStream is = null;
-    	String result = null;
-        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        nameValuePairs.add(new BasicNameValuePair("entree", entree));
-
-        //http post
-        try{
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httppost = new HttpPost(REVIEW_SELECTION_SCRIPT);
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity entity = response.getEntity();
-                is = entity.getContent();
-        }catch(Exception e){
-                DebugLog.LOGD("Error in http connection "+e.toString());
-        }
-        
-        //convert response to string
-        try{
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                        sb.append(line + "\n");
-                }
-                is.close();
-                result = sb.toString();
-        }catch(Exception e){
-                DebugLog.LOGD("Error converting result "+e.toString());
-        }
-        
-        //parse json data
-        try{
-                JSONArray jArray = new JSONArray(result);
-                for(int i = 0 ; i < jArray.length() ;i++ ){
-                        JSONObject json_data = jArray.getJSONObject(i);
-
-                        String title = json_data.getString("Title");
-                        String body = json_data.getString("Body");
-                        String entreeName = json_data.getString("Entree");
-                        
-                        //Get an output to the screen
-                        DebugLog.LOGD("Found Review " + title + " for " + entreeName);
-                        DebugLog.LOGD("Body of review: " + body);
-                }
-        }catch(JSONException e){
-                DebugLog.LOGD("Error parsing data "+e.toString());
-        }
-        //***************End External DB Code*********
-
         // Get all of the rows from the database and create the item list
         Cursor notesCursor = dbHelper.fetchAllReviews(entree);
         startManagingCursor(notesCursor);
@@ -139,7 +69,8 @@ public class ViewReview extends ListActivity {
         // Now create a simple cursor adapter and set it to display
         SimpleCursorAdapter notes = new SimpleCursorAdapter(this, R.layout.review_row, notesCursor, from, to);
         setListAdapter(notes);
-    }    
+    }
+    
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

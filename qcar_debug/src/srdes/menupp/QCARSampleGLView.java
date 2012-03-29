@@ -34,6 +34,7 @@ public class QCARSampleGLView extends GLSurfaceView
     {
         super(context);
     }
+
     
     /** Initialization. */
     public void init(int flags, boolean translucent, int depth, int stencil)
@@ -122,7 +123,8 @@ public class QCARSampleGLView extends GLSurfaceView
             DebugLog.LOGE(String.format("%s: EGL error: 0x%x", prompt, error));
         }
     }
-    
+
+
     /** The config chooser. */
     private static class ConfigChooser implements GLSurfaceView.EGLConfigChooser
     {
@@ -135,7 +137,8 @@ public class QCARSampleGLView extends GLSurfaceView
             mDepthSize = depth;
             mStencilSize = stencil;
         }
-  
+
+        
         private EGLConfig getMatchingConfig(EGL10 egl, EGLDisplay display,
             int[] configAttribs)
         {
