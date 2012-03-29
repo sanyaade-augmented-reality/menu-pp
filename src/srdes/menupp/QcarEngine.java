@@ -52,8 +52,7 @@ public class QcarEngine extends Activity {
 	
 	// Our Default Activity View
 	private static View loaderView;
-	
-	
+		
     // Our OpenGL view:
     public static QCARSampleGLView mGlView;
     
@@ -126,11 +125,12 @@ public class QcarEngine extends Activity {
 		DebugLog.LOGD("QcarEngine::onResume");
 		super.onResume();
 		
+		menuppRenderer.context = this;
+		menuppRenderer.buttonPressed = false;
+		
 		// QCAR-specific resume operation
 		QCAR.onResume();
-		
-		menuppRenderer.context = this;
-		
+        
         // We may start the camera only if the QCAR SDK has already been 
         // initialized
         if (qcarStatus == QCAR_CAMERA_STOPPED)
@@ -139,12 +139,14 @@ public class QcarEngine extends Activity {
         // Resume the GL view:
         if (mGlView != null)
         {
+        	DebugLog.LOGD("Setting opengl view as visible");
             mGlView.setVisibility(View.VISIBLE);
             mGlView.onResume();
         } 
         
         if (mGUIManager != null)
         {
+        	DebugLog.LOGD("Setting interface overlay as visible");
             mGUIManager.initButtons();
         }
 	}
@@ -153,11 +155,19 @@ public class QcarEngine extends Activity {
 	protected void onPause() {
 		DebugLog.LOGD("QcarEngine::onPause");
 		super.onPause();
-		
+        
         if (mGlView != null)
         {
             mGlView.setVisibility(View.INVISIBLE);
             mGlView.onPause();
+        }
+        
+        // QCAR-specific pause operation
+        QCAR.onPause();
+        
+        if (mGUIManager != null)
+        {
+            mGUIManager.deinitButtons();
         }
         
         // Turn flash off if it was left on
@@ -167,12 +177,9 @@ public class QcarEngine extends Activity {
             DebugLog.LOGI("Toggle flash "+(mGUIManager.mFlash?"ON":"OFF")+" "+(result?"WORKED":"FAILED")+"!!");
         }
         
-        // QCAR-specific pause operation
-        QCAR.onPause();
-        
-        if (mGUIManager != null)
+        if (qcarStatus == QCAR_CAMERA_RUNNING)
         {
-            mGUIManager.deinitButtons();
+            updateQcarStatus(QCAR_CAMERA_STOPPED);
         }
 
 	}
@@ -195,11 +202,6 @@ public class QcarEngine extends Activity {
         {
             mLoadTrackerTask.cancel(true);
             mLoadTrackerTask = null;
-        }
-        
-        if (qcarStatus == QCAR_CAMERA_RUNNING)
-        {
-            updateQcarStatus(QCAR_CAMERA_STOPPED);
         }
         
         // Do application deinitialization in native code
@@ -442,8 +444,7 @@ public class QcarEngine extends Activity {
 	        // initialization status:
 	        if (result)
 	        {
-	            DebugLog.LOGD("InitQCARTask::onPostExecute: QCAR initialization" +
-	                                                        " successful");
+	            DebugLog.LOGD("InitQCARTask::onPostExecute: QCAR initialization" + " successful");
 
 	            updateQcarStatus(QCAR_INIT_AR);
 	        }
@@ -517,8 +518,7 @@ public class QcarEngine extends Activity {
             
             return (progressValue > 0);
         }
-        
-        
+           
         protected void onProgressUpdate(Integer... values)
         {
             // Do something with the progress value "values[0]", e.g. update
@@ -540,7 +540,6 @@ public class QcarEngine extends Activity {
     public boolean onTouchEvent(MotionEvent event)
     {
         boolean result = autofocus();
-        DebugLog.LOGI("Autofocus requested"+(result?" successfully.":".  Not supported in current mode or on this device."));
     	return true;
     }
 }

@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
 import android.os.Message;
+import android.view.View;
 
 import com.qualcomm.QCAR.QCAR;
 
@@ -28,6 +29,7 @@ import com.qualcomm.QCAR.QCAR;
 public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;
+    public static boolean buttonPressed = false;
 
 	private GUIManager mGUIManager;
     
@@ -73,11 +75,9 @@ public class menuppRenderer implements GLSurfaceView.Renderer
         // Call QCAR function to handle render surface size changes:
         QCAR.onSurfaceChanged(width, height);
     }    
-    
-    
+        
     /** The native render function. */    
     public native void renderFrame();
-    
     
     /** Called to draw the current frame. */
     public void onDrawFrame(GL10 gl)
@@ -86,10 +86,13 @@ public class menuppRenderer implements GLSurfaceView.Renderer
             return;
 
         // Call our native function to render content
-        renderFrame();
+        if (!buttonPressed)
+        	renderFrame();
     }
     
     public void entreeTabManage(int textureId) {
+
+    	buttonPressed = true;
     	Intent intent = new Intent (context, EntreeTabManage.class);
     	DebugLog.LOGD("Putting extra " + textureId);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
