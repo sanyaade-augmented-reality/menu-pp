@@ -16,20 +16,41 @@
 
 package srdes.menupp;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
+/**
+ * \brief Database interface for entrees/reviews.
+ */
 public class EntreeDbAdapter {
 	
 	 	public static final String KEY_TITLE = "title";
 	    public static final String KEY_BODY = "body";
 	    public static final String KEY_ROWID = "_id";
 	    public static final String KEY_ENTREE = "entree";
+	    public static final String KEY_RATING = "rating";
 
 	    private static final String TAG = "EntreeDbAdapter";
 	    private DatabaseHelper mDbHelper;
@@ -40,9 +61,9 @@ public class EntreeDbAdapter {
 	     */
 	    private static final String DATABASE_CREATE =
 	        "create table entrees (_id integer primary key autoincrement, "
-	        + "title text not null, body text not null, entree text not null);";
+	        + "title text not null, body text not null, entree text not null, rating float not null);";
 
-	    private static final String DATABASE_NAME = "data";
+	    private static final String DATABASE_NAME = "data"; //"http://184.172.207.73/grid";
 	    private static final String DATABASE_TABLE = "entrees";
 	    private static final int DATABASE_VERSION = 2;
 
@@ -108,14 +129,36 @@ public class EntreeDbAdapter {
 	     * @param body the body of the note
 	     * @return rowId or -1 if failed
 	     */
-	    public long createReview(String title, String body, String entree) {
+	    public long createReview(String title, String body, String entree, float rating) {
 	        ContentValues initialValues = new ContentValues();
 	        initialValues.put(KEY_TITLE, title);
 	        initialValues.put(KEY_BODY, body);
 	        initialValues.put(KEY_ENTREE, entree);
+	        initialValues.put(KEY_RATING, rating);
 
 	        return mDb.insert(DATABASE_TABLE, null, initialValues);
 	    }
+	 /*   private final String INSERT_REVIEW_SCRIPT = "http://www.jsl.grid.webfactional.com/insert_review.php";
+	    public void createReview(String title, String body, String entree) {
+	    	InputStream is = null;
+	    	String result = null;
+	        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	        nameValuePairs.add(new BasicNameValuePair("title", title));
+	        nameValuePairs.add(new BasicNameValuePair("body", body));
+	        nameValuePairs.add(new BasicNameValuePair("entree", entree));
+
+	        //http post
+	        try{
+	                HttpClient httpclient = new DefaultHttpClient();
+	                HttpPost httppost = new HttpPost(INSERT_REVIEW_SCRIPT);
+	                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	                HttpResponse response = httpclient.execute(httppost);
+	                HttpEntity entity = response.getEntity();
+	                is = entity.getContent();
+	        }catch(Exception e){
+	                DebugLog.LOGD("Error in http connection "+e.toString());
+	        }
+	    }*/
 
 	    /**
 	     * Delete the note with the given rowId
@@ -136,8 +179,69 @@ public class EntreeDbAdapter {
 	    public Cursor fetchAllReviews(String entree) {
 
 	        return mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
-	                KEY_BODY, KEY_ENTREE}, KEY_ENTREE + "='" + entree + "'", null, null, null, null, null);
+	                KEY_BODY, KEY_ENTREE, KEY_RATING}, KEY_ENTREE + "='" + entree + "'", null, null, null, null, null);
 	    }
+	/*    private final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
+	    public Cursor fetchAllReviews(String entree) {
+	    	
+	    	InputStream is = null;
+	    	String result = null;
+	        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	        nameValuePairs.add(new BasicNameValuePair("entree", entree));
+
+	        //http post
+	        try{
+	                HttpClient httpclient = new DefaultHttpClient();
+	                HttpPost httppost = new HttpPost(REVIEW_SELECTION_SCRIPT);
+	                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	                HttpResponse response = httpclient.execute(httppost);
+	                HttpEntity entity = response.getEntity();
+	                is = entity.getContent();
+	        }catch(Exception e){
+	                DebugLog.LOGD("Error in http connection "+e.toString());
+	        }
+	        
+	        //convert response to string
+	        try{
+	                BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
+	                StringBuilder sb = new StringBuilder();
+	                String line = null;
+	                while ((line = reader.readLine()) != null) {
+	                        sb.append(line + "\n");
+	                }
+	                is.close();
+	                result = sb.toString();
+	        }catch(Exception e){
+	                DebugLog.LOGD("Error converting result "+e.toString());
+	        }
+	        
+	        Cursor notesCursor = new MatrixCursor(new String[]{"Title","Body","Entree"});//dbHelper.fetchAllReviews(entree);
+	        
+	        //parse json data
+	        try{
+	                JSONArray jArray = new JSONArray(result);
+	                for(int i = 0 ; i < jArray.length() ;i++ ){
+	                        JSONObject json_data = jArray.getJSONObject(i);
+
+	                        String title = json_data.getString("Title");
+	                        String body = json_data.getString("Body");
+	                        String entreeName = json_data.getString("Entree");
+	                        
+	                        ((MatrixCursor) notesCursor).addRow(new Object[]{title,body,entreeName});
+	                        
+	                        //Get an output to the screen
+	                        DebugLog.LOGD("Found Review " + title + " for " + entreeName);
+	                        DebugLog.LOGD("Body of review: " + body);
+	                }
+	        }catch(JSONException e){
+	                DebugLog.LOGD("Error parsing data "+e.toString());
+	        }
+	        
+	        return notesCursor;
+
+	       // return mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
+	      //          KEY_BODY, KEY_ENTREE}, KEY_ENTREE + "='" + entree + "'", null, null, null, null, null);
+	    }*/
 
 	    /**
 	     * Return a Cursor positioned at the note that matches the given rowId
@@ -151,7 +255,7 @@ public class EntreeDbAdapter {
 	    	DebugLog.LOGD("preparing query");
 	        Cursor mCursor =
 	            mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID,
-	                    KEY_TITLE, KEY_BODY, KEY_ENTREE}, KEY_ROWID + "=" + rowId, null,
+	                    KEY_TITLE, KEY_BODY, KEY_ENTREE, KEY_RATING}, KEY_ROWID + "=" + rowId, null,
 	                    null, null, null, null);
 	        if (mCursor != null) {
 	        	DebugLog.LOGD("found cursor, moving to first");
@@ -172,12 +276,14 @@ public class EntreeDbAdapter {
 	     * @param title value to set note title to
 	     * @param body value to set note body to
 	     * @return true if the note was successfully updated, false otherwise
-	     *
-	    public boolean updateNote(long rowId, String title, String body) {
+	     */
+	    public boolean updateReview(long rowId, /*String title, String body, String entree,*/ float rating) {
 	        ContentValues args = new ContentValues();
-	        args.put(KEY_TITLE, title);
-	        args.put(KEY_BODY, body);
+	        //args.put(KEY_TITLE, title);
+	        //args.put(KEY_BODY, body);
+	        //args.put(KEY_ENTREE, entree);
+	        args.put(KEY_RATING, rating);
 
 	        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
-	    }*/
+	    }
 }

@@ -17,6 +17,7 @@
 #include <android/log.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <assert.h>
 
 #include <GLES2/gl2.h>
@@ -41,6 +42,7 @@
 #include "CubeShaders.h"
 #include "EntreeTarget.h"
 #include "Menupp.h"
+#include "SampleMath.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -55,6 +57,9 @@ int buttonMask                  = 0;
 // Virtual Button runtime creation:
 bool updateBtns                   = false;
 const int NUM_BUTTONS             = 5;
+
+// Touch screen button
+bool displayedMessage 			  = false;
 
 // Texture defines
 int textureCount                = 0;
@@ -81,23 +86,56 @@ unsigned int screenHeight       = 0;
 float halfScreenWidth 			= 0;
 float halfScreenHeight			= 0;
 
+// Parameters to internalize Java environment
+JNIEnv* javaEnv;
+jobject javaObj;
+jclass javaClass;
+
 // Indicates whether screen is in portrait (true) or landscape (false) mode
 bool isActivityInPortraitMode   = false;
 
 // The projection matrix used for rendering virtual objects:
 QCAR::Matrix44F projectionMatrix;
 
-// Constants
-static const float kObjectScale = 300;
+QCAR::Matrix44F inverseProjMatrix;
+
+QCAR::Matrix44F modelViewMatrices[4];
+
+QCAR::Matrix44F viewProjection;
 
 JNIEXPORT int JNICALL
 Java_srdes_menupp_QcarEngine_getOpenGlEsVersionNative(JNIEnv *, jobject)
 {
-#ifdef USE_OPENGL_ES_1_1
+#ifdef USE_OPENGL_ES_1_1        
     return 1;
 #else
     return 2;
 #endif
+}
+
+void displayMessage(char* message)
+{
+    // Use the environment and class stored in initNativeCallback
+    // to call a Java method that displays a message via a toast
+    jstring js = javaEnv->NewStringUTF(message);
+    jmethodID method = javaEnv->GetMethodID(javaClass, "displayMessage", "(Ljava/lang/String;)V");
+    javaEnv->CallVoidMethod(javaObj, method, js);
+}
+
+JNIEXPORT void JNICALL
+Java_srdes_menupp_menuppRenderer_initNativeCallback(JNIEnv* env, jobject obj)
+{
+    // Store the java environment for later use
+    // Note that this environment is only safe for use in this thread
+    javaEnv = env;
+
+    // Store the calling object for later use
+    // Make a global reference to keep it valid beyond the scope of this function
+    javaObj = env->NewGlobalRef(obj);
+
+    // Store the class of the calling object for later use
+    jclass objClass = env->GetObjectClass(obj);
+    javaClass = (jclass) env->NewGlobalRef(objClass);
 }
 
 JNIEXPORT void JNICALL
@@ -243,10 +281,9 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 {
 	int trackableId;
-    QCAR::Matrix44F entreeImageMatrix, entreeNameMatrix;
-    //LOG("Java_com_qualcomm_QCARSamples_ImageTargets_GLRenderer_renderFrame");
+	QCAR::Matrix44F entreeImageMatrix, entreeNameMatrix;
 
-    // Clear color and depth buffer
+    // Clear color and depth buffer 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Render video background:
@@ -255,22 +292,30 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    // If this is our first time seeing the target, display a tip
+    if (!displayedMessage) {
+        displayMessage("Tap the screen to focus at anytime.");
+        displayedMessage = true;
+    }
+
     // Did we find any trackables this frame?
-    for(int i = 0 ; i < state.getNumActiveTrackables(); i++)
+    for(int i = 0 ; i < state.getNumActiveTrackables() && i < textureCeiling; i++)
     {
         // Get the trackable:
         const QCAR::Trackable* trackable = state.getActiveTrackable(i);
-        QCAR::Matrix44F entreeImageMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
-        QCAR::Matrix44F entreeNameMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
+
+        // Capture Id
+        trackableId = trackable->getId();
+
+        entreeImageMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
+
+        entreeNameMatrix = QCAR::Tool::convertPose2GLMatrix(trackable->getPose());
 
         // The image target:
         assert(trackable->getType() == QCAR::Trackable::IMAGE_TARGET);
         const QCAR::ImageTarget* target = static_cast<const QCAR::ImageTarget*>(trackable);
 
         const QCAR::VirtualButton* button = target->getVirtualButton(0);
-
-        // Capture Id
-        trackableId = trackable->getId();
 
         // Choose the texture based on the target name:
         Texture* imgTexture = textures[trackableId];
@@ -283,9 +328,9 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
         if (button->isPressed())
         {
         	LOG("button was pressed!");
-        	//jstring js = env->NewStringUTF(imgTexture->getName());
+        	//jstring js = env->NewStringUTF(trackable->getName());
             jclass javaClass = env->GetObjectClass(obj);
-            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");//"(Ljava/lang/String;)V");
+            jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");
             env->CallVoidMethod(obj, method, imgTexture->getId());
         }
 
@@ -357,7 +402,7 @@ void configureVideoBackground()
     config.mSynchronous = true;
     config.mPosition.data[0] = 0.0f;
     config.mPosition.data[1] = 0.0f;
-
+    
     if (isActivityInPortraitMode)
     {
         //LOG("configureVideoBackground PORTRAIT");
@@ -380,13 +425,13 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, jint width, jint height)
 {
     LOG("Java_srdes_menupp_menupp_initApplicationNative");
-
+    
     // Store screen dimensions
     screenWidth = width;
     screenHeight = height;
     halfScreenWidth = screenWidth / 2.0;
     halfScreenHeight = screenHeight / 2.0;
-
+        
     // Handle to the activity class:
     jclass activityClass = env->GetObjectClass(obj);
 
@@ -397,14 +442,14 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
         return;
     }
 
-    textureCount = env->CallIntMethod(obj, getTextureCountMethodID);
+    textureCount = env->CallIntMethod(obj, getTextureCountMethodID);    
     if (!textureCount)
     {
         LOG("getTextureCount() returned zero.");
         return;
     }
 
-	textureCeiling = ((textureCount / 2) < MAX_TRACKABLES) ? (textureCount / 2) : (MAX_TRACKABLES);
+    textureCeiling = ((textureCount / 2) < MAX_TRACKABLES) ? (textureCount / 2) : (MAX_TRACKABLES);
 
     textures = new Texture*[textureCount];
 
@@ -420,7 +465,7 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
     for (int i = 0; i < textureCount; ++i)
     {
 
-        jobject textureObject = env->CallObjectMethod(obj, getTextureMethodID, i);
+        jobject textureObject = env->CallObjectMethod(obj, getTextureMethodID, i); 
         if (textureObject == NULL)
         {
             LOG("GetTexture() returned zero pointer");
@@ -436,18 +481,19 @@ Java_srdes_menupp_QcarEngine_deinitApplicationNative(JNIEnv* env, jobject obj)
 {
     LOG("Java_srdes_menupp_menupp_deinitApplicationNative");
 
+    displayedMessage = false;
     // Release texture resources
     if (textures != 0)
-    {
+    {    
         for (int i = 0; i < textureCount; ++i)
         {
             delete textures[i];
             textures[i] = NULL;
         }
-
+    
         delete[]textures;
         textures = NULL;
-
+        
         textureCount = 0;
     }
 }
@@ -475,7 +521,7 @@ Java_srdes_menupp_QcarEngine_startCamera(JNIEnv *, jobject)
 
     // Start the tracker:
     QCAR::Tracker::getInstance().start();
-
+ 
     // Cache the projection matrix:
     const QCAR::Tracker& tracker = QCAR::Tracker::getInstance();
     const QCAR::CameraCalibration& cameraCalibration = tracker.getCameraCalibration();
@@ -497,6 +543,8 @@ Java_srdes_menupp_QcarEngine_stopCamera(JNIEnv *, jobject)
 JNIEXPORT jboolean JNICALL
 Java_srdes_menupp_QcarEngine_toggleFlash(JNIEnv*, jobject, jboolean flash)
 {
+    jmethodID method = javaEnv->GetMethodID(javaClass, "toggleFlashButton", "()V");
+    javaEnv->CallVoidMethod(javaObj, method);
     return QCAR::CameraDevice::getInstance().setFlashTorchMode((flash==JNI_TRUE)) ? JNI_TRUE : JNI_FALSE;
 }
 
@@ -517,6 +565,53 @@ JNIEXPORT void JNICALL
 Java_srdes_menupp_menuppRenderer_initRendering(
                                                     JNIEnv* env, jobject obj)
 {
+//    LOG("Java_srdes_menupp_menuppRenderer_initRendering");
+//
+//    // Define clear color
+//    glClearColor(0.0f, 0.0f, 0.0f, QCAR::requiresAlpha() ? 0.0f : 1.0f);
+//
+//    // Now generate the OpenGL texture objects and add settings
+//    for (int i = 0; i < textureCount; ++i)
+//    {
+//        glGenTextures(1, &(textures[i]->mTextureID));
+//        glBindTexture(GL_TEXTURE_2D, textures[i]->mTextureID);
+//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures[i]->mWidth, textures[i]->mHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)  textures[i]->mData);
+//    }
+//
+//    shaderProgramID     = Utils::createProgramFromBuffer(cubeMeshVertexShader, cubeFragmentShader);
+//    vertexHandle        = glGetAttribLocation(shaderProgramID, "vertexPosition");
+//    normalHandle        = glGetAttribLocation(shaderProgramID, "vertexNormal");
+//    textureCoordHandle  = glGetAttribLocation(shaderProgramID, "vertexTexCoord");
+//    mvpMatrixHandle     = glGetUniformLocation(shaderProgramID, "modelViewProjectionMatrix");
+//
+//    // OpenGL setup for Virtual Buttons
+//    vbShaderProgramID   = Utils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
+//    vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
+//
+//    // Render video background:
+//    QCAR::State state = QCAR::Renderer::getInstance().begin();
+//
+//	entreeCount = state.getNumTrackables();
+//	entreeImageBase = 0;
+//	entreeNameBase = entreeImageBase + (textureCount / 2);
+//	entreeTargets = new EntreeTarget*[entreeCount];
+//	string trackableName;
+//
+//	LOG("entree count %d", entreeCount);
+//	for (int i = 0, trackableId; i < entreeCount ; i++)
+//	{
+//		trackableName = (string) state.getTrackable(i)->getName();
+//		trackableId = state.getTrackable(i)->getId();
+//		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
+//		LOG("Created entree %s with id %d", trackableName, trackableId);
+//	}
+//	LOG("Passing target info to java code");
+//	env->CallVoid
+//	QCAR::Renderer::getInstance().end();
+//
+	//**********Denis Code********
     LOG("Java_srdes_menupp_menuppRenderer_initRendering");
 
     // Define clear color
@@ -542,13 +637,12 @@ Java_srdes_menupp_menuppRenderer_initRendering(
     vbShaderProgramID   = Utils::createProgramFromBuffer(lineMeshVertexShader, lineFragmentShader);
     vbVertexHandle      = glGetAttribLocation(vbShaderProgramID, "vertexPosition");
 
-	// Render video background:
+    // Render video background:
     QCAR::State state = QCAR::Renderer::getInstance().begin();
 
-	entreeCount = state.getNumTrackables();
-	entreeImageBase = 0;
-	entreeNameBase = textureCount / 2;
-	entreeTargets = new EntreeTarget*[textureCount / 2];
+    entreeImageBase = 0;
+    entreeNameBase = textureCount / 2;
+    entreeTargets = new EntreeTarget*[textureCount / 2];
 
 	// Java types to be passed back to menuppRenderer
 	jclass jstringClass = env->FindClass("java/lang/String");
@@ -568,6 +662,7 @@ Java_srdes_menupp_menuppRenderer_initRendering(
 		env->SetObjectArrayElement(jnames, i, env->NewStringUTF(trackableName));
 		LOG("Created entree %s with id %d", trackableName, trackableId);
 	}
+
 	LOG("Passing target info to java code");
 	env->CallVoidMethod(obj, method, jnames, jids);
 	QCAR::Renderer::getInstance().end();
@@ -578,7 +673,7 @@ Java_srdes_menupp_menuppRenderer_updateRendering(
                         JNIEnv* env, jobject obj, jint width, jint height)
 {
     LOG("Java_srdes_menupp_menuppRenderer_updateRendering");
-
+    
     // Update screen dimensions
     screenWidth = width;
     screenHeight = height;
@@ -598,11 +693,10 @@ Java_srdes_menupp_GUIManager_nativeNext(JNIEnv* env, jobject obj)
 JNIEXPORT void JNICALL
 Java_srdes_menupp_GUIManager_nativeBack(JNIEnv* env, jobject obj)
 {
-	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + (entreeImageBase - MAX_TRACKABLES) + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
+	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + entreeImageBase + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
 	entreeNameBase = entreeImageBase + (textureCount / 2);
 	textureCeiling = ((textureCount / 2) - entreeImageBase < MAX_TRACKABLES) ?  (textureCount / 2 - entreeImageBase) : (MAX_TRACKABLES);
 }
-
 #ifdef __cplusplus
 }
 #endif

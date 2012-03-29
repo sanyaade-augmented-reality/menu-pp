@@ -1,9 +1,28 @@
 package srdes.menupp;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.view.ContextMenu;
@@ -13,7 +32,9 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-
+/**
+ * \brief Displays a review.
+ */
 public class ViewReview extends ListActivity {
 	private static final int ACTIVITY_CREATE=0;
     private static final int ACTIVITY_EDIT=1;
@@ -22,17 +43,18 @@ public class ViewReview extends ListActivity {
     //private static final int DELETE_ID = Menu.FIRST + 1;
 	
 	private EntreeDbAdapter dbHelper;
-	
+    private final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
+
     /** Called when the activity first starts or the user navigates back
      * to an activity. */
     protected void onCreate(Bundle savedInstanceState)
     {
         DebugLog.LOGD("ViewEntree::onCreate");
         super.onCreate(savedInstanceState);
-               
+
         // Set the app view
         String entree = getEntreeName();
-        setContentView(R.layout.reviews_list); 
+        setContentView(R.layout.reviews_list);
         dbHelper = new EntreeDbAdapter(this);
         dbHelper.open();
         fillData(entree);
@@ -54,12 +76,67 @@ public class ViewReview extends ListActivity {
     }
 
     private void fillData(String entree) {
+
+    	/*InputStream is = null;
+    	String result = null;
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("entree", entree));
+
+        //http post
+        try{
+                HttpClient httpclient = new DefaultHttpClient();
+                HttpPost httppost = new HttpPost(REVIEW_SELECTION_SCRIPT);
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                HttpResponse response = httpclient.execute(httppost);
+                HttpEntity entity = response.getEntity();
+                is = entity.getContent();
+        }catch(Exception e){
+                DebugLog.LOGD("Error in http connection "+e.toString());
+        }
+        
+        //convert response to string
+        try{
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                }
+                is.close();
+                result = sb.toString();
+        }catch(Exception e){
+                DebugLog.LOGD("Error converting result "+e.toString());
+        }
+        
+        //Cursor notesCursor = new MatrixCursor(new String[]{"Title","Body","Entree"});//dbHelper.fetchAllReviews(entree);
+        ArrayList<String> reviewTitles = new ArrayList<String>();
+        
+        //parse json data
+        try{
+                JSONArray jArray = new JSONArray(result);
+                for(int i = 0 ; i < jArray.length() ;i++ ){
+                        JSONObject json_data = jArray.getJSONObject(i);
+
+                        String title = json_data.getString("Title");
+                        String body = json_data.getString("Body");
+                        String entreeName = json_data.getString("Entree");
+                        
+        //              ((MatrixCursor) notesCursor).addRow(new Object[]{title,body,entreeName});
+                        reviewTitles.add(title);
+                        
+                        //Get an output to the screen
+                        DebugLog.LOGD("Found Review " + title + " for " + entreeName);
+                        DebugLog.LOGD("Body of review: " + body);
+                }
+        }catch(JSONException e){
+                DebugLog.LOGD("Error parsing data "+e.toString());
+        }*/
         // Get all of the rows from the database and create the item list
         Cursor notesCursor = dbHelper.fetchAllReviews(entree);
         startManagingCursor(notesCursor);
 
         // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[]{EntreeDbAdapter.KEY_TITLE};
+        String[] from = new String[]{EntreeDbAdapter.KEY_TITLE,EntreeDbAdapter.KEY_RATING};
 
         // and an array of the fields we want to bind those fields to (in this case just text1)
         int[] to = new int[]{R.id.text1};
@@ -67,8 +144,9 @@ public class ViewReview extends ListActivity {
         // Now create a simple cursor adapter and set it to display
         SimpleCursorAdapter notes = new SimpleCursorAdapter(this, R.layout.review_row, notesCursor, from, to);
         setListAdapter(notes);
+        
+        //setListAdapter(new ArrayAdapter<String>(ViewReview.this, R.layout.menu_list, reviewTitles));
     }
-    
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

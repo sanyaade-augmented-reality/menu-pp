@@ -23,13 +23,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RatingBar;
+import android.widget.Toast;
 
 public class EntreeEdit extends Activity {
 
     private EditText mTitleText;
     private EditText mBodyText;
+    private float mRatingFloat;
     private Long mRowId;
     private EntreeDbAdapter mDbHelper;
+    private RatingBar ratingbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,7 @@ public class EntreeEdit extends Activity {
 
         mTitleText = (EditText) findViewById(R.id.review_title);
         mBodyText = (EditText) findViewById(R.id.review_body);
+        mRatingFloat = 0;
 
         Button confirmButton = (Button) findViewById(R.id.confirm);
 
@@ -49,13 +54,21 @@ public class EntreeEdit extends Activity {
 
         DebugLog.LOGD("row id is " + mRowId);
         populateFields();
+        
+        ratingbar = (RatingBar) findViewById(R.id.ratingbar);
+        ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                //Toast.makeText(EntreeEdit.this, "Rating: " + rating, Toast.LENGTH_SHORT).show();
+            	//mDbHelper.updateReview(mRowId, rating);
+            	mRatingFloat = rating;
+            }
+        });
         confirmButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
                 setResult(RESULT_OK);
                 finish();
             }
-
         });
     }
     
@@ -107,10 +120,10 @@ public class EntreeEdit extends Activity {
     	String body = mBodyText.getText().toString();
 
     	if(mRowId == null){
-    		long id = mDbHelper.createReview(title, body, entree);
-    		if(id > 0){
+    		/*long id = */mDbHelper.createReview(title, body, entree, mRatingFloat);
+    		/*if(id > 0){
     			mRowId = id;
-    		}
+    		}*/
     	}/* else {
     		mDbHelper.updateNote(mRowId, title, body);
     	}*/

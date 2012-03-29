@@ -6,10 +6,15 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class ViewEntree extends Activity {
+	
+	private RatingBar ratingbar;
+	private EntreeDbAdapter dbHelper;
+	private Entree cur_entree;
 
 	/** Called when the activity is first created. */
     @Override
@@ -20,6 +25,9 @@ public class ViewEntree extends Activity {
         setContentView(R.layout.view_entree);
         DebugLog.LOGD("getting intent extras");
 
+        dbHelper = new EntreeDbAdapter(this);
+        dbHelper.open();
+        
         int textureId;
 
     	DebugLog.LOGD("Found extras flag");
@@ -29,7 +37,7 @@ public class ViewEntree extends Activity {
     		DebugLog.LOGD("key_entree_id not found");
     	}
     	DebugLog.LOGD("tracking texture: " + Integer.toString(textureId));
-    	Entree cur_entree = findEntreeById(textureId);
+    	cur_entree = findEntreeById(textureId);
     	if(cur_entree == null){
     		DebugLog.LOGD("null cur_entree");
     		cur_entree.getName();	//to exit here
@@ -50,6 +58,18 @@ public class ViewEntree extends Activity {
     	} else {
     		DebugLog.LOGD("null entree image view");
     	}
+    	
+    	ratingbar = (RatingBar) findViewById(R.id.ratingbar_e);
+        ratingbar.setIsIndicator(true);
+        Cursor reviewsCursor = dbHelper.fetchAllReviews(cur_entree.getName());
+        float averageRating = 0;
+        for(int i = 0; i < reviewsCursor.getCount(); i++){
+        	reviewsCursor.moveToPosition(i);
+        	averageRating += reviewsCursor.getFloat(reviewsCursor.getColumnIndexOrThrow(EntreeDbAdapter.KEY_RATING));
+        }
+        averageRating = averageRating/reviewsCursor.getCount();
+        ratingbar.setRating(averageRating);
+        
     	TextView descriptionText = (TextView) findViewById(R.id.entree_desc);
     	if(descriptionText != null){
     		String [] descriptions = getResources().getStringArray(R.array.descriptions);
@@ -58,6 +78,23 @@ public class ViewEntree extends Activity {
     	} else {
     		DebugLog.LOGD("null description text view");
     	}
+    }
+    
+    @Override
+    public void onResume(){
+    	
+        DebugLog.LOGD("ViewEntree::onResume");
+    	super.onResume();
+    	ratingbar = (RatingBar) findViewById(R.id.ratingbar_e);
+        ratingbar.setIsIndicator(true);
+        Cursor reviewsCursor = dbHelper.fetchAllReviews(cur_entree.getName());
+        float averageRating = 0;
+        for(int i = 0; i < reviewsCursor.getCount(); i++){
+        	reviewsCursor.moveToPosition(i);
+        	averageRating += reviewsCursor.getFloat(reviewsCursor.getColumnIndexOrThrow(EntreeDbAdapter.KEY_RATING));
+        }
+        averageRating = averageRating/reviewsCursor.getCount();
+        ratingbar.setRating(averageRating);
     }
     
 	public static Entree findEntreeById(int id){

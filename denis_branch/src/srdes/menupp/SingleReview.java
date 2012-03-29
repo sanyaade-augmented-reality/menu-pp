@@ -3,6 +3,7 @@ package srdes.menupp;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class SingleReview extends Activity{
@@ -27,9 +28,13 @@ public class SingleReview extends Activity{
         Bundle extras = getIntent().getExtras();
         long mRowId = (extras != null) ? extras.getLong(EntreeDbAdapter.KEY_ROWID) : null;
         
+        final RatingBar ratingbar = (RatingBar) findViewById(R.id.ratingbar_s);
+        ratingbar.setIsIndicator(true);
+        
         DebugLog.LOGD("getting review info");
         Cursor note = mDbHelper.fetchReview(mRowId);
         titleText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_TITLE)));
 		bodyText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_BODY)));
+		ratingbar.setRating(note.getFloat(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_RATING)));
     }
 }

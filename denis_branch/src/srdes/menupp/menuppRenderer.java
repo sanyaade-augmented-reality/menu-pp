@@ -20,11 +20,11 @@ import javax.microedition.khronos.opengles.GL10;
 import android.content.Context;
 import android.content.Intent;
 import android.opengl.GLSurfaceView;
-import android.os.Bundle;
+import android.os.Message;
 
 import com.qualcomm.QCAR.QCAR;
 
-/** The renderer class for the ImageTargets sample. */
+/** \brief The renderer class for the ImageTargets sample. */
 public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;
@@ -36,7 +36,8 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     
     /** Native function for initializing the renderer. */
     public native void initRendering();
-    
+    /** Native function to store Java environment information for callbacks. */
+    public native void initNativeCallback();
     
     /** Native function to update the renderer. */
     public native void updateRendering(int width, int height);
@@ -53,6 +54,11 @@ public class menuppRenderer implements GLSurfaceView.Renderer
         // Call QCAR function to (re)initialize rendering after first use
         // or after OpenGL ES context was lost (e.g. after onPause/onResume):
         QCAR.onSurfaceCreated();
+        
+        // Call native function to store information about the Java environment
+        // It is important that we make this call from this thread (the rendering thread)
+        // as the native code will want to make callbacks from this thread
+        initNativeCallback();
     }
     
     
@@ -99,25 +105,10 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 		}
         DebugLog.LOGD("Entree array created with size" + Integer.toString(size));
     }
-    /*
-    public void addTargetInfo(String name, int id){
-    	//Entree e = new Entree(name, id);
-    	String s = "adding entree to list: " + name + " " + id;
-    	DebugLog.LOGD(s);
-    	if(menupp.entreeIndex < menupp.entrees.length){
-    		
-			menupp.entrees[menupp.entreeIndex].setId(id);
-			menupp.entrees[menupp.entreeIndex].setName(name);
-			menupp.entreeIndex++;
-		}
-    	s = "added entree to list: " + name + " " + id;
-    	DebugLog.LOGD(s);
-    } */
     
     public void addTargetsInfo(String [] names, int [] ids){
     	menupp.entrees = new Entree[ids.length];
         DebugLog.LOGD("Entree array created with size " + Integer.toString(menupp.entrees.length) + " array length " + Integer.toString(names.length) + " " + Integer.toString(ids.length));
-		//menupp.entreeIndex = 0;
 		for(int i = 0; i < menupp.entrees.length; i++){
 	        DebugLog.LOGD("Creating entree " + names[i] + " with id " + ids[i]);
 	        menupp.entrees[i] = new Entree(names[i], ids[i], i);
@@ -134,9 +125,25 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 			}
 		}
 		return to_return;
-		//return menupp.entrees[id];
 	}
-	    
+    
+    /** Called from native to display a message. */
+    public void displayMessage(String text)
+    {
+        Message message = new Message();
+        message.what = GUIManager.DISPLAY_INFO_TOAST;
+        message.obj = text;
+        mGUIManager.sendThreadSafeGUIMessage(message);
+    }
+    
+    /** Called from native to toggle the start button. */
+    public void toggleFlashButton()
+    {
+        Message message = new Message();
+        message.what = GUIManager.TOGGLE_FLASH_BUTTON;
+        mGUIManager.sendThreadSafeGUIMessage(message);
+    }
+    
     /** Setter for the gui manager. */
     public void setGUIManager(GUIManager guiManager)
     {
