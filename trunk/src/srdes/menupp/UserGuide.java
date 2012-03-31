@@ -13,7 +13,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+/**
+ *\brief Class that displays user guide.
+ */
 public class UserGuide extends Activity {
     
         private ViewPager awesomePager;
