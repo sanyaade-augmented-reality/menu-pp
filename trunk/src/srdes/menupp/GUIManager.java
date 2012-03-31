@@ -16,7 +16,9 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-
+/**
+ *\brief manages the GUI of the camera view
+ */
 public class GUIManager {
 
     // Custom views

@@ -76,7 +76,7 @@ public class QCARSampleGLView extends GLSurfaceView
     }
 
     
-    /** Creates OpenGL contexts. */
+    /** \brief Creates OpenGL contexts. */
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory
     {
         private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
@@ -114,7 +114,7 @@ public class QCARSampleGLView extends GLSurfaceView
         }
     }
 
-    /** Checks the OpenGL error. */
+    /** \brief Checks the OpenGL error. */
     private static void checkEglError(String prompt, EGL10 egl)
     {
         int error;
@@ -125,7 +125,7 @@ public class QCARSampleGLView extends GLSurfaceView
     }
 
 
-    /** The config chooser. */
+    /** \brief The config chooser. */
     private static class ConfigChooser implements GLSurfaceView.EGLConfigChooser
     {
         public ConfigChooser(int r, int g, int b, int a, int depth, int stencil)

@@ -89,7 +89,9 @@ public class menuppRenderer implements GLSurfaceView.Renderer
         if (!buttonPressed)
         	renderFrame();
     }
-    
+    /**
+     *\brief manages entree tabs
+     */
     public void entreeTabManage(int textureId) {
 
     	buttonPressed = true;
@@ -99,7 +101,9 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     	intent.putExtra("key_entree_id", textureId);
     	context.startActivity(intent);
     }
-    
+    /**
+     *\brief initializes the image targets
+     */
     public void initTargetInfo(int size){
     	menupp.entrees = new Entree[size];
 		menupp.entreeIndex = 0;
@@ -108,7 +112,9 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 		}
         DebugLog.LOGD("Entree array created with size" + Integer.toString(size));
     }
-    
+    /**
+     *\brief adds info to the image targets
+     */
     public void addTargetsInfo(String [] names, int [] ids){
     	menupp.entrees = new Entree[ids.length];
         DebugLog.LOGD("Entree array created with size " + Integer.toString(menupp.entrees.length) + " array length " + Integer.toString(names.length) + " " + Integer.toString(ids.length));
@@ -118,7 +124,9 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 		}
 		DebugLog.LOGD("Finished initializing target info. Returning to native code.");
     }
-	
+    /**
+     *\brief returns entree with the given id
+     */
 	public static Entree findEntreeById(int id){
 		Entree to_return = null;
 		for(int i = 0; i < menupp.entrees.length; i++){

@@ -33,7 +33,9 @@ public class MenuList extends ListActivity{
         // Initialize intent for Qcar Engine
         qcarEngine = new Intent(this, QcarEngine.class);
 	}
-	
+	/**
+     *\brief Called when a menu in the list is tapped
+     */
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		
