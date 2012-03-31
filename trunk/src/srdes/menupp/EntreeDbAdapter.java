@@ -82,6 +82,8 @@ public class EntreeDbAdapter {
 	    }
 
 	    /**
+	     *\brief Opens a database 
+	     *
 	     * Open the notes database. If it cannot be opened, try to create a new
 	     * instance of the database. If it cannot be created, throw an exception to
 	     * signal the failure
@@ -95,13 +97,17 @@ public class EntreeDbAdapter {
 	        mDb = mDbHelper.getWritableDatabase();
 	        return this;
 	    }
-
+	    /**
+	     *\brief Closes the helper
+	     */
 	    public void close() {
 	        mDbHelper.close();
 	    }
 
 
 	    /**
+	     *\brief Creates a new review
+	     *
 	     * Create a new note using the title and body provided. If the note is
 	     * successfully created return the new rowId for that note, otherwise return
 	     * a -1 to indicate failure.
@@ -120,6 +126,8 @@ public class EntreeDbAdapter {
 	    }
 
 	    /**
+	     *\brief Deletes a review
+	     *
 	     * Delete the note with the given rowId
 	     * 
 	     * @param rowId id of note to delete
@@ -131,7 +139,7 @@ public class EntreeDbAdapter {
 	    }
 
 	    /**
-	     * Return a Cursor over the list of all notes in the database
+	     *\brief Return a Cursor over the list of all notes in the database
 	     * 
 	     * @return Cursor over all notes
 	     */
@@ -142,7 +150,7 @@ public class EntreeDbAdapter {
 	    }
 
 	    /**
-	     * Return a Cursor positioned at the note that matches the given rowId
+	     *\brief Return a Cursor positioned at the note that matches the given rowId
 	     * 
 	     * @param rowId id of note to retrieve
 	     * @return Cursor positioned to matching note, if found
