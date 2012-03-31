@@ -367,6 +367,9 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		// Install program object to be apart of renderering
 		glUseProgram(shaderProgramID);
 
+	    // Enable 2D Textures
+	    glEnable(GL_TEXTURE_2D);
+
 		// Establish dimensions of the plane and bound texture
 		glVertexAttribPointer(vertexHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectPlaneVertices[0]);
 		glVertexAttribPointer(normalHandle, 3, GL_FLOAT, GL_FALSE, 0, (const GLvoid*) &rectNormals[0]);
@@ -378,6 +381,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		glEnableVertexAttribArray(textureCoordHandle);
 
 		// Bind the appropriate entree description to the plane and draw the image
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textures[entreeNameBase + (trackableId % textureCeiling)]->mTextureID);
 		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&entreeNameProjection.data[0] );
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &rectIndices[0]);
@@ -398,11 +402,9 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 		glEnableVertexAttribArray(textureCoordHandle);
 
 		// Bind the correct entree image and draw
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textures[entreeImageBase + (trackableId % textureCeiling)]->mTextureID);
 		glUniformMatrix4fv(mvpMatrixHandle, 1, GL_FALSE, (GLfloat*)&entreeImageProjection.data[0] );
-
-	    // Enable 2D Textures
-	    glEnable(GL_TEXTURE_2D);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (const GLvoid*) &planeIndices[0]);
     }
