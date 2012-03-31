@@ -6,7 +6,7 @@
  * 			openGL ES related tasks.
  */
 
-#define MAX_TRACKABLES 4
+#define MAX_TRACKABLES 3
 
 enum BUTTONS
 {

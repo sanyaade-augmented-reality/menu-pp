@@ -42,9 +42,7 @@
 #include "Utils.h"
 #include "Texture.h"
 #include "CubeShaders.h"
-#include "EntreeTarget.h"
 #include "Menupp.h"
-#include "SampleMath.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -73,7 +71,6 @@ int textureFloor				= 0;
 
 // Entrees defines
 int entreeCount = 0;
-EntreeTarget** entreeTargets = 0;
 int entreeImageBase = 0;
 int entreeNameBase = 0;
 
@@ -628,26 +625,23 @@ Java_srdes_menupp_menuppRenderer_initRendering(
 
     entreeImageBase = 0;
     entreeNameBase = textureCount / 2;
-    entreeTargets = new EntreeTarget*[textureCount / 2];
 
 	// Java types to be passed back to menuppRenderer
+    int trackableId;
 	jclass jstringClass = env->FindClass("java/lang/String");
 	jintArray jids = env->NewIntArray(textureCount / 2);
 	jobjectArray jnames = env->NewObjectArray(textureCount / 2, jstringClass, env->NewStringUTF(""));
 	jclass javaClass = env->GetObjectClass(obj);
 	jmethodID method = env->GetMethodID(javaClass, "addTargetsInfo", "([Ljava/lang/String;[I)V");
 
-	LOG("entree count %d", textureCount / 2);
 	for (int i = 0 ; i < textureCount / 2 ; i++)
 	{
 		string trackableName = (string) textures[i]->getName();
-		int trackableId = (int) textures[i]->getId();
-		entreeTargets[i] = new EntreeTarget(trackableName, trackableId);
+		trackableId = (int) textures[i]->getId();
 		env->SetIntArrayRegion(jids, i, 1, &trackableId);
 		env->SetObjectArrayElement(jnames, i, env->NewStringUTF(trackableName));
 	}
 
-	LOG("Passing target info to java code");
 	env->CallVoidMethod(obj, method, jnames, jids);
 	QCAR::Renderer::getInstance().end();
 }
@@ -683,7 +677,7 @@ Java_srdes_menupp_GUIManager_nativeNext(JNIEnv* env, jobject obj)
 JNIEXPORT void JNICALL
 Java_srdes_menupp_GUIManager_nativeBack(JNIEnv* env, jobject obj)
 {
-	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + entreeImageBase + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
+	entreeImageBase = (entreeImageBase - MAX_TRACKABLES < 0) ? ((textureCount / 2) + (entreeImageBase - MAX_TRACKABLES) + (MAX_TRACKABLES - (((textureCount / 2) % MAX_TRACKABLES) ? ((textureCount / 2) % MAX_TRACKABLES) : (MAX_TRACKABLES)))) : (entreeImageBase - MAX_TRACKABLES);
 	entreeNameBase = entreeImageBase + (textureCount / 2);
 	textureCeiling = ((textureCount / 2) - entreeImageBase < MAX_TRACKABLES) ?  (textureCount / 2 - entreeImageBase) : (MAX_TRACKABLES);
 }
