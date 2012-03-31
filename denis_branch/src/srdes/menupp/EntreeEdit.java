@@ -16,72 +16,66 @@
 
 package srdes.menupp;
 
+import org.json.JSONException;
+
 import android.app.Activity;
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.Toast;
 
+/**
+ * 
+ * @author dksokolov
+ * \brief activity for creating a review
+ */
 public class EntreeEdit extends Activity {
 
     private EditText mTitleText;
     private EditText mBodyText;
     private float mRatingFloat;
     private Long mRowId;
-    private EntreeDbAdapter mDbHelper;
     private RatingBar ratingbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDbHelper = new EntreeDbAdapter(this);
-        mDbHelper.open();
+        
+        //set and find views
         setContentView(R.layout.review_create);
         setTitle(R.string.review_write);
-
         mTitleText = (EditText) findViewById(R.id.review_title);
         mBodyText = (EditText) findViewById(R.id.review_body);
         mRatingFloat = 0;
-
         Button confirmButton = (Button) findViewById(R.id.confirm);
 
         DebugLog.LOGD("getting row id");
         mRowId = (savedInstanceState == null) ? null : (Long) savedInstanceState.getSerializable(EntreeDbAdapter.KEY_ROWID);
-
         DebugLog.LOGD("row id is " + mRowId);
-        populateFields();
-        
+
+        //create a rating bar
         ratingbar = (RatingBar) findViewById(R.id.ratingbar);
         ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                //Toast.makeText(EntreeEdit.this, "Rating: " + rating, Toast.LENGTH_SHORT).show();
-            	//mDbHelper.updateReview(mRowId, rating);
             	mRatingFloat = rating;
             }
         });
         confirmButton.setOnClickListener(new View.OnClickListener() {
-
+        	//create a review when the confirm button is pressed
             public void onClick(View view) {
+            	Bundle extras = getIntent().getExtras();
+            	String entree = null;
+            	if(extras != null){
+            		entree = extras.getString("key_entree_name");
+            	} else {
+            		DebugLog.LOGD("null extras");
+            	}
+            	saveState(entree);
                 setResult(RESULT_OK);
                 finish();
             }
         });
-    }
-    
-    private void populateFields(){
-    	if(mRowId != null){
-    		Cursor note = mDbHelper.fetchReview(mRowId);
-    		startManagingCursor(note);
-    		if(note == null){
-    			DebugLog.LOGD("null note");
-    		}
-    		mTitleText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_TITLE)));
-    		mBodyText.setText(note.getString(note.getColumnIndexOrThrow(EntreeDbAdapter.KEY_BODY)));
-    	}
     }
     
     protected void onSavedInstanceState(Bundle outState){
@@ -99,33 +93,32 @@ public class EntreeEdit extends Activity {
     
     protected void onPause(){
     	super.onPause();
-    	Bundle extras = getIntent().getExtras();
-    	String entree = null;
-    	if(extras != null){
-    		entree = extras.getString("key_entree_name");
-    	} else {
-    		DebugLog.LOGD("null extras");
-    	}
-    	saveState(entree);
     }
     
     protected void onResume(){
     	super.onResume();
-    	populateFields();
     }
     
+    /**
+     * create the review
+     * @param entree entree being reviewed
+     */
     private void saveState(String entree){
     	DebugLog.LOGD("saving state");
     	String title = mTitleText.getText().toString();
     	String body = mBodyText.getText().toString();
 
-    	if(mRowId == null){
-    		/*long id = */mDbHelper.createReview(title, body, entree, mRatingFloat);
-    		/*if(id > 0){
+		long id = 0;
+		try {
+			id = EntreeDbAdapter.createReview(title, body, entree, mRatingFloat);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} finally {
+    		if(id > 0){
     			mRowId = id;
-    		}*/
-    	}/* else {
-    		mDbHelper.updateNote(mRowId, title, body);
-    	}*/
+    		} else {
+    			DebugLog.LOGD("id was not returned properly");
+    		}
+		}
     }
 }
