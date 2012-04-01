@@ -21,11 +21,19 @@
         android:layout_marginTop="30dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="30dp" />
+    
    <ImageView
         android:id="@+id/entree_image"        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="6dip"/>	
+        android:layout_marginRight="6dip"/>
+   
+   <RatingBar android:id="@+id/ratingbar_e"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="0.1"/>
+   
    <TextView
         android:id="@+id/entree_desc"
         android:layout_width="wrap_content"
