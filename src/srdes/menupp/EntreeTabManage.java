@@ -21,25 +21,22 @@ public class EntreeTabManage extends TabActivity {
 	    TabHost.TabSpec spec;  // Resusable TabSpec for each tab
 	    Intent intent;  // Reusable Intent for each tab
 
-	    DebugLog.LOGD("creating intent");
 	    // Create an Intent to launch an Activity for the tab (to be reused)
 	    intent = new Intent().setClass(this, ViewEntree.class);
 	    Bundle extras = getIntent().getExtras();
-
 	    if(extras != null){
-	         intent.putExtras(extras);
+	        intent.putExtras(extras);
 	    } else {
 	    	DebugLog.LOGD("null extras");
 	    }
 	    
-	    DebugLog.LOGD("setting tabs");
 	    // Initialize a TabSpec for each tab and add it to the TabHost
 	    spec = tabHost.newTabSpec("entree").setIndicator("Entree",
 	                      res.getDrawable(R.drawable.ic_tab_entree))
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 
-	    DebugLog.LOGD("setting intent for other tab");
+	    //setting intent for other tab
 	    intent = new Intent().setClass(this, ViewReview.class);
 	    if(extras != null){
 	         intent.putExtras(extras);
@@ -51,6 +48,7 @@ public class EntreeTabManage extends TabActivity {
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 
+	    //set the tab
 	    tabHost.setCurrentTab(2);
 	}
 }

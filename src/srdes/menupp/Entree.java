@@ -2,6 +2,11 @@ package srdes.menupp;
 /**
  *\brief Class that represents an entree.
  */
+/**
+ * 
+ * @author dksokolov
+ * \brief holds entree information
+ */
 public class Entree {
 
 	private String name;
@@ -9,13 +14,13 @@ public class Entree {
 	private String image;
 	private int description;
 	
+	//Entree constructors
 	public Entree(){
 		this.name = null;
 		this.id = 0;
 		this.image = null;
 		this.description = 0;
 	}
-	
 	public Entree(String n, int id, int desc){
 		this.name = n;
 		this.id = id;
@@ -25,6 +30,7 @@ public class Entree {
 	/** 
 	 *\brief returns entree id
 	 */
+	//get and set methods
 	public int getId(){
 		return this.id;
 	}
