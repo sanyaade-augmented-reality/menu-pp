@@ -11,7 +11,6 @@
 // Include files
 #include "Texture.h"
 #include "Utils.h"
-
 #include <string.h>
 
 Texture::Texture() :

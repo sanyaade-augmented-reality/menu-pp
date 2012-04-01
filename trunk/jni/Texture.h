@@ -16,50 +16,48 @@
 
 typedef char* string;
 
-// Forward declarations
-
-/// A utility class for textures.
+// A utility class for textures.
 class Texture
 {
 public:
 
-    /// Constructor
+    // Constructor
     Texture();
 
-    /// Destructor.
+    // Destructor.
     ~Texture();
 
-    /// Returns the width of the texture.
+    // Returns the width of the texture.
     unsigned int getWidth() const;
 
-    /// Returns the height of the texture.
+    // Returns the height of the texture.
     unsigned int getHeight() const;
 
-    /// Returns the name of the texture.
+    // Returns the name of the texture.
     string getName();
 
-    /// Returns the id of the texture.
+    // Returns the id of the texture.
     unsigned int getId();
 
-    /// Create a texture from a jni object:
+    // Create a texture from a jni object:
     static Texture* create(JNIEnv* env, jobject textureObject);
  
-    /// The width of the texture.
+    // The width of the texture.
     unsigned int mWidth;
 
-    /// The height of the texture.
+    // The height of the texture.
     unsigned int mHeight;
 
-    /// The name of the texture
+    // The name of the texture
     string mName;
 
-    /// The number of channels of the texture.
+    // The number of channels of the texture.
     unsigned int mChannelCount;
 
-    /// The pointer to the raw texture data.
+    // The pointer to the raw texture data.
     unsigned char* mData;
 
-    /// The ID of the texture
+    // The ID of the texture
     unsigned int mTextureID;
 };
 
