@@ -15,7 +15,7 @@
 		android:layout_alignParentLeft="true"
 
 		android:textStyle="bold"
-		android:singleLine="true"
+		android:singleLine="false"
 		android:ellipsize="marquee"
    />
 
@@ -23,14 +23,14 @@
    <TextView
 		android:id="@+id/toptextdata"
 
-		android:layout_width="fill_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
 		android:layout_toRightOf="@id/toptext"
 
-		android:singleLine="true"
+		android:singleLine="false"
 		android:ellipsize="marquee"
    />
 

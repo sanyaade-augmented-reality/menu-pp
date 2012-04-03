@@ -2,6 +2,7 @@ package srdes.menupp;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -12,6 +13,8 @@ import android.widget.TextView;
  * \brief the activity for viewing a single review's title, rating, and body
  */
 public class SingleReview extends Activity{
+	
+	//private Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
 
 	/** Called when the activity is first created. */
     @Override
@@ -22,6 +25,8 @@ public class SingleReview extends Activity{
         //set views
         setContentView(R.layout.view_single_review);
         TextView titleText = (TextView) findViewById(R.id.review_title);
+        Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
+        titleText.setTypeface(tf);
         TextView bodyText = (TextView) findViewById(R.id.review_body);
 
         //get review info

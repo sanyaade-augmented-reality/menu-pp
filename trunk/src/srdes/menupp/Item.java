@@ -1,18 +1,18 @@
 package srdes.menupp;
 
 public class Item {
-	private String details;
+	//private String details;
 	private String name;
-	private int price;
+	//private int price;
 
 	public Item(){
 
 	}
 
-	public Item(String i, String d, int p){
-		this.details = d;
+	public Item(String i){
+		//this.details = d;
 		this.name = i;
-		this.price = p;
+		//this.price = p;
 	}
 
 	public String getName() {

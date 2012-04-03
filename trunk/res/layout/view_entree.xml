@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/menuppcbbg"
     android:orientation="vertical" >
 
 	<ScrollView android:id="@android:id/list"
@@ -11,7 +12,8 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="vertical">
+	    android:orientation="vertical"
+	    >
 
     <TextView
         android:id="@+id/entree_name"
@@ -20,19 +22,23 @@
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="30dp" />
+        android:textSize="30dp"
+        android:padding="20dp" />
     
    <ImageView
         android:id="@+id/entree_image"        
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_marginRight="6dip"/>
+        android:layout_gravity="center"
+        />
    
-   <RatingBar android:id="@+id/ratingbar_e"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="0.1"/>
+   <RatingBar
+       android:id="@+id/ratingbar_e"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_gravity="center_horizontal"
+       android:numStars="5"
+       android:stepSize="0.1" />
    
    <TextView
         android:id="@+id/entree_desc"
@@ -41,7 +47,8 @@
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:padding="20dp" />
    
 	</LinearLayout>
 	</ScrollView>
