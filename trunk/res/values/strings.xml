@@ -29,16 +29,15 @@
     </string-array>
     
     <string-array name="descriptions">
-        <item>Chicken wrapped in a corn tortilla covered in a chipotle sauce and cheese with a side of rice and beans.</item>
-        <item>A hotdog in a bun covered with toppings of your choosing.</item>
-        <item>A round, flat piece of dough with tomato sauce, cheese, and other toppings of your choosing.</item>
-        <item>Pan-fried eggs with cheese and other toppings of your choosing.</item>
-        <item>A ground beef patty placed between two buns with toppings including lettuce, tomatoes, mustard, and others.</item>
-        <item>A round, flat piece of dough with tomato sauce, cheese, and other toppings of your choosing.</item>
-        <item>Pan-fried eggs with cheese and other toppings of your choosing.</item>
-        <item>A hotdog in a bun covered with toppings of your choosing.</item>
-        <item>Chicken wrapped in a corn tortilla covered in a chipotle sauce and cheese with a side of rice and beans.</item>
-        <item>A ground beef patty placed between two buns with toppings including lettuce, tomatoes, mustard, and others.</item>
+        <item>Hand breaded round steak, seasoned and fried to perfection and topped with cream gravy.</item>
+        <item>Cracker crumb breaded chicken breast stuffed with chorizo, fresh jalapeños and Monterey Jack cheese. Topped with chile con queso. Served with Spanish rice and refried borracho beans.</item>
+        <item>Filled with marinated chicken fajita and mixed cheese. Topped with chipotle cream sauce: a smoky jalapeño sauce blended wth sour cream, mixed cheese, and sliced avocado. Served with Spanish rice and borracho beans.</item>
+        <item>Two tortillas stuffed with crispy corn tortilla breaded tilapia fish fillets, shredded red cabbage and fresh cilantro with a side of chipotle ranch dressing for dipping. Served with Spanish rice and spicy black beans.</item>
+        <item>Four corn tortillas stuffed with spiced chicken rolled and fried with guacamole, sour cream and queso for dipping. Served with Spanish rice and refried beans.</item>
+        <item>Can't decide? Try our sampler and get it all! Choose from our famous queso or queso especial served with loaded jalapeños, homemade bean and cheese nachos and chicken flaquities. Served with ranch dressing and fresh or pickled jalapeños on the side.</item>
+        <item>A marinated chicken breast dusted with blackening spice on a bed of chipotle sauce; a blend of smoked jalapeños, tomatoes, and spices. Served with cheese mashed potatoes and mesquite grilled Central Mexican street corn. Try it with grilled zucchini.</item>
+        <item>Your choice of beef or chicken fajita with spicy pico de gallo.</item>
+        <item>The famous original! A fried, breaded avocado stuffed with spiced chicken and cheese. Topped with suiza sauce and more cheese. Served with Spanish rice and refried black beans.</item>
     </string-array>
 
 </resources>
