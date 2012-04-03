@@ -333,27 +333,25 @@ public class QcarEngine extends Activity {
     use for rendering. */
     private void loadTextures()
     {
+        mTextures.add(Texture.loadTextureFromApk("chicken_fried_steak.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("chorizo_stuffed_chicken.png", getAssets()));
         mTextures.add(Texture.loadTextureFromApk("enchiladas.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));     
-        mTextures.add(Texture.loadTextureFromApk("pizza.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("omelette.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("hotdog.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("enchiladas.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("burger.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("fish_tacos.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("flautas.png", getAssets()));     
+        mTextures.add(Texture.loadTextureFromApk("mixed_grill.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("pollo_a_la_plancha.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("quesadillas.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("stuffed_avacado.png", getAssets()));
         
-        mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("hotdog_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("pizza_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("omelette_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("hotdog_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("enchilada_info.png", getAssets()));
-        mTextures.add(Texture.loadTextureFromApk("burger_info.png", getAssets()));    
+        mTextures.add(Texture.loadTextureFromApk("chicken_fried_steak_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("chorizo_stuffed_chicken_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("enchiladas_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("fish_tacos_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("flautas_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("mixed_grill_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("pollo_a_la_plancha_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("quesadillas_info.png", getAssets()));
+        mTextures.add(Texture.loadTextureFromApk("stuffed_avacado_info.png", getAssets()));
     }
     
     /** Configure QCAR with the desired version of OpenGL ES. */

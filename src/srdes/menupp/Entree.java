@@ -10,6 +10,7 @@ package srdes.menupp;
 public class Entree {
 
 	private String name;
+	private String fileName;
 	private int id;
 	private String image;
 	private int description;
@@ -22,9 +23,14 @@ public class Entree {
 		this.description = 0;
 	}
 	public Entree(String n, int id, int desc){
-		this.name = n;
+		this.fileName = n + ".png";
+		this.name = "";
+		String[] nameParts = n.split("_");
+		for (int i = 0 ; i < nameParts.length ; i++) {
+			this.name += nameParts[i].substring(0, 1).toUpperCase() + nameParts[i].substring(1) + ((i == nameParts.length - 1) ? ("") : (" "));
+		}		
 		this.id = id;
-		this.image = "srdes.menupp:drawable/" + n;
+		this.image = "srdes.menupp:assets/" + n;
 		this.description = desc;
 	}
 	/** 
@@ -58,5 +64,8 @@ public class Entree {
 	 *\brief returns entree description*/
 	public int getDescriptionIndex(){
 		return this.description;
+	}
+	public String getFileName(){
+		return this.fileName;
 	}
 }
