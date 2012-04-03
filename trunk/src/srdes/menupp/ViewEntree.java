@@ -1,6 +1,8 @@
 package srdes.menupp;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -18,7 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -67,13 +72,23 @@ public class ViewEntree extends Activity {
     	} else {
     		DebugLog.LOGD("null name text view");
     	}
-    	ImageView imageID = (ImageView) findViewById(R.id.entree_image);
-    	if(imageID != null){
-        	DebugLog.LOGD("setting image to " + cur_entree.getImage());
-        	imageID.setImageResource(getResources().getIdentifier(cur_entree.getImage(), null, null));
-    	} else {
-    		DebugLog.LOGD("null entree image view");
-    	}
+    	
+        AssetManager am = this.getAssets();
+        BufferedInputStream buf = null;
+		try {
+			buf = new BufferedInputStream(am.open(cur_entree.getFileName()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        Bitmap bitmap = BitmapFactory.decodeStream(buf);
+        ImageView imageView = (ImageView) findViewById(R.id.entree_image);
+        imageView.setImageBitmap(bitmap);
+        try {
+			buf.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
     	ratingbar = (RatingBar) findViewById(R.id.ratingbar_e);
         ratingbar.setIsIndicator(true);
         float averageRating = getAverageRating(cur_entree.getName());

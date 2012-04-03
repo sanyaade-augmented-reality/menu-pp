@@ -330,9 +330,6 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 
         const QCAR::VirtualButton* button = target->getVirtualButton(0);
 
-        // Choose the texture based on the target name:
-        Texture* imgTexture = textures[trackableId];
-
 		// Place an image on the target using a 3D plane
 		QCAR::Matrix44F entreeImageProjection;
 		QCAR::Matrix44F entreeNameProjection;
@@ -344,7 +341,7 @@ Java_srdes_menupp_menuppRenderer_renderFrame(JNIEnv *env, jobject obj)
 			captureUpdateTime = false;
 			jclass javaClass = env->GetObjectClass(obj);
 			jmethodID method = env->GetMethodID(javaClass, "entreeTabManage", "(I)V");
-			env->CallVoidMethod(obj, method, imgTexture->getId());
+			env->CallVoidMethod(obj, method, textures[entreeImageBase + (trackableId % textureCeiling)]->getId());
 
 			// Clean up
 			glDisable(GL_DEPTH_TEST);
