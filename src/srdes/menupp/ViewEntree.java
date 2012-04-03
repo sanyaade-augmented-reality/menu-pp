@@ -21,15 +21,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 /**
@@ -42,7 +38,8 @@ public class ViewEntree extends Activity {
 	private RatingBar ratingbar;
 	private Entree cur_entree;
     public static final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
-
+    //private Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
+    
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +66,8 @@ public class ViewEntree extends Activity {
     	if(nameText != null){
         	DebugLog.LOGD("setting text to " + cur_entree.getName());
     		nameText.setText(cur_entree.getName());
+    		//Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
+    		nameText.setTypeface(Typefaces.get(getBaseContext(),"SqueakyChalkSound"));
     	} else {
     		DebugLog.LOGD("null name text view");
     	}

@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -124,8 +123,8 @@ public class ViewReview extends ListActivity {
         }
         
         //hold the strings to display on the list of reviews
-        ArrayList<String> reviewTitles = new ArrayList<String>();
-        
+        //ArrayList<String> reviewTitles = new ArrayList<String>();
+        ArrayList<Item> reviewTitles = new ArrayList<Item>();
         //parse json data
         try{
                 JSONArray jArray = new JSONArray(result);
@@ -145,8 +144,7 @@ public class ViewReview extends ListActivity {
                         entreeName = json_data.getString(EntreeDbAdapter.KEY_ENTREE);
                         rating = Float.parseFloat(json_data.getString(EntreeDbAdapter.KEY_RATING));
                         cur_reviews.add(new Review(unique_id, title, body, entreeName, rating));
-                        
-                        reviewTitles.add(title+"  ("+new Float(rating).toString()+"/5)");
+                        reviewTitles.add(new Item(title+"  ("+new Float(rating).toString()+"/5)"));
                         
                         //Get an output to the screen
                         DebugLog.LOGD("Found Review " + title);
@@ -156,7 +154,10 @@ public class ViewReview extends ListActivity {
         }
         
         //display list of reviews with a list adapter
-        setListAdapter(new ArrayAdapter<String>(ViewReview.this, R.layout.review_row, reviewTitles));
+        //Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
+        ItemAdapter m_adapter = new ItemAdapter(ViewReview.this, R.layout.review_row, reviewTitles, Typefaces.get(getBaseContext(),"SqueakyChalkSound"));
+        setListAdapter(m_adapter);
+        //setListAdapter(new ArrayAdapter<String>(ViewReview.this, R.layout.review_row, reviewTitles));
     }
 
     /**

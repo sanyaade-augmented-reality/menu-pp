@@ -11,27 +11,31 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:orientation="vertical">
+	    android:orientation="vertical"
+	    android:background="@drawable/menuppcbbg"
+	    >
     
     <TextView
 	    android:id="@+id/review_title"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:padding="10dp"
+	    android:padding="30dp"
 	    android:textSize="20sp" />
     
-    <RatingBar android:id="@+id/ratingbar_s"
+    <RatingBar
+        android:id="@+id/ratingbar_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:numStars="5"
-        android:stepSize="0.5"/>
+        android:stepSize="0.5" />
 
     <TextView
 	    android:id="@+id/review_body"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:padding="10dp"
-	    android:textSize="16sp" />
+	    android:padding="20dp"
+	    android:textSize="16sp"/>
 	 
     </LinearLayout>
     </ScrollView>
