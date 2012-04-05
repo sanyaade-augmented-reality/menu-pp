@@ -21,20 +21,23 @@ import org.json.JSONObject;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ListView;
 
 /**
  * \brief Displays a list of reviews in the reviews tab.
  */
-public class ViewReview extends ListActivity {
+public class ViewReview extends ListActivity implements android.view.View.OnClickListener {
 	
 	//menu constants
 	private static final int ACTIVITY_CREATE=0;
     private static final int INSERT_ID = Menu.FIRST;
+    private Button addReviewButton;
 	
     //php request script
     private final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
@@ -61,9 +64,11 @@ public class ViewReview extends ListActivity {
         setContentView(R.layout.reviews_list);
         fillData(entree);
         registerForContextMenu(getListView());
+        addReviewButton = (Button) findViewById(R.id.addreview);
+        addReviewButton.setOnClickListener(this);
         
         //show instruction message
-        Toast.makeText(ViewReview.this, "To add a review, click the phone's menu button and select \"Add Review\"", Toast.LENGTH_LONG).show();
+        //Toast.makeText(ViewReview.this, "To add a review, click the phone's menu button and select \"Add Review\"", Toast.LENGTH_LONG).show();
     }
     
     /**
@@ -154,26 +159,25 @@ public class ViewReview extends ListActivity {
         }
         
         //display list of reviews with a list adapter
-        //Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
         ItemAdapter m_adapter = new ItemAdapter(ViewReview.this, R.layout.review_row, reviewTitles, Typefaces.get(getBaseContext(),"SqueakyChalkSound"));
         setListAdapter(m_adapter);
-        //setListAdapter(new ArrayAdapter<String>(ViewReview.this, R.layout.review_row, reviewTitles));
     }
 
     /**
      * Run when user hits the menu key. Adds a "Add Review" button to the menu
      */
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         menu.add(0, INSERT_ID, 0, R.string.menu_insert);
         return true;
-    }
+    }*/
 
     /**
      * Run when user selects a button on the menu. Run the creation activity to make a review
      */
-    @Override
+    /*@Override
+    
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         switch(item.getItemId()) {
             case INSERT_ID:
@@ -183,7 +187,7 @@ public class ViewReview extends ListActivity {
         }
 
         return super.onMenuItemSelected(featureId, item);
-    }
+    }*/
 
     /**
      * Starts the creation activity for a review for an entree
@@ -267,4 +271,16 @@ public class ViewReview extends ListActivity {
         
     }
 
+    public void onClick(View v) {
+		
+    	switch(v.getId()) {
+        case R.id.addreview:
+        	String entree = getEntreeName();
+        	Intent i = new Intent(this, EntreeEdit.class);
+            i.putExtra("key_entree_name", entree);
+            startActivityForResult(i, ACTIVITY_CREATE);
+            //createNote(entree);
+            break;
+        }
+    }
 }
