@@ -16,6 +16,7 @@
     <string name="review_body_meta">Review</string>
     <string name="confirm">Confirm</string>
     <string name="menu_insert">Add Review</string>
+    <string name="menu_refresh">Refresh</string>
     <string name="review_write">Write a Review</string>
     <string name="entree_tab_manage">Entree View Tab Manager</string>
     <string name="entree_description">Insert description of entree here</string>
