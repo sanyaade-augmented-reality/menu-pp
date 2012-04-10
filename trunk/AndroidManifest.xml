@@ -105,7 +105,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".EntreeEdit"></activity>
+        <activity android:windowSoftInputMode="adjustResize"
+            		android:name=".EntreeEdit">
+        </activity>
         <activity android:label="@string/entree_tab_manage"
             	  android:launchMode="singleTop"
             	  android:configChanges="orientation|keyboardHidden"
