@@ -36,6 +36,7 @@ public class ViewReview extends ListActivity {
 	//menu constants
 	private static final int ACTIVITY_CREATE=0;
     private static final int INSERT_ID = Menu.FIRST;
+    private static final int REFRESH_ID = Menu.FIRST + 1;
 	
     //php request script
     private final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
@@ -179,6 +180,9 @@ public class ViewReview extends ListActivity {
             	String entree = getEntreeName();
                 createNote(entree);
                 return true;
+            case REFRESH_ID:
+            	fillData(this_entree);
+            	return true;
         }
 
         return super.onMenuItemSelected(featureId, item);

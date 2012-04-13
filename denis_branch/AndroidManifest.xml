@@ -105,10 +105,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".EntreeEdit"></activity>
+        <activity android:name=".EntreeEdit"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
         <activity android:label="@string/entree_tab_manage"
             	  android:launchMode="singleTop"
             	  android:configChanges="orientation|keyboardHidden"
+            	  android:windowSoftInputMode="adjustResize"
             	  android:name=".EntreeTabManage">
             
             <intent-filter>
@@ -116,7 +119,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewReview"></activity>
+        <activity android:name=".ViewReview"
+            	android:windowSoftInputMode="adjustResize"
+            	></activity>
         <activity android:name=".SingleReview"></activity>
 
     </application>
