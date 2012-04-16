@@ -15,6 +15,11 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 	// declaring our ArrayList of items
 	private ArrayList<Item> objects;
 	private Typeface tff;
+	private View v;
+	private LayoutInflater inflater;
+	private Item i;
+	private TextView tt;
+	private TextView ttd;
 
 	/* here we must override the constructor for ArrayAdapter
 	* the only variable we care about now is ArrayList<Item> objects,
@@ -33,12 +38,12 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 	public View getView(int position, View convertView, ViewGroup parent){
 
 		// assign the view we are converting to a local variable
-		View v = convertView;
+		v = convertView;
 
 		// first check to see if the view is null. if so, we have to inflate it.
 		// to inflate it basically means to render, or show, the view.
 		if (v == null) {
-			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			v = inflater.inflate(R.layout.list_item, null);
 		}
 
@@ -49,24 +54,19 @@ public class ItemAdapter extends ArrayAdapter<Item> {
 		 *
 		 * Therefore, i refers to the current Item object.
 		 */
-		Item i = objects.get(position);
+		i = objects.get(position);
 
 		if (i != null) {
 
 			// This is how you obtain a reference to the TextViews.
 			// These TextViews are created in the XML files we defined.
 
-			TextView tt = (TextView) v.findViewById(R.id.toptext);
-			TextView ttd = (TextView) v.findViewById(R.id.toptextdata);
-			/*TextView mt = (TextView) v.findViewById(R.id.middletext);
-			TextView mtd = (TextView) v.findViewById(R.id.middletextdata);
-			TextView bt = (TextView) v.findViewById(R.id.bottomtext);
-			TextView btd = (TextView) v.findViewById(R.id.desctext);*/
+			tt = (TextView) v.findViewById(R.id.toptext);
+			ttd = (TextView) v.findViewById(R.id.toptextdata);
 			
 	        tt.setTypeface(this.tff);
 	        ttd.setTypeface(this.tff);
-			// check to see if each individual textview is null.
-			// if not, assign some text!
+
 			if (tt != null){
 				//tt.setText("Name: ");
 			}

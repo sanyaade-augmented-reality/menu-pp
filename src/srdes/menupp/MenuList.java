@@ -20,6 +20,7 @@ public class MenuList extends ListActivity {
 	private Runnable viewParts;
 	private ItemAdapter m_adapter;
 	private Intent qcarEngine;
+	private Typeface tf;
 
     /** Called when the activity is first created. */
     public void onCreate(Bundle savedInstanceState) {
@@ -27,7 +28,7 @@ public class MenuList extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu_list);
 
-        Typeface tf = Typeface.createFromAsset(getAssets(),
+        tf = Typeface.createFromAsset(getAssets(),
                 "fonts/SqueakyChalkSound.ttf");
         
         // instantiate our ItemAdapter class
@@ -52,18 +53,11 @@ public class MenuList extends ListActivity {
 	 {
 		public void handleMessage(Message msg)
 		{
-			//Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
-			// create some objects
-			// here is where you could also request data from a server
-			// and then create objects from that data.
 			m_parts.add(new Item("Demo Menu"));
-			//m_parts.add(new Item("MyItemName #2", "This is item #2", 0));
-
 			m_adapter = new ItemAdapter(MenuList.this, R.layout.list_item, m_parts, Typefaces.get(getBaseContext(),"SqueakyChalkSound"));
 
 			// display the list.
 	        setListAdapter(m_adapter);
-
 		}
 	};
 	

@@ -17,11 +17,12 @@ import android.widget.TextView;
  *\brief Class that displays user guide.
  */
 public class UserGuide extends Activity {
-    
-        private ViewPager awesomePager;
-        private static int NUM_AWESOME_VIEWS = 20;
-        private Context cxt;
-        private AwesomePagerAdapter awesomeAdapter;
+    private ViewPager awesomePager;
+    private static int NUM_AWESOME_VIEWS = 20;
+    private Context cxt;
+    private AwesomePagerAdapter awesomeAdapter;
+    private LayoutInflater inflater;
+    private View view;
         
         /** Called when the activity is first created. */
     @Override
@@ -44,8 +45,7 @@ public class UserGuide extends Activity {
      
             public Object instantiateItem(View collection, int position) {
      
-                LayoutInflater inflater = (LayoutInflater) collection.getContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                inflater = (LayoutInflater) collection.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
      
                 int resId = 0;
                 switch (position) {
@@ -69,7 +69,7 @@ public class UserGuide extends Activity {
                     break;
                 }
      
-                View view = inflater.inflate(resId, null);
+                view = inflater.inflate(resId, null);
      
                 ((ViewPager) collection).addView(view, 0);
      

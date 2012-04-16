@@ -37,26 +37,30 @@ import org.json.JSONObject;
  */
 public class EntreeDbAdapter {
 
-	//column names also used as keys
- 	public static final String KEY_TITLE = "title";
-    public static final String KEY_BODY = "body";
-    public static final String KEY_ROWID = "_id";
-    public static final String KEY_ENTREE = "entree";
-    public static final String KEY_RATING = "rating";
-
-    private static final String INSERT_REVIEW_SCRIPT = "http://www.jsl.grid.webfactional.com/insert_review.php";
+	// Column names also used as keys
+ 	public final static String KEY_TITLE = "title";
+    public final static String KEY_BODY = "body";
+    public final static String KEY_ROWID = "_id";
+    public final static String KEY_ENTREE = "entree";
+    public final static String KEY_RATING = "rating";
+    private final static String INSERT_REVIEW_SCRIPT = "http://www.jsl.grid.webfactional.com/insert_review.php";    
 
     /**
-     * Create a new review using the title and body provided. If the review is
-     * successfully created return the new rowId for that review, otherwise return
-     * a -1 to indicate failure.
+     * @brief	Create a new review using the title and body provided. If the review is
+     * 			successfully created return the new rowId for that review, otherwise return
+     * 			a -1 to indicate failure.
      * 
-     * @param title the title of the note
-     * @param body the body of the note
-     * @param entree the name of the entree the review is for
-     * @param rating the rating given to the entree in the review
-     * @throws JSONException if cannot get rowID
-     * @return rowId or -1 if failed
+     * @param 	title the title of the note
+     * 
+     * @param 	body the body of the note
+     * 
+     * @param 	entree the name of the entree the review is for
+     * 
+     * @param 	rating the rating given to the entree in the review
+     * 
+     * @throws 	JSONException if cannot get rowID
+     * 
+     * @return 	rowId or -1 if failed
      */
     public static Long createReview(String title, String body, String entree, float rating) throws JSONException {
 

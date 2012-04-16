@@ -490,17 +490,26 @@ Java_srdes_menupp_QcarEngine_initApplicationNative( JNIEnv* env, jobject obj, ji
         return;
     }
 
+    jmethodID deleteTextureMethodID = env->GetMethodID(activityClass, "deleteTexture", "(I)V");
+
+    if (getTextureMethodID == 0)
+    {
+        LOG("Function getTexture() not found.");
+        return;
+    }
+
     // Register the textures
-    for (int i = 0; i < textureCount; ++i)
+    for (int i = 0; i < textureCount; i++)
     {
 
-        jobject textureObject = env->CallObjectMethod(obj, getTextureMethodID, i);
+        jobject textureObject = env->CallObjectMethod(obj, getTextureMethodID, 0);
         if (textureObject == NULL)
         {
             LOG("GetTexture() returned zero pointer");
             return;
         }
         textures[i] = Texture::create(env, textureObject);
+        env->CallVoidMethod(obj, deleteTextureMethodID, 0);
     }
 }
 

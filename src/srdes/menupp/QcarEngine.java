@@ -28,39 +28,39 @@ import android.widget.Button;
 public class QcarEngine extends Activity {
 
 	// Possible states of qcar engine
-	private final static int QCAR_UNINIT = -1;
-	private final static int QCAR_INIT = 0;
-	private final static int QCAR_INIT_AR = 1;
-	private final static int QCAR_INIT_TRACKER = 2;
-	private final static int QCAR_INITED = 3;
-	private final static int QCAR_CAMERA_STOPPED = 4;
-	private final static int QCAR_CAMERA_RUNNING = 5;
+	private final int QCAR_UNINIT = -1;
+	private final int QCAR_INIT = 0;
+	private final int QCAR_INIT_AR = 1;
+	private final int QCAR_INIT_TRACKER = 2;
+	private final int QCAR_INITED = 3;
+	private final int QCAR_CAMERA_STOPPED = 4;
+	private final int QCAR_CAMERA_RUNNING = 5;
 	
 	// Status that determines current state of QcarEngine
 	private int qcarStatus = QCAR_UNINIT;
-	private static boolean qcarInitComplete = false;
+	private boolean qcarInitComplete = false;
 	
 	// Asynchronous tasks that must be completed for initialization
 	private InitQCARTask mInitQCARTask;
     private LoadTrackerTask mLoadTrackerTask;
 	
 	// Menu++ Renderer
-	public static menuppRenderer mRenderer;
+	public menuppRenderer mRenderer;
 	
 	// Qcar init flags
-	private static int mQCARFlags;
+	private int mQCARFlags;
 	
 	// Our Default Activity View
-	private static View loaderView;
+	private View loaderView;
 		
     // Our OpenGL view:
-    public static QCARSampleGLView mGlView;
+    public QCARSampleGLView mGlView;
     
     // Gui Manager
     private GUIManager mGUIManager;
     
 	// Textures for application
-	private static Vector<Texture> mTextures;
+	private Vector<Texture> mTextures;
 	
     private MenuItem checked;
     public static native boolean toggleFlash(boolean flash);
@@ -115,9 +115,7 @@ public class QcarEngine extends Activity {
 		
         // As long as this window is visible to the user, keep the device's
         // screen turned on and bright.
-        getWindow().setFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
 	
 	@Override
@@ -206,10 +204,6 @@ public class QcarEngine extends Activity {
         
         // Do application deinitialization in native code
         deinitApplicationNative();
-        
-        // Unload texture
-        mTextures.clear();
-        mTextures = null;
                 
         // Deinitialize QCAR SDK
         QCAR.deinit();
@@ -249,6 +243,10 @@ public class QcarEngine extends Activity {
             // that may rely on the fact that the QCAR SDK has been
             // already initialized
             initApplicationAR();
+            
+            // Unload textures
+            mTextures.clear();
+            mTextures = null;
             
             // Proceed to next application initialization status
             updateQcarStatus(QCAR_INIT_TRACKER);
@@ -406,6 +404,11 @@ public class QcarEngine extends Activity {
     public Texture getTexture(int i)
     {
         return mTextures.elementAt(i);
+    }
+    
+    /** Deletes a texture object once it has been copied to native code */
+    public void deleteTexture(int i){
+    	mTextures.remove(i);
     }
     
 	private class InitQCARTask extends AsyncTask<Void, Integer, Boolean> {
