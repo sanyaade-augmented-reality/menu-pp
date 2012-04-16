@@ -50,8 +50,7 @@ public class Texture
             Bitmap bitMap = BitmapFactory.decodeStream(bufferedStream);
             
             int[] data = new int[bitMap.getWidth() * bitMap.getHeight()];
-            bitMap.getPixels(data, 0, bitMap.getWidth(), 0, 0,
-                                bitMap.getWidth(), bitMap.getHeight());
+            bitMap.getPixels(data, 0, bitMap.getWidth(), 0, 0, bitMap.getWidth(), bitMap.getHeight());
             
             // Convert:
             byte[] dataBytes = new byte[bitMap.getWidth() *

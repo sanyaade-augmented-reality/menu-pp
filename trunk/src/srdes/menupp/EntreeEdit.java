@@ -21,6 +21,7 @@ import org.json.JSONException;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
@@ -42,6 +43,9 @@ public class EntreeEdit extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        //hide keyboard
+     //   getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         //set and find views
         setContentView(R.layout.review_create);
         setTitle(R.string.review_write);

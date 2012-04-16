@@ -38,8 +38,8 @@ public class GUIManager {
     private Handler mainActivityHandler;
     
     // Flags for our Handler
-    public static final int TOGGLE_FLASH_BUTTON = 0;
-    public static final int DISPLAY_INFO_TOAST = 1;
+    public final static int TOGGLE_FLASH_BUTTON = 0;
+    public final static int DISPLAY_INFO_TOAST = 1;
     
     // Native methods to handle button clicks
     public native void nativeNext();
@@ -82,8 +82,7 @@ public class GUIManager {
             }
         };
     }
-    
-    
+      
     /** Button clicks should call corresponding native functions. */
     public void initButtons()
     {

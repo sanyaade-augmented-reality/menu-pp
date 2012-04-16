@@ -43,12 +43,12 @@ import com.qualcomm.QCAR.QCAR;
 public class menupp extends Activity implements android.view.View.OnClickListener
 {
     // Application status constants:
-    private static final int APPSTATUS_UNINITED         = -1;
-    private static final int APPSTATUS_INIT_APP         = 0;
-    private static final int APPSTATUS_INIT_QCAR_ENGINE = 1;
-    private static final int APPSTATUS_INIT_APP_AR      = 2;
-    private static final int APPSTATUS_INIT_TRACKER     = 3;
-    private static final int APPSTATUS_INITED           = 4;
+    private final int APPSTATUS_UNINITED         = -1;
+    private final int APPSTATUS_INIT_APP         = 0;
+    private final int APPSTATUS_INIT_QCAR_ENGINE = 1;
+    private final int APPSTATUS_INIT_APP_AR      = 2;
+    private final int APPSTATUS_INIT_TRACKER     = 3;
+    private final int APPSTATUS_INITED           = 4;
     
     // Name of the native dynamic libraries to load:
     private static final String NATIVE_LIB_SAMPLE = "menupp";    
@@ -67,9 +67,10 @@ public class menupp extends Activity implements android.view.View.OnClickListene
     // Display size of the device
     public static int mScreenWidth = 0;
     public static int mScreenHeight = 0;
+    private DisplayMetrics metrics;
     
     // The current application status
-    private static int mAppStatus = APPSTATUS_UNINITED;
+    private int mAppStatus = APPSTATUS_UNINITED;
 
     // Flags status of activity
     private static boolean appInitComplete = false;
@@ -221,7 +222,7 @@ public class menupp extends Activity implements android.view.View.OnClickListene
         setRequestedOrientation(screenOrientation);
                 
         // Query display dimensions
-        DisplayMetrics metrics = new DisplayMetrics();
+        metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mScreenWidth = metrics.widthPixels;
         mScreenHeight = metrics.heightPixels;

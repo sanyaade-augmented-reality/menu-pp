@@ -14,6 +14,7 @@ public class Entree {
 	private int id;
 	private String image;
 	private int description;
+	private String[] nameParts;
 	
 	//Entree constructors
 	public Entree(){
@@ -25,7 +26,7 @@ public class Entree {
 	public Entree(String n, int id, int desc){
 		this.fileName = n + ".png";
 		this.name = "";
-		String[] nameParts = n.split("_");
+		nameParts = n.split("_");
 		for (int i = 0 ; i < nameParts.length ; i++) {
 			this.name += nameParts[i].substring(0, 1).toUpperCase() + nameParts[i].substring(1) + ((i == nameParts.length - 1) ? ("") : (" "));
 		}		

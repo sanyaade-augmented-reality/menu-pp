@@ -38,6 +38,8 @@ public class ViewEntree extends Activity {
 	
 	private RatingBar ratingbar;
 	private Entree cur_entree;
+	private TextView nameText;
+	private TextView descriptionText;
     public static final String REVIEW_SELECTION_SCRIPT = "http://www.jsl.grid.webfactional.com/select_entree_reviews.php";
     //private Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
     
@@ -63,11 +65,10 @@ public class ViewEntree extends Activity {
     	DebugLog.LOGD("retrieving texture");
 
     	//find views from layout and set their respective texts/information
-    	TextView nameText = (TextView) findViewById(R.id.entree_name);
+    	nameText = (TextView) findViewById(R.id.entree_name);
     	if(nameText != null){
         	DebugLog.LOGD("setting text to " + cur_entree.getName());
     		nameText.setText(cur_entree.getName());
-    		//Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/SqueakyChalkSound.ttf");
     		nameText.setTypeface(Typefaces.get(getBaseContext(),"SqueakyChalkSound"));
     	} else {
     		DebugLog.LOGD("null name text view");
@@ -93,7 +94,7 @@ public class ViewEntree extends Activity {
         ratingbar.setIsIndicator(true);
         float averageRating = getAverageRating(cur_entree.getName());
         ratingbar.setRating(averageRating);
-    	TextView descriptionText = (TextView) findViewById(R.id.entree_desc);
+    	descriptionText = (TextView) findViewById(R.id.entree_desc);
     	if(descriptionText != null){
     		String [] descriptions = getResources().getStringArray(R.array.descriptions);
         	DebugLog.LOGD("setting text image to " + cur_entree.getDescriptionIndex());

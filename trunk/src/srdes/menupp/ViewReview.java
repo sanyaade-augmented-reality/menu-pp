@@ -35,9 +35,8 @@ import android.widget.ListView;
 public class ViewReview extends ListActivity implements android.view.View.OnClickListener {
 	
 	//menu constants
-	private static final int ACTIVITY_CREATE=0;
+	private static final int ACTIVITY_CREATE = 0;
     private static final int INSERT_ID = Menu.FIRST;
-    private static final int REFRESH_ID = Menu.FIRST + 1;
     private Button addReviewButton;
 	
     //php request script
@@ -67,9 +66,6 @@ public class ViewReview extends ListActivity implements android.view.View.OnClic
         registerForContextMenu(getListView());
         addReviewButton = (Button) findViewById(R.id.addreview);
         addReviewButton.setOnClickListener(this);
-        
-        //show instruction message
-        //Toast.makeText(ViewReview.this, "To add a review, click the phone's menu button and select \"Add Review\"", Toast.LENGTH_LONG).show();
     }
     
     /**
@@ -162,36 +158,6 @@ public class ViewReview extends ListActivity implements android.view.View.OnClic
         //display list of reviews with a list adapter
         ItemAdapter m_adapter = new ItemAdapter(ViewReview.this, R.layout.review_row, reviewTitles, Typefaces.get(getBaseContext(),"SqueakyChalkSound"));
         setListAdapter(m_adapter);
-    }
-
-    /**
-     * Run when user hits the menu key. Adds a "Add Review" button to the menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        menu.add(0, INSERT_ID, 0, R.string.menu_insert);
-        menu.add(0, REFRESH_ID, 1, R.string.menu_refresh);
-        return true;
-    }
-
-    /**
-     * Run when user selects a button on the menu. Run the creation activity to make a review
-     */
-    @Override
-    
-    public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        switch(item.getItemId()) {
-            case INSERT_ID:
-            	String entree = getEntreeName();
-                createNote(entree);
-                return true;
-            case REFRESH_ID:
-            	fillData(this_entree);
-            	return true;
-        }
-
-        return super.onMenuItemSelected(featureId, item);
     }
 
     /**

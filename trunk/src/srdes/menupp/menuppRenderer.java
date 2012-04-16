@@ -30,6 +30,7 @@ public class menuppRenderer implements GLSurfaceView.Renderer
 {
     public boolean mIsActive = false;
     public static boolean buttonPressed = false;
+    private Intent intent;
 
 	private GUIManager mGUIManager;
     
@@ -95,7 +96,7 @@ public class menuppRenderer implements GLSurfaceView.Renderer
     public void entreeTabManage(int textureId) {
 
     	buttonPressed = true;
-    	Intent intent = new Intent (context, EntreeTabManage.class);
+    	intent = new Intent (context, EntreeTabManage.class);
     	DebugLog.LOGD("Putting extra " + textureId);
     	intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	intent.putExtra("key_entree_id", textureId);
