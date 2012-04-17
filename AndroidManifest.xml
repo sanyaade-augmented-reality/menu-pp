@@ -23,7 +23,7 @@
     <application
         android:icon="@drawable/menupp_icon"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme"
+        android:theme="@android:style/Theme.NoTitleBar"
         android:debuggable="true">
 
         <activity android:label="@string/app_name"
@@ -112,7 +112,7 @@
         <activity android:label="@string/entree_tab_manage"
             	  android:launchMode="singleTop"
             	  android:configChanges="orientation|keyboardHidden"
-            	  android:windowSoftInputMode="stateHidden|adjustResize"
+            	  android:windowSoftInputMode="stateAlwaysHidden"
             	  android:name=".EntreeTabManage">
             
             <intent-filter>
@@ -121,7 +121,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ViewReview"
-            android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity android:name=".SingleReview"></activity>
 
     </application>
