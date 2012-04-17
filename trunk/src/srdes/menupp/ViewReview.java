@@ -37,6 +37,7 @@ public class ViewReview extends ListActivity implements android.view.View.OnClic
 	//menu constants
 	private static final int ACTIVITY_CREATE = 0;
     private static final int INSERT_ID = Menu.FIRST;
+    private static final int REFRESH_ID = Menu.FIRST + 1;
     private Button addReviewButton;
 	
     //php request script
@@ -240,6 +241,33 @@ public class ViewReview extends ListActivity implements android.view.View.OnClic
         DebugLog.LOGD("ViewEntree::onDestroy");
         super.onDestroy();
         
+    }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        menu.add(0, INSERT_ID, 0, R.string.menu_insert);
+        menu.add(0, REFRESH_ID, 1, R.string.menu_refresh);
+        return true;
+    }
+
+    /*
+     * Run when user selects a button on the menu. Run the creation activity to make a review
+     */
+    @Override
+    
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        switch(item.getItemId()) {
+            case INSERT_ID:
+                String entree = getEntreeName();
+                createNote(entree);
+                return true;
+            case REFRESH_ID:
+                fillData(this_entree);
+                return true;
+        }
+
+        return super.onMenuItemSelected(featureId, item);
     }
 
     public void onClick(View v) {
